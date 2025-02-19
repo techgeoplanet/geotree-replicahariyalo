@@ -1,0 +1,32 @@
+{% load static %}
+{% block content %}
+    <div id="qr-container"></div>
+    <!-- <a id="download-link" style="display:none;" download="qrcode.png">Download QR Code</a> -->
+    <!-- Include the qrcode.min.js library -->
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script>
+        // If qrcodeurl is passed, use it
+        var text = "{{ qrcodeurl|default:'' }}"; // Use the passed variable qrcodeurl
+
+        // Check if text is not empty before generating QR code
+        if (text) {
+            // Create the QR code with the passed URL or text
+            var qrContainer = document.getElementById("qr-container");
+            var qrcode = new QRCode(qrContainer, {
+                text: text,
+                width: 200,
+                height: 200
+            });
+
+            // After the QR code is generated, get the image and set up the download link
+            setTimeout(function () {
+                var qrImage = qrContainer.querySelector("img");
+                if (qrImage) {
+                    var downloadLink = document.getElementById("download-link");
+                    downloadLink.href = qrImage.src; // Use the QR code image source
+                    downloadLink.style.display = "inline-block"; // Show the download link
+                }
+            }, 500); // Slight delay to ensure the QR code is rendered
+        }
+    </script>
+{% endblock %}

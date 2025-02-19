@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="icon" href="{% static 'base/images/fiv-icon.png' %}"
+            type="image/x-icon">
+    <style>
+        :root {
+            --primary-color: #006769;
+            /* Blue */
+            --secondary-color: #40A578;
+            /* Green */
+            --background-color: #ffffff;
+            /* Light Gray */
+            --text-color: #ffffff;
+            /* Dark Gray */
+        }
+        /* Reset default browser styles */
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            position: relative;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- <h2>Welcome {{name}}</h2> -->
+    {% block content %}{% endblock %}
+    
+</body>
+</html>

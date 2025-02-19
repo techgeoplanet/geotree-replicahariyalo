@@ -1,0 +1,57 @@
+{% load static %}
+
+<footer class="footer-container absolute bottom-0 relative p-4">
+    <div class="bg-white flex justify-center items-center" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;">
+        <img src="{% static 'home/images/logo.webp' %}" alt="Background Image" style="height: 100%; background-position: center; background-size: cover; opacity: 0.5;">
+    </div>
+
+    <div class="short-dec">
+        <div class="footer-text text-center bg-white bg-opacity-70 rounded-lg">
+            <h3 class="bg-pink-900 bg-opacity-60 text-white p-2 rounded-lg text-lg mb-1"><b>“हरयाळो–राजस्थान" (एक पेड मां के नाम)</b></h3>
+            <p>राजस्थान को हरित प्रदेश के रूप में विकसित करने की दृष्टि से बजट 2024-25 में मुख्यमंत्री वृक्षारोपण
+                महाअभियान के माध्यम से हर परिवार को जोडते हुए 7 करोड़ पौधे लगाने एवम पालने का लक्ष्य रखा है। इस क्रम को
+                सतत रखने के लिए Multi-Sectoral Programme के रूप में मिशन "हरयाळो-राजस्थान” की घोषणा की गयी हैं ।</p>
+        </div>
+
+        <!-- Play Store Download Button -->
+        <div class="download-app flex justify-end w-auto my-2 gap-2 mt-20">
+            <a href="#" target="_blank" class="playstore-btn flex justify-center items-center flex-row bg-black bg-opacity-40 shadow-2xl text-white text-2xl rounded-lg p-1 px-4">
+                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                <p class="ml-1">About</p>
+            </a>
+            <a href="https://play.google.com/store/apps/details?id=com.hariyalorajasthan.gpsplit&pcampaignid=web_share" target="_blank" class="playstore-btn flex justify-center items-center flex-row bg-black shadow-2xl text-white rounded-lg p-1 px-4">
+                <img src="{% static 'footer/images/play.png'%}" alt="First Image" style="height: 90%;">
+                <p style="white-space: nowrap;" class="ml-2">Get it on <br><strong>Google Play</strong></p>
+            </a>
+        </div>
+
+
+        <div class="footer-bottom flex justify-between items-center mt-2 bg-white rounded-lg overflow-x-hidden">
+            <div class="footimg flex justify-center items-center">
+                <img src="{% static 'footer/images/company logo 1.webp'%}" alt="First Image" style="height: 100px; width: 100px;">
+            </div>
+            <div class="text-center text-lg font-bold p-2 rounded-lg">
+                <p>महात्मा गांधी नरेगा (ग्रामीण विकास विभाग)</p>
+                <p class="text-green-900">राजस्थान सरकार</p>
+            </div>
+            <div class="footimg flex justify-center items-center">
+                <img src="{% static 'footer/images/manrega.webp'%}" alt="Third Image" style="height: 100px; width: 100px;">
+            </div>
+        </div>
+    </div>
+
+    <div class="dive-with-top-border border-t-2 mt-2 pt-2 text-center text-sm">
+        <div class="top-border"></div>
+        <div class="content">
+            <p>Operated by <a href="https://geoplanetsolution.com/" class="bg-pink-900 bg-opacity-80 text-white rounded-lg p-1">Geo Planet Solution Private Limited.</a></p>
+            <p><span>
+                    <a
+                        href="https://doitc.rajasthan.gov.in/Content/PrivacyPolicy.aspx"
+                        style="text-decoration: underline; color: #6918ff;">Privacy Policy</a>
+                </span></p>
+            <p class="mt-2">In collaboration with <span class="bg-pink-900 bg-opacity-80 text-white rounded-lg p-1 ">the Government of Rajasthan.</span></p>
+            <p>&copy; 2024, Government of Rajasthan. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+

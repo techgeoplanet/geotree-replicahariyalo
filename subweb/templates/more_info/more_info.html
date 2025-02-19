@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+More information
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        background-color: #f0f0f0;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: auto;
+        /* background-color: #fff; */
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1,
+    h2,
+    h3 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    p {
+        text-align: justify;
+        margin-bottom: 12px;
+        font-size: 1.1em;
+        word-spacing: normal;
+        /* Adjust word spacing */
+    }
+
+    .section {
+        margin-bottom: 30px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-title {
+        font-size: 2em;
+        margin-bottom: 10px;
+        color: #4CAF50;
+        text-align: center;
+    }
+
+    .section-content {
+        font-size: 1em;
+        color: #555;
+    }
+
+    .benefits {
+        padding-left: 20px;
+        font-size: 1em;
+    }
+
+    .benefits li {
+        margin-bottom: 8px;
+    }
+
+    .button_join {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        border: none;
+        height: auto;
+        font-size: 14px;
+        width: auto;
+    }
+
+    .button_join:hover {
+        background-color: #45a049;
+    }
+
+    @media (max-width: 480px) {
+        p {
+            font-size: 1em;
+            /* Adjust font size for smaller screens */
+        }
+    }
+
+    .top-nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        height: 40px;
+        width: 100%;
+        top: 70px;
+        background-color: var(--primary-color);
+        color: var(--text-color);
+        z-index: 100;
+    }
+
+    .top-section {
+        height: 100px;
+        width: 100%;
+    }
+
+    .top-nav p {
+        margin: 0;
+        font-size: 1.5rem;
+        color: white;
+    }
+</style>
+
+{% endblock %}
+{% block content %}
+
+<nav class="top-nav" style="display: flex; justify-content: flex-start; align-items: center;">
+    <a href="{%url 'home' %}"
+        style="justify-content: flex-end; align-items: center; display: flex; text-decoration: none;">
+        <i class="fa-solid fa-arrow-left" style="margin: 0 15px; font-size: 28px; color: #fff;"></i>
+        <p style="color: #ffff;">More Information</p>
+    </a>
+    </a>
+</nav>
+<div class="container" style="margin-top:120px ;">
+    <div class="section">
+        <h1 class="section-title">Vision</h1>
+        <p class="section-content">To transform Rajasthan into a lush green state by mobilizing collective efforts for
+            large-scale tree plantation, ensuring a sustainable environment for future generations.</p>
+    </div>
+
+    <div class="section">
+        <h1 class="section-title">Mission</h1>
+        <p class="section-content">To plant 7 crore trees across All districts of Rajasthan, leveraging community
+            participation and advanced technology for effective monitoring and management of the plantation process.</p>
+    </div>
+
+    <div class="section">
+        <h1 class="section-title">About</h1>
+        <p class="section-content">Mukhyamantri Vriksharopan Maha Abhiyan is an ambitious initiative by the Government
+            of Rajasthan aimed at significantly increasing the state's green cover. This large-scale plantation drive
+            involves both government departments and citizens, fostering a community-driven approach to environmental
+            conservation. The success of this initiative will be monitored using the Hariyalo-Rajasthan mobile
+            application,
+            which allows users to register, track, and ensure the growth and survival of planted trees.</p>
+    </div>
+
+    <div class="section">
+        <h1 class="section-title">Benefits</h1>
+        <ul class="section-content benefits">
+            <li>Conservation of biodiversity</li>
+            <li>Soil and water conservation</li>
+            <li>Mitigation of climate change</li>
+            <li>Community participation</li>
+            <li>Promotion of urban greenery</li>
+        </ul>
+    </div>
+
+    <div style="text-align: center;">
+        <a href="{% url 'addplant' %}" class="button_join">
+            Join us in making Rajasthan a green state.</a>
+    </div>
+</div>
+{% endblock %}

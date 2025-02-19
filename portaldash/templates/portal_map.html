@@ -1,0 +1,179 @@
+{% extends "portal_base.html" %}
+{% load static %}
+
+{% block title %}
+Portal
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'portal_map/portalmap2.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <!-- included_template.html -->
+    <script type="text/javascript">
+        var aggregatedData = JSON.parse('{{ aggregated_data_list|escapejs }}');
+        console.log(aggregatedData);  // You can now use the data in JavaScript
+    </script>
+
+    <div id="svg-container">
+    <object type="image/svg+xml" data="{% static 'map-svg\District\dict_map.svg' %}" id="svg-map"></object>
+    <!-- Tooltip container -->
+    <div class="tooltip" id="tooltip"></div>
+    </div>
+
+  <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', () => {
+          const svgObject = document.getElementById('svg-map');
+          const popup = document.getElementById('tooltip');
+
+          // Data object containing dynamic information for each district
+          const districtData = {};
+
+          aggregatedData.forEach(item => {
+              const districtId = item.DISTRICT_C;  // Assuming DISTRICT_N can be used as an ID
+              console.log(districtId,"districtId");
+
+              districtData[districtId] = {
+                  name: item.DISTRICT_N,  // Assuming DISTRICT_N is the name
+                  Total: item.total_tag_tree_non_verify + item.total_block_plantation_non_verify
+              };
+          });
+
+          const colorRamp = [
+              {"value": 0, "color": "#FF9B0F"},
+              {"value": 5.00, "color": "#F49B0F"},
+              {"value": 10.00, "color": "#EA9B0F"},
+              {"value": 15.00, "color": "#DF9C10"},
+              {"value": 20.00, "color": "#D59C10"},
+              {"value": 25.00, "color": "#CA9D11"},
+              {"value": 30.00, "color": "#C09D11"},
+              {"value": 35.00, "color": "#B59D12"},
+              {"value": 40.00, "color": "#AB9E12"},
+              {"value": 45.00, "color": "#A09E13"},
+              {"value": 50.00, "color": "#969F13"},
+              {"value": 55.00, "color": "#8B9F13"},
+              {"value": 60.00, "color": "#819F14"},
+              {"value": 65.00, "color": "#76A014"},
+              {"value": 70.00, "color": "#6CA015"},
+              {"value": 75.00, "color": "#61A115"},
+              {"value": 80.00, "color": "#57A116"},
+              {"value": 85.00, "color": "#4CA116"},
+              {"value": 90.00, "color": "#42A217"},
+              {"value": 95.00, "color": "#37A217"},
+              {"value": 100, "color": "#2DA318"}
+          ];
+
+          // Function to get color for a given value based on the color ramp
+          function getColorForPopulation(value, maxValue) {
+              const normalizedValue = Math.min(Math.max(value / maxValue, 0), 1) * 100;
+              let lowerStop = colorRamp[0];
+              let upperStop = colorRamp[colorRamp.length - 1];
+              for (let i = 0; i < colorRamp.length - 1; i++) {
+                  if (normalizedValue >= colorRamp[i].value && normalizedValue <= colorRamp[i + 1].value) {
+                      lowerStop = colorRamp[i];
+                      upperStop = colorRamp[i + 1];
+                      break;
+                  }
+              }
+              const ratio = (normalizedValue - lowerStop.value) / (upperStop.value - lowerStop.value);
+              return interpolateColor(lowerStop.color, upperStop.color, ratio);
+          }
+
+          // Function to interpolate between two colors
+          function interpolateColor(color1, color2, factor) {
+              const hex = (color) => parseInt(color.slice(1), 16);
+              const rgb = (color) => [(hex(color) >> 16) & 0xff, (hex(color) >> 8) & 0xff, hex(color) & 0xff];
+              const [r1, g1, b1] = rgb(color1);
+              const [r2, g2, b2] = rgb(color2);
+              const r = Math.round(r1 + factor * (r2 - r1));
+              const g = Math.round(g1 + factor * (g2 - g1));
+              const b = Math.round(b1 + factor * (b2 - b1));
+              return `rgb(${r}, ${g}, ${b})`;
+          }
+
+          // Handle SVG load event
+          svgObject.addEventListener('load', () => {
+              const svgDocument = svgObject.contentDocument;
+              if (svgDocument) {
+                  const districts = svgDocument.querySelectorAll('g');
+                  const maxPopulation = 1000000; // Define your max population value
+
+                  districts.forEach(district => {
+                      const districtId = district.id;
+                      if (districtId in districtData) {
+                          const { name, Total } = districtData[districtId];
+                          const color = getColorForPopulation(Total, maxPopulation);
+
+                          // Apply color to the path
+                          const path = district.querySelector('path');
+                          if (path) {
+                              path.style.fill = color;
+                          }
+
+                          // Determine text position based on bounding box of the path
+                          const bbox = district.querySelector('path').getBBox();
+                          const textX = bbox.x + bbox.width / 2;
+                          const textY = bbox.y + bbox.height / 2 + 5;
+
+                          // Create and append text element for district name
+                          createDistrictText(svgDocument, districtId, name, textX, textY);
+
+                          // Tooltip interactions
+                          district.addEventListener('mouseenter', (e) => {
+                              popup.innerHTML = `<strong>${name}</strong><br>Total: ${Total}`;
+                              popup.style.display = 'block';
+                              popup.style.left = `${e.pageX + 10}px`;
+                              popup.style.top = `${e.pageY + 10}px`;
+                          });
+
+                          district.addEventListener('mousemove', (e) => {
+                              popup.style.left = `${e.pageX + 10}px`;
+                              popup.style.top = `${e.pageY + 10}px`;
+                          });
+
+                          district.addEventListener('mouseleave', () => {
+                              popup.style.display = 'none';
+                          });
+
+                          // Redirect to respective page on click
+                          district.addEventListener('click', () => {
+                              const baseUrl = '/portaldash/portalblock/';
+                              const fullUrl = `${baseUrl}${districtId}/`;
+                              window.location.href = fullUrl;
+                          });
+                      }
+                  });
+              }
+          });
+
+          // Check if the SVG is already loaded
+          if (svgObject.contentDocument && svgObject.contentDocument.readyState === 'complete') {
+              svgObject.dispatchEvent(new Event('load'));
+          }
+      });
+
+     // Function to create and append a text element for district name
+    function createDistrictText(svgDocument, districtId, name, x, y) {
+        // Check if a text element for this district already exists
+        if (!svgDocument.getElementById(`text-${districtId}`)) {
+            const text = svgDocument.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('id', `text-${districtId}`);
+            text.setAttribute('x', x);
+            text.setAttribute('y', y);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('alignment-baseline', 'middle');
+            text.setAttribute('font-size', '24px');
+            text.setAttribute('font-weight', '600');
+            text.textContent = name;
+            svgDocument.documentElement.appendChild(text);
+        }
+    }
+
+  </script>
+
+
+
+<!-- <script src="{%static 'portal_map/portalmap1.js' %}"></script> -->
+{% endblock %}

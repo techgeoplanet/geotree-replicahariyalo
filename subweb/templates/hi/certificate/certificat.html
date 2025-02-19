@@ -1,0 +1,306 @@
+{% extends "subweb-base.html" %}
+{% load static %}
+
+{% block title %}
+Certificate
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .top-nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        height: 40px;
+        width: 100%;
+        top: 60px;
+        background-color: var(--primary-color);
+        color: var(--text-color);
+        z-index: 100;
+    }
+
+    .top-section {
+        height: 100px;
+        width: 100%;
+    }
+
+    .top-nav p {
+        margin: 0;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        width: 100%;
+    }
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .view-btn {
+        padding: 8px 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .view-btn:hover {
+        background-color: #45a049;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100vh;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.9);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 0 auto; /* Center horizontally */
+        
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 600px;
+        position: relative;
+        border-radius: 8px;
+    }
+    .close {
+        color: white;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+    }
+    h3{
+        margin: 5px;
+    }
+    .modal-header {
+        padding: 2px 5px;
+        background-color: #5cb85c;
+        color: white;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    .modal-body {
+        padding-top: 5px;
+        text-align: center;
+    }
+    .modal-footer {
+        padding: 10px;
+        text-align: center;
+        background-color: #f2f2f2;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+    .btn {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+        transition: background-color 0.3s ease;
+        margin-top: 5px;
+    }
+    .btn:hover {
+        background-color: #45a049;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'header/headerbar.html' %}
+{% include 'header/backbg.html' %}
+{% include 'header/header-route.html' with btn_text="प्रशस्ति पत्र" %}
+
+<div class="main-div" style="display: flex; width: 100%; justify-content: center;">
+    <div class="container" style="margin:10px;">
+        <h1>प्रशस्ति सूची</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>प्रशस्ति पत्र मे नाम</th>
+                    <th>प्रशस्ति पत्र मे संख्या</th>
+                    <th>और देखें</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if data %}
+                    {% for certi in data %}
+                    <tr>
+                        <td>{{ certi.certificate_holder_name }}</td>
+                        <td>{{ certi.certificate_id }}</td>
+                        <td>
+                            <button class="view-btn" onclick="viewCertificate('{{ certi.certificate_holder_name }}', '{{ certi.certificate_id }}')">View</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <script>
+                        window.onload = function() {
+                            var popup = document.createElement('div');
+                            popup.className = 'popup';
+                            popup.innerHTML = `
+                                <div class="popup-content">
+                                    <p>कोई डेटा नहीं मिला। कृपया एक पौधा जोड़ें।</p>
+                                    <button id="ok-button">OK</button>
+                                </div>
+                            `;
+                            document.body.appendChild(popup);
+                            document.getElementById('ok-button').onclick = function() {
+                                window.history.back();
+                            };
+                        };
+                    </script>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <!-- Modal -->
+        <div id="myModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <h3>Certificate Preview</h3>
+                </div>
+                <div class="modal-body">
+                    <canvas id="certificateCanvas" style="max-width: 100%;"></canvas>
+                </div>
+                <div class="modal-footer">
+                    <button id="downloadBtn" class="btn">Download</button>
+                    <button class="btn" onclick="closeModal()">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            var modal = document.getElementById('myModal');
+            var downloadBtn = document.getElementById('downloadBtn');
+
+            function openModal() {
+                modal.style.display = 'flex';
+            }
+
+            function closeModal() {
+                modal.style.display = 'none';
+            }
+
+            WebFont.load({
+                google: { families: ['Noto Sans'] }
+            });
+
+            function setDownloadLink(canvas) {
+                const dataURL = canvas.toDataURL("image/png");
+
+                console.log("Download button clicked in WebView");
+
+                downloadBtn.onclick = function () {
+                    if (window.ReactNativeWebView) {
+                        console.log("Inside WebView - Sending base64 image");
+                        window.ReactNativeWebView.postMessage(
+                            JSON.stringify({ type: "download", data: dataURL })
+                        );
+                    } else {
+                        console.log("Normal browser download triggered");
+                        const a = document.createElement("a");
+                        a.href = dataURL;
+                        a.download = "certificate.png";
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    }
+                };
+            }
+
+
+
+            function viewCertificate(name, certificateId) {
+                fetch('/get_certificate_template/')
+                .then(response => response.blob())
+                .then(blob => {
+                    const canvas = document.getElementById('certificateCanvas');
+                    const ctx = canvas.getContext('2d');
+
+                    const image = new Image();
+                    image.src = URL.createObjectURL(blob);
+                    image.onload = function() {
+                        canvas.width = image.width;
+                        canvas.height = image.height;
+                        ctx.drawImage(image, 0, 0);
+
+                        ctx.font = '80px "Noto Sans"';
+                        ctx.fillStyle = 'black';
+
+                        const x_start = 250, x_end = 870, y_position = 770;
+                        const textWidth = ctx.measureText(name).width;
+                        const x_center = (x_start + x_end) / 2;
+                        const x_position = x_center - (textWidth / 2);
+                        ctx.fillText(name, x_position, y_position);
+
+                        ctx.font = '30px "Noto Sans"';
+                        ctx.fillStyle = 'black';
+                        ctx.fillText(certificateId, 540, 1500);
+
+                        setDownloadLink(canvas);
+                        openModal();
+                    };
+                })
+                .catch(error => console.error('Error loading certificate:', error));
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    closeModal();
+                }
+            };
+        </script>
+
+        <style>
+            .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+            .modal-content { background: white; padding: 20px; border-radius: 10px; text-align: center; }
+            .modal-footer { margin-top: 10px; }
+            .popup { display: flex; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+            .popup-content { background: white; padding: 20px; border-radius: 10px; text-align: center; }
+        </style>
+    </div>
+</div>
+
+{% endblock %}

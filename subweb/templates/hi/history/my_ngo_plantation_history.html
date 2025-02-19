@@ -1,0 +1,134 @@
+{% extends "subweb-base.html" %}
+{% load static %}
+
+{% block title %}
+इतिहास
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'history/css/history.css' %}">
+{% endblock %}
+{% block content %}
+{% include 'header/headerbar.html' %}
+{% include 'header/backbg.html' %}
+<div class="mian-section">
+    <div class="fixed w-full" style="z-index: 999;" >
+        {% include 'header/header-route.html' with btn_text="निजी / वक्तीगत इतिहास" %}
+    </div>
+    <div class="sub-mian-section pt-14 w-full max-width-[600px] flex justify-center items-center flex-wrap">
+
+            {% include './nav-module/route_btn.html' with active='ngo' %}
+
+            {% if data %}
+            {% for tree in data %}
+
+                <!-- include treeprofile  -->
+                {% include './tree-view-module/tree-profile.html' with active='NGO' %}
+
+            {% endfor %}
+            {% else %}
+            <!-- Trigger the modal -->
+            <script>
+                window.onload = function() {
+                 var popup = document.createElement('div');
+                 popup.id = 'custom-popup';
+                 popup.className = 'popup';
+ 
+                 var popupContent = document.createElement('div');
+                 popupContent.className = 'popup-content';
+ 
+                 var message = document.createElement('p');
+                 message.textContent = 'कोई डेटा नहीं मिला। कृपया एक पौधा जोड़ें।';
+ 
+                 var okButton = document.createElement('button');
+                 okButton.id = 'ok-button';
+                 okButton.textContent = 'OK';
+ 
+                 popupContent.appendChild(message);
+                 popupContent.appendChild(okButton);
+                 popup.appendChild(popupContent);
+ 
+                 document.body.appendChild(popup);
+ 
+                 popup.style.display = 'flex';
+ 
+                 // OK button click event
+                 okButton.onclick = function() {
+                     window.history.back(); 
+                 };
+ 
+                 // CSS styling
+                 var style = document.createElement('style');
+                 style.innerHTML = `
+                     .popup {
+                         display: flex; 
+                         position: fixed;
+                         z-index: 2000;
+                         left: 0;
+                         top: 0;
+                         width: 100%;
+                         height: 100%;
+                         background-color: rgba(0, 0, 0, 0.5);
+                         align-items: center;
+                         justify-content: center;
+                     }
+ 
+                     .popup-content {
+                         background-color: #fff;
+                         padding: 20px;
+                         border-radius: 10px;
+                         text-align: center;
+                     /* max-width: 400px;*/
+                         margin: auto;
+                     }
+ 
+                     #ok-button {
+                         background-color: #4CAF50;
+                         color: white;
+                         padding: 10px 20px;
+                         border: none;
+                         border-radius: 5px;
+                         cursor: pointer;
+                         margin-top: 20px;
+                     }
+ 
+                     #ok-button:hover {
+                         background-color: #45a049;
+                     }
+                 `;
+                 document.head.appendChild(style);
+             };
+             </script>
+            {% endif %}
+            <div class="nomore-history" style="display: flex; justify-content: center; align-items: center; flex-direction: column; width: 100%;">
+                <p style="color: rgb(161, 161, 161); font-size: 12px;">अधिक इतिहास नहीं है</p>
+                <div class="line-fal" style="width: 100%; border-top: 2px solid rgb(187, 187, 187);"></div>
+            </div>
+    </div>
+
+    <!-- this is popupfor update  -->
+    {% include '../updatemodule/operationsupdate.html' with endurl='ngo' %}
+    {% include '../updatemodule/plantgalleryopen.html' %}
+</div>
+    
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const buttons = document.querySelectorAll('.view-image-btn');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                const imageUrl = this.getAttribute('data-image-url');
+                const imgElement = document.createElement('img');
+                imgElement.src = imageUrl;
+                imgElement.onload = function() {
+                    imgElement.classList.add('loaded');
+                };
+                const parent = this.parentElement;
+                parent.innerHTML = '';
+                parent.appendChild(imgElement);
+            });
+        });
+    });
+</script>
+
+{% endblock %}

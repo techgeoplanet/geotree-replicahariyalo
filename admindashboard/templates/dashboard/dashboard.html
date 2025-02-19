@@ -1,0 +1,51 @@
+<!-- dashboard.html -->
+{% extends "A_base.html" %}
+{% load static %}
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 10px; /* Space between grid items */
+        height: 95%; /* Full viewport height */
+    }
+    
+    .grid-item {
+        /* background-color: #ccc; */
+        /* border: 1px solid #333; */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        padding: 5px;
+    }
+    .dasboard-space{
+        margin-top: 6rem ;
+    }
+    #download-kmz-section{
+        width: 100%;
+        padding: 5px;
+
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    {% include 'menu/menu.html' with name=user.name active='Dashboard' %}
+    <div class="dasboard-space">
+    <div class="grid-container">
+        <div class="grid-item">
+            <div id="download-kmz-section">
+                {{ sub_view_content_download_kmz|safe }}
+            </div>            
+        </div>
+        <!-- <div class="grid-item">3</div>
+        <div class="grid-item">4</div> -->
+    </div>
+    </div>
+{% endblock %}

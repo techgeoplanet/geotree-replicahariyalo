@@ -1,0 +1,50 @@
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'menu/menu.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="sidebar">
+    <div class="user-profil">
+        <span>Welcome, {{ name }}</span>
+    </div>
+    <ul>
+        <li><a href="{% url 'dashboardadm' %}" class="{% if active == 'Dashboard' %}active{% endif %}">Dashboard</a></li>
+        <li><a href="{% url 'plantationdatapvtadm' %}" class="{% if active == 'Plantation Data' %}active{% endif %}">Plantation Data</a></li>
+        <li><a href="{% url 'certificateadm' %}" class="{% if active == 'Certificate' %}active{% endif %}">Certificate</a></li>
+        <li><a href="{% url 'certificateadm' %}" class="{% if active == 'Users' %}active{% endif %}">Users</a></li>
+        <li><a href="/admin-django/" class="{% if active == 'Users' %}active{% endif %}">Supper Admin</a></li>
+        <li><a href="{% url 'portaldash' %}" class="{% if active == 'Users' %}active{% endif %}">Portal Dashboard</a></li>
+        <li><a href="{% url 'refresh_data' %}" class="{% if active == 'Users' %}active{% endif %}">Refresh Data</a></li>
+        <li><a href="{% url 'nurserydash' %}" class="{% if active == 'Nursery' %}active{% endif %}">Nursery</a></li>
+    </ul>
+
+    <div class="user-profile">
+        
+        <a href="{% url 'logoutadm' %}">Logout</a>
+    </div>
+</div>
+
+<div class="content">
+    {% if active != 'Nursery' %}
+    <div class="header">
+        <p>{{ active }}</p>
+    </div>
+    {% endif %}
+    </header>
+    <script>
+        function toggleDrawer() {
+            const drawer = document.querySelector('.drawer');
+            drawer.classList.toggle('open');
+        }
+        document.querySelectorAll('.drawer ul li a').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.drawer ul li a').forEach(link => {
+                    link.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+    </script>
+{% endblock %}

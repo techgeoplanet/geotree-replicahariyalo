@@ -1,0 +1,41 @@
+{% load static %}
+
+<style>
+    header {
+        padding: 10px 20px;
+        background-color: white;
+        border-bottom: 2px solid #e0e0e0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: #ffff;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        /* height: 80px; */
+        transition: background-color 0.3s;
+    }
+</style>
+<header class="bg-white w-full overflow-x-hidden">
+    <nav class="navbar-section flex flex-row justify-between md:items-center">
+        <div class="left-right flex justify-center items-center md:flex-wrap flex-row">
+            <img src="{% static 'base_static/images/goldenemb.png' %}"
+                alt="बाएं छवि" class="w-10 md:w-16">
+            <img src="{% static 'base_static/images/manrega.webp' %}" alt="बाएं छवि"
+                class="w-10 md:w-14">
+            <!-- <img src="{% static 'base_static/images/company logo 1.webp' %}"
+                alt="बाएं छवि" class="w-10"> -->
+        </div>
+        <h1 class="styled-heading text-center text-xs md:text-xl font-bold text-green-800 p-2">
+            <p>मुख्यमंत्री वृक्षारोपण महाअभियान हरयाळो राजस्थान (एक पेड़ माँ के नाम)</p>
+            <!-- <p>हरयाळो राजस्थान (एक पेड़ माँ के नाम)</p>   -->
+            <p>राजस्थान सरकार</p>
+        </h1>
+        <div class="right-left flex justify-center items-center md:flex-wrap flex-row">
+            <img src="{% static 'base_static/images/logo.webp' %}"
+                alt="मध्य छवि" class="w-10 md:w-20">
+                
+            <img src="{% static 'base_static/images/cm.webp' %}" alt="दाएं छवि"
+                class="w-10 md:w-20">
+        </div>
+    </nav>
+</header>

@@ -1,0 +1,211 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Example</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!-- Font Awesome -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            display: block; /* Initially visible */
+            z-index: 1001; /* Ensure it's above the map */
+        }
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #4caf50;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .locate-button {
+            position: absolute;
+            bottom: 50px; /* Adjust as needed */
+            right: 10px; /* Adjust as needed */
+            background: white;
+            border: 2px solid #4caf50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 401;
+        }
+        .locate-button i {
+            color: #4caf50;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map-container" style="position: relative; height: 100%; width: 100%;">
+        <div id="map"></div>
+        <div id="loading">
+            <div class="spinner"></div>
+            <div>
+                <p id="loading-text" style="font-family:'Arial';text-align:center;">कृपया लोकेशन की अनुमति दें</p>
+            </div>
+        </div>
+        <div class="locate-button" title="Find My Location">
+            <i class="fa-solid fa-location-crosshairs"></i>
+            <input type="hidden" id="locationLat" value="25">
+            <input type="hidden" id="locationLong" value="74">
+            <input type="hidden" id="location_dist_code" value="0">
+            <input type="hidden" id="location_ps_code" value="0">
+            <input type="hidden" id="location_gp_code" value="0">
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var location_dist_code = document.getElementById('location_dist_code');
+        var location_ps_code = document.getElementById('location_ps_code');
+        var location_gp_code = document.getElementById('location_gp_code');
+    
+        function fetchAddress(lat, lon, marker) {
+            fetch("{% url 'GetCurrentLoactionAddresh' %}"+`?lat=${lat}&lon=${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    // console.log(data,"this is an data object with location information");
+                    var updatedPopupContent = `<b>Details:</b><br/>
+                                               Latitude: ${data.lat}<br/>
+                                               Longitude: ${data.lon}<br/>
+                                               Address: GP:-${data.gp_name}<br/>${data.ps_name}, ${data.dist_name}`;
+                    marker.getPopup().setContent(updatedPopupContent).update();
+    
+                    // Update the input fields with the received data
+                    if(data.dist_code && data.ps_code && data.gp_code ){
+                        location_dist_code.value = data.dist_code;
+                        location_ps_code.value = data.ps_code;
+                        location_gp_code.value = data.gp_code;
+                    }
+                    
+                });
+        }
+    </script>
+    
+    
+    <script>
+       document.addEventListener('DOMContentLoaded', function () {
+            var loadingText = document.getElementById('loading-text');
+            var locateButton = document.querySelector('.locate-button');
+            var locationLatInput = document.getElementById('locationLat');
+            var locationLongInput = document.getElementById('locationLong');
+            var map;
+            var marker;
+    
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var lat = position.coords.latitude;
+                    var long = position.coords.longitude;
+                    
+                    map = L.map('map').setView([lat, long], 15);
+    
+                    L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                        maxZoom: 20,
+                        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+                    }).addTo(map);
+    
+                    marker = L.marker([lat, long], {
+                        icon: L.icon({
+                            iconUrl: "{% static 'addplant/images/tree.png' %}", 
+                            iconSize: [30, 30],
+                            iconAnchor: [15, 15],
+                            popupAnchor: [0, -15]
+                        })
+                    }).addTo(map);
+    
+                    var popupContent = "<b>Details:</b><br/>" +
+                                        "Latitude: " + lat + "<br/>" +
+                                        "Longitude: " + long + "<br/>" +
+                                        "Address: Fetching .." ;
+    
+                    marker.bindPopup(popupContent).openPopup();
+    
+                    // Fetch and update address in the popup
+                    fetchAddress(lat, long, marker);
+    
+                    map.flyTo([lat, long], 18, {
+                        duration: 2
+                    });
+    
+                    locationLatInput.value = lat;
+                    locationLongInput.value = long;
+    
+                    // Hide loading screen
+                    document.getElementById('loading').style.display = 'none';
+                }, function(error) {
+                    // console.error('Error obtaining location:', error);
+                    loadingText.innerText = 'कृपया लोकेशन की अनुमति दें';
+                });
+            } else {
+                // console.error('Geolocation is not supported by this browser.');
+                loadingText.innerText = 'Geolocation is not supported by this browser.';
+            }
+    
+            // Locate button functionality
+            locateButton.addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var lat = position.coords.latitude;
+                        var long = position.coords.longitude;
+                        fetchAddress(lat, long, marker);
+                        map.flyTo([lat, long], 18, { 
+                            duration: 2
+                        });
+                        // Update marker position
+                        marker.setLatLng([lat, long]);
+                        marker.bindPopup("<b>Details:</b><br/>" +
+                                        "Latitude: " + lat + "<br/>" +
+                                        "Longitude: " + long + "<br/>" +
+                                        "Address: Fetching .." ).openPopup();
+                    }, function(error) {
+                        console.error('Error obtaining location:', error);
+                    });
+                } else {
+                    console.error('Geolocation is not supported by this browser.');
+                }
+            });
+        });
+    </script>
+    
+    
+    <script>
+        // Additional script for updating marker position
+        function updateMarkerPosition(lat, long) {
+            if (marker) {
+                marker.setLatLng([lat, long]);
+                map.flyTo([lat, long], 18, { 
+                    duration: 2
+                });
+            }
+        }
+    </script>
+    
+</body>
+</html>

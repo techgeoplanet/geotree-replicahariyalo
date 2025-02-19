@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tree Details</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <style>
+    #map {
+      height: 300px;
+      width: 100%;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+
+  <!-- Header -->
+  <header class="bg-green-700 text-white py-4 shadow-md">
+    <div class="container mx-auto text-center">
+      <h1 class="text-3xl font-bold">Tree Details</h1>
+      <p class="text-sm">Empowering sustainability by tracking every tree</p>
+    </div>
+  </header>
+
+  <!-- Tree Details Section -->
+  <main class="container mx-auto my-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Tree Card -->
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <!-- Images
+        <div class="flex">
+          <img src="https://via.placeholder.com/150x100" alt="Tree Image 1" class="w-1/2 h-32 object-cover">
+          <img src="https://via.placeholder.com/150x100" alt="Tree Image 2" class="w-1/2 h-32 object-cover">
+        </div> -->
+        <div class="p-4">
+          <!-- Tree Details -->
+          <h2 class="text-xl font-bold text-green-800">Planted By: John Doe</h2>
+          <div class="mt-8">
+            <h2 class="text-xl font-semibold text-green-700 mb-4 text-center">Tree Information</h2>
+            <ul class="list-none space-y-3">
+              <li class="flex items-center space-x-2">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">🌿</span>
+                <span><strong>Species:</strong> Neem</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">🕰️</span>
+                <span><strong>Created At:</strong> 2022-01-01</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">🔄</span>
+                <span><strong>Updated At:</strong> 2023-06-15</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">📏</span>
+                <span><strong>Height:</strong> 4.5 ft</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">⏳</span>
+                <span><strong>Age:</strong> 2 years</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">📍</span>
+                <div>
+                  <strong>Location:</strong>
+                  <p>Latitude: 26.836743</p>
+                  <p>Longitude: 75.833990</p>
+                  <p>District: Jaipur</p>
+                  <p>Block: Sanganer , GP: Kankho</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Map -->
+        <div class="p-4">
+          <div id="map"></div>
+        </div>
+        <!-- View More Button -->
+        <div class="bg-gray-100 text-center py-2">
+          <button class="text-green-700 font-bold hover:text-green-800" onclick="toggleYearImages(this)">
+            View More
+          </button>
+        </div>
+
+        <!-- Year-Wise Images Section -->
+        <div class="hidden p-4 bg-gray-50" id="year-images">
+          <h3 class="text-lg font-semibold text-green-700 mb-4">Tree Images Gallery</h3>
+          <ul class="space-y-4">
+            <li>
+              <strong>2023</strong>
+              <div class="flex flex-col space-y-2">
+                <div class="flex flex-row space-x-2">
+                  <div>
+                    <strong>June</strong>
+                    <img src="https://via.placeholder.com/200x150" alt="Tree Image June 2023" class="rounded-lg shadow-md">
+                  </div>
+                  <div>
+                    <strong>September</strong>
+                    <img src="https://via.placeholder.com/200x150" alt="Tree Image September 2023" class="rounded-lg shadow-md">
+                  </div>
+                </div>
+                <div class="flex flex-row space-x-2">
+                  <div>
+                    <strong>December</strong>
+                    <img src="https://via.placeholder.com/200x150" alt="Tree Image December 2023" class="rounded-lg shadow-md">
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Repeat Tree Card as needed -->
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-4">
+    <div class="container mx-auto text-center">
+      <p>&copy; 2024 Haryalo Rajasthan. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Initialize Leaflet Map -->
+  <script>
+    function initMap() {
+      const lat = 26.836743;
+      const lng = 75.833990;
+
+      const map = L.map('map').setView([lat, lng], 15);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      const treeIcon = L.icon({
+        iconUrl: 'tree.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+      });
+
+      L.marker([lat, lng], { icon: treeIcon })
+        .addTo(map)
+        .bindPopup("<b>Neem Tree</b><br>Lat: " + lat + ", Long: " + lng)
+        .openPopup();
+    }
+
+    document.addEventListener("DOMContentLoaded", initMap);
+
+    function toggleYearImages(button) {
+      const yearImages = document.getElementById('year-images');
+      if (yearImages.classList.contains('hidden')) {
+        yearImages.classList.remove('hidden');
+        button.textContent = 'View Less';
+      } else {
+        yearImages.classList.add('hidden');
+        button.textContent = 'View More';
+      }
+    }
+  </script>
+
+</body>
+</html>

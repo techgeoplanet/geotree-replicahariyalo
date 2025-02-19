@@ -1,0 +1,14 @@
+{% load static %}
+
+<div class="route_btn">
+    <a href="{% url 'hi-my_pvt_history' %}" style="text-decoration: none;">
+        <button class="head bg-green-600 {% if active == 'pvt' %}bg-pink-700{% endif %}">निजी / व्यक्तिगत</button>
+    </a>
+    <a href="{% url 'hi-my_gov_history' %}" style="text-decoration: none;">
+        <button class="head bg-green-600 {% if active == 'gov' %}bg-pink-700{% endif %}">सरकारी</button>
+    </a>
+    <a href="{% url 'hi-my_ngo_history' %}" style="text-decoration: none;">
+        <button class="head bg-green-600 {% if active == 'ngo' %}bg-pink-700{% endif %}">एनजीओ</button>
+    </a>
+</div>
+

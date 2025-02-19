@@ -1,0 +1,196 @@
+{% extends "subweb-base.html" %}
+{% load static %}
+
+{% block title %}
+पौधा
+{% endblock %}
+{% block extra_css %}
+<script src="https://cdn.tailwindcss.com"></script>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <style>
+    #map {
+      height: 300px;
+      width: 100%;
+      border-radius: 8px;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+{% include 'header/headerbar.html' %}
+{% include 'header/header-route.html' with btn_text="पौधा का जानकारी" %}
+  {% if error %}
+    <div class="w-full mt-4 p-4  text-white text-lg  overflow-x-hidden">
+      <div class="ineer-div  flex justify-center items-center whitespace-nowrap bg-pink-900 bg-opacity-40 rounded-lg p-2 flex-wrap"> 
+          <span class="absolute inline-flex h-1/5 w-1/2 animate-ping rounded-full bg-red-200 bg-opacity-80 opacity-75"></span>
+          <!-- <span class="relative inline-flex size-3 rounded-full bg-sky-500"></span> -->
+          <strong class="font-bold">त्रुटि!</strong>
+          <span class="block sm:inline text-red-900">{{ error }}</span>
+          {% if error == "Plant data not found" %}
+              <span class="block sm:inline">पोधा अपडेट करें।</span>
+          {% else %}
+              <span class="block sm:inline">कृपया जिला सुधार करें।</span>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  {% else %}
+    <!-- Content when no error -->
+ 
+  <!-- Tree Details Section -->
+  <main class="container mx-auto flex justify-center items-center max-w-[600px] mt-2">
+    <div class="w-full">
+      <!-- Tree Card -->
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden m-2 mt-0">
+        {% if plant.owner_name %}
+            <h2 class="text-xl font-bold text-green-800 text-center">Planted By: {{ plant.owner_name }}</h2>
+        {% endif %}
+        <!-- Images -->
+        <div class="flex justify-center items-center p-2 relative w-full overflow-x-hidden">
+          <!-- <img src="https://via.placeholder.com/150x100" alt="Tree Image 2" class="w-9/12 h-50 object-cover rounded-lg"> -->
+           {% include "hi/pic_silder.html" with updates=update_data %}
+           
+        </div>
+        <div class="p-4 pt-0">
+          <!-- Tree Details -->
+          
+          <div class="mt-2">
+            <h2 class="text-xl font-semibold text-green-700 mb-4 text-center">Tree Information</h2>
+            {% if not plant.plant_alive_status %}
+                <h2 class="text-xl font-semibold text-red-700 mb-4 text-center animate-pulse">The plant has died.</h2>
+            {% endif %}
+            <ul class="list-none space-y-3">
+              <li class="flex items-center space-x-2">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">🌿</span>
+                <span class="flex justify-between w-full"><strong>Plant No:</strong><span class="font-bold text-green-800 bg-green-100 rounded-2xl px-5 py-1" >{{plant.PLantid}}</span></span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">🌿</span>
+                <span class="flex justify-between w-full"><strong>Name:</strong>{{plant.plant_name}}</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">🕰️</span>
+                <span class="flex justify-between w-full"><strong>Planted At:</strong> <span id="plant-created">{{ plant.created_at|date:"Y-m-d" }}</span></span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">🔄</span>
+                <span class="flex justify-between w-full"><strong>Total number of times updated</strong>{{ update_data.count }}</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">🔄</span>
+                <span class="flex justify-between w-full"><strong>Last Updated At:</strong><span id="status-date">{{ update_data.first.status_date_mmyyyy|date:"Y-m-d" }}</span></span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">📏</span>
+                <span class="flex justify-between w-full"><strong>Planted Height:</strong>{{ update_data.first.height_infeet }} feet</span>
+              </li>
+
+              <li class="flex items-center space-x-2">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">📏</span>
+                <span class="flex justify-between w-full"><strong>Initial Height:</strong>{{ plant.height }} feet</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">⏳</span>
+                <span class="flex justify-between w-full"><strong>Age:</strong><span id="plant-age"></span></span>
+              </li>
+              
+              <script>
+                // Get the dates from the HTML elements
+                const plantCreatedAt = document.getElementById("plant-created").textContent;
+                const statusDate = document.getElementById("status-date").textContent;
+              
+                // Convert the dates to Date objects
+                const plantDate = new Date(plantCreatedAt);
+                const statusDateObj = new Date(statusDate);
+              
+                // Function to calculate the difference in years and months
+                function calculateAge(createdAt, statusDate) {
+                  const yearsDiff = statusDate.getFullYear() - createdAt.getFullYear();
+                  const monthsDiff = statusDate.getMonth() - createdAt.getMonth();
+              
+                  let totalYears = yearsDiff;
+                  let totalMonths = monthsDiff;
+              
+                  if (monthsDiff < 0) {
+                    totalYears -= 1;
+                    totalMonths = 12 + monthsDiff;
+                  }
+              
+                  return { years: totalYears, months: totalMonths };
+                }
+              
+                // Calculate the age difference
+                const age = calculateAge(plantDate, statusDateObj);
+              
+                // Display the result
+                document.getElementById("plant-age").textContent = `${age.years} years, ${age.months} months`;
+              </script>
+              
+              <li class="flex items-center space-x-2">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">📍</span>
+                <div>
+                  <strong>Location:</strong>
+                  <p id="latitude-text">Latitude: {{plant.latitude}}</p>
+                  <p id="longitude-text">Longitude: {{plant.longitude}}</p>
+                  <p>Address: {{plant.address_gp_id}}</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+        <!-- Map -->
+        <div class="p-4">
+          <div id="map"></div>
+        </div>
+       
+      </div>
+      <!-- Repeat Tree Card as needed -->
+    </div>
+  </main>
+  {% include 'hi/footer/footer.html' %}
+
+  <!-- Initialize Leaflet Map -->
+  <script>
+    function initMap() {
+      const lat = {{plant.latitude}}
+      const lng =  {{plant.longitude}}
+
+      const map = L.map('map').setView([lat, lng], 15);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      const treeIcon = L.icon({
+        iconUrl: "{% static 'updateapp/tree.png' %}",
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+      });
+
+      L.marker([lat, lng], { icon: treeIcon })
+        .addTo(map)
+        .bindPopup("<b>{{plant.plant_name}}</b><br>Lat: " + lat + ", Long: " + lng )
+        .openPopup();
+    }
+
+    document.addEventListener("DOMContentLoaded", initMap);
+
+    function toggleYearImages(button) {
+      const yearImages = document.getElementById('year-images');
+      if (yearImages.classList.contains('hidden')) {
+        yearImages.classList.remove('hidden');
+        button.textContent = 'View Less';
+      } else {
+        yearImages.classList.add('hidden');
+        button.textContent = 'View More Photos';
+      }
+    }
+  </script>
+ {% endif %}
+
+{% endblock %}

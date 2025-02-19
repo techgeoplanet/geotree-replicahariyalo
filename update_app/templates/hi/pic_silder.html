@@ -1,0 +1,73 @@
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<style>
+  .swiper {
+      width: 100%;
+      padding: 10px;
+    }
+
+    .swiper-slide {
+      background-position: center;
+      background-size: cover;
+      width: 200px;
+      height: 200px;
+    }
+
+    .swiper-slide img {
+      display: block;
+      width: 100%;
+    }
+    .img-decor{
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .img-decor img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="relative">
+    <!-- Swiper -->
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        {% for update in update_data %}
+          <div class="swiper-slide img-decor">
+            <img src="{{ update.Update_image1.url }}" alt="Image for {{ update.status_date_mmyyyy|date:'F Y' }}">
+          </div>
+        {% endfor %}
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+</div>
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<!-- Initialize Swiper -->
+<script>
+  var swiper = new Swiper(".mySwiper", {
+    effect: "coverflow",
+    grabCursor: true,
+    centeredSlides: true,
+    // loop: true,
+    slidesPerView: "auto",
+    coverflowEffect: {
+      rotate: 0,
+      stretch: 0,
+      depth: 150,
+      modifier: 2,
+      slideShadows: true,
+    },
+    autoplay: {
+      delay: 2500,
+      disableOnInteraction: false,
+    },
+  });
+</script>
+
+{% endblock %}

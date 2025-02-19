@@ -1,0 +1,50 @@
+{% load static %}
+<div class="section-history relative">
+    <div class="info-section">
+        <h3>{{ tree.plantation_name }} <span>(आईडी: {{active}}{{ tree.id }})</span></h3>
+        <p><i>तारीख: {{ tree.created_at }}</i></p>
+        <p><span>स्थान:</span> <span class="border-1 rounded-lg text-red-900">{{ tree.location_lat }} , {{ tree.location_long }}</span></p>
+            <p>
+                <span id="district-text-name" class="border-1 rounded-lg border-green-900 bg-green-100 text-green-900 p-2">
+                    जिला: {{ tree.dict_code }}
+                </span>, 
+                <span id="block-text-name" class="border-1 rounded-lg border-green-900 bg-green-100 text-green-900 p-2">
+                    ब्लॉक: {{ tree.block_code }}
+                </span>, 
+                <span id="gram-panchayat-text" class="border-1 rounded-lg border-green-900 bg-green-100 text-green-900 p-2">
+                    ग्राम पंचायत: {{ tree.gp_code }}
+                </span>
+            </p>
+
+    </div>
+    <div class="tree-details-section">
+        <!-- <p><span>प्लांटेशन भूमि:</span> {{ tree.land }}</p> -->
+        {% comment %} <p><span>ऊँचाई:</span> {{ tree.plantation_height }} फीट</p>
+            <p><span>स्थिति:</span>
+            {% if tree.status %}
+                स्वीकृत
+            {% else %}
+                स्वीकृति लंबित
+            {% endif %}
+        </p> {% endcomment %}
+    </div>
+    <div class="images-grid">
+        <div class="plant-image">
+            {% if tree.image1 %}
+                <button class="view-image-btn" data-image-url="{{ tree.image1.url }}">View Image</button>
+            {% else %}
+                Null
+            {% endif %}
+        </div>
+        <div class="plant-image">
+            {% if tree.image3 %}
+                <button class="view-image-btn" data-image-url="{{ tree.image3.url }}">View Image</button>
+            {% else %}
+                Null
+            {% endif %}
+        </div>
+    </div>
+    <div class="map-view-section">
+        {% include '../../updatemodule/sectionbtn.html' %}
+   </div>
+</div>

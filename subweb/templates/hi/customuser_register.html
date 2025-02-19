@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>कस्टम उपयोगकर्ता पंजीकरण</title>
+</head>
+
+<body>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="email">ईमेल:</label>
+        <input type="email" name="email" id="email" required><br>
+        <label for="name">नाम:</label>
+        <input type="text" name="name" id="name" required><br>
+        <label for="department">विभाग:</label>
+        <input type="text" name="department" id="department" required><br>
+        <label for="tc">नियम और शर्तें:</label>
+        <input type="checkbox" name="tc" id="tc" required><br>
+        <label for="password">पासवर्ड:</label>
+        <input type="password" name="password" id="password" required><br>
+        <button type="submit">रजिस्टर</button>
+    </form>
+</body>
+
+</html>

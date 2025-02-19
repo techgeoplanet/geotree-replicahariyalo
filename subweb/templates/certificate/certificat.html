@@ -1,0 +1,410 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Certificate
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .top-nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        height: 40px;
+        width: 100%;
+        top: 70px;
+        background-color: var(--primary-color);
+        color: var(--text-color);
+        z-index: 100;
+    }
+
+    .top-section {
+        height: 100px;
+        width: 100%;
+    }
+
+    .top-nav p {
+        margin: 0;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        width: 100%;
+    }
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .view-btn {
+        padding: 8px 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .view-btn:hover {
+        background-color: #45a049;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100vh;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.9);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 0 auto; /* Center horizontally */
+        
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 600px;
+        position: relative;
+        border-radius: 8px;
+    }
+    .close {
+        color: white;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+    }
+    h3{
+        margin: 5px;
+    }
+    .modal-header {
+        padding: 2px 5px;
+        background-color: #5cb85c;
+        color: white;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    .modal-body {
+        padding-top: 5px;
+        text-align: center;
+    }
+    .modal-footer {
+        padding: 10px;
+        text-align: center;
+        background-color: #f2f2f2;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+    .btn {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+        transition: background-color 0.3s ease;
+        margin-top: 5px;
+    }
+    .btn:hover {
+        background-color: #45a049;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% block content %}
+{% include 'header/headerbar.html' %}
+{% include 'header/backbg.html' %}
+{% include 'header/header-route.html' with btn_text="प्रशस्ति पत्र" %}
+
+<div class="main-div" style="display: flex; width: 100%; justify-content: center;">
+
+    <div class="container" style="margin:10px; margin-top: 120px;">
+        <h1>Certificate List</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Certificate Name</th>
+                    <th>Certificate Number</th>
+                    <th>Actions</th>
+                </tr>
+                <tbody>
+                {% if data %}
+                    {% for certi in data %}
+                    <tr>
+                        <td>{{ certi.certificate_holder_name }}</td>
+                        <td>{{ certi.certificate_id }}</td>
+                        <td><button class="view-btn" onclick="viewCertificate('{{ certi.certificate_holder_name }}', '{{ certi.certificate_id }}')">View</button></td>
+
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <!-- Trigger the modal -->
+                    <script>
+                        window.onload = function() {
+                         var popup = document.createElement('div');
+                         popup.id = 'custom-popup';
+                         popup.className = 'popup';
+         
+                         var popupContent = document.createElement('div');
+                         popupContent.className = 'popup-content';
+         
+                         var message = document.createElement('p');
+                         message.textContent = 'कोई डेटा नहीं मिला। कृपया एक पौधा जोड़ें।';
+         
+                         var okButton = document.createElement('button');
+                         okButton.id = 'ok-button';
+                         okButton.textContent = 'OK';
+         
+                         popupContent.appendChild(message);
+                         popupContent.appendChild(okButton);
+                         popup.appendChild(popupContent);
+         
+                         document.body.appendChild(popup);
+         
+                         popup.style.display = 'flex';
+         
+                         // OK button click event
+                         okButton.onclick = function() {
+                             window.history.back(); 
+                         };
+         
+                         // CSS styling
+                         var style = document.createElement('style');
+                         style.innerHTML = `
+                             .popup {
+                                 display: flex; 
+                                 position: fixed;
+                                 z-index: 2000;
+                                 left: 0;
+                                 top: 0;
+                                 width: 100%;
+                                 height: 100%;
+                                 background-color: rgba(0, 0, 0, 0.5);
+                                 align-items: center;
+                                 justify-content: center;
+                             }
+         
+                             .popup-content {
+                                 background-color: #fff;
+                                 padding: 20px;
+                                 border-radius: 10px;
+                                 text-align: center;
+                             /* max-width: 400px;*/
+                                 margin: auto;
+                             }
+         
+                             #ok-button {
+                                 background-color: #4CAF50;
+                                 color: white;
+                                 padding: 10px 20px;
+                                 border: none;
+                                 border-radius: 5px;
+                                 cursor: pointer;
+                                 margin-top: 20px;
+                             }
+         
+                             #ok-button:hover {
+                                 background-color: #45a049;
+                             }
+                         `;
+                         document.head.appendChild(style);
+                     };
+                     </script>
+                    {% endif %}
+
+                </tbody>
+            </table>
+        
+            <!-- Modal -->
+            <div id="myModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="close" onclick="closeModal()">&times;</span>
+                        <h3>Certificate Preview</h3>
+                    </div>
+                    <div class="modal-body">
+                        <canvas id="certificateCanvas" style="max-width: 100%;"></canvas>
+                    </div>
+                    <div class="modal-footer">
+                        <a id="downloadLink" class="btn" download="certificate.png" style="text-decoration: none;">Download</a>
+                        <!-- <button class="btn" onclick="shareCertificate()">Share</button> -->
+                        <button class="btn" onclick="closeModal()">Close</button>
+                    </div>
+                </div>
+            </div>
+        
+            <script>
+                // Get the modal
+                var modal = document.getElementById('myModal');
+                var downloadLink = document.getElementById('downloadLink');
+        
+                // Function to open the modal
+                function openModal() {
+                    modal.style.display = 'flex';
+                }
+        
+                // Function to close the modal
+                function closeModal() {
+                    modal.style.display = 'none';
+                }
+        
+                WebFont.load({
+                    google: {
+                        families: ['Noto Sans']
+                    }
+                });
+
+                // Function to generate the downloadable certificate
+                function setDownloadLink(canvas) {
+                    canvas.toBlob((blob) => {
+                        if (blob) {
+                            const blobUrl = URL.createObjectURL(blob);
+                            downloadLink.href = blobUrl;
+                            downloadLink.download = 'certificate_hariyalo_rajasthan.png'; // Set filename for download
+
+                            console.log('Download link set to:', blobUrl);
+                        } else {
+                            console.error('Failed to generate blob from canvas');
+                        }
+                    }, 'image/png');
+                }
+
+        
+                // Function to view the certificate
+                function viewCertificate(name, certificateId) {
+                    fetch('/get_certificate_template/')
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const canvas = document.getElementById('certificateCanvas');
+                        const ctx = canvas.getContext('2d');
+        
+                        const image = new Image();
+                        image.src = URL.createObjectURL(blob);
+                        image.onload = function() {
+                            // Set canvas dimensions to match the image
+                            canvas.width = image.width;
+                            canvas.height = image.height;
+        
+                            // Draw the image on the canvas
+                            ctx.drawImage(image, 0, 0);
+        
+                            // Set text properties for the name
+                            ctx.font = '80px "Noto Sans"'; // Font size for the name
+                            ctx.fillStyle = 'black';
+        
+                            // Define the section coordinates for centering the name
+                            const x_start = 250, x_end = 870;
+                            const y_position = 770;
+        
+                            // Calculate the width of the name text
+                            const textWidth = ctx.measureText(name).width;
+        
+                            // Calculate the center position
+                            const x_center = (x_start + x_end) / 2;
+        
+                            // Adjust the x-coordinate to center the text
+                            const x_position = x_center - (textWidth / 2);
+        
+                            // Draw the name on the canvas, centered between 250 and 870
+                            ctx.fillText(name, x_position, y_position);
+        
+                            // Set text properties for the certificate ID
+                            ctx.font = '30px "Noto Sans"'; // Font size for the certificate ID
+                            ctx.fillStyle = 'black';
+        
+                            // Position and draw the certificate ID
+                            const idPosition = { x: 540, y: 1500 };
+                            ctx.fillText(certificateId, idPosition.x, idPosition.y);
+                            
+                            setDownloadLink(canvas)
+                            // Set download link
+                            // downloadLink.href = canvas.toDataURL('image/png');
+        
+                            // Log the href to debug
+                            console.log('Download link set to:', downloadLink.href);
+        
+                            // Open the modal (if you have a modal function, include it here)
+                            openModal(); // Uncomment if you have a modal function
+                        };
+                    });
+                }
+    
+                // Function to share the certificate
+                function shareCertificate() {
+                    const dataUrl = downloadLink.href;
+        
+                    // Log the URL to debug
+                    console.log('Data URL for sharing:', dataUrl);
+        
+                    // Validate the data URL
+                    if (!dataUrl || dataUrl === 'data:,') {
+                        console.error('Invalid data URL for sharing');
+                        return;
+                    }
+        
+                    // Upload the image and get the public URL
+                    uploadImage(dataUrl).then(publicUrl => {
+                        // Log the public URL to debug
+                        console.log('Public URL for sharing:', publicUrl);
+        
+                        if (navigator.share) { // Check if Web Share API is supported
+                            navigator.share({
+                                title: 'Certificate',
+                                text: 'Check out this certificate!',
+                                url: publicUrl
+                            })
+                            .then(() => console.log('Shared successfully'))
+                            .catch((error) => console.error('Error sharing:', error));
+                        } else { // Fallback for browsers that do not support Web Share API
+                            alert('Share functionality is not supported on this browser.');
+                            // Implement other sharing options if needed (e.g., copying link)
+                        }
+                    }).catch(error => {
+                        console.error('Error uploading image:', error);
+                    });
+                }
+        
+                // Close the modal when clicking outside of the modal content
+                window.onclick = function(event) {
+                    if (event.target == modal) {
+                        closeModal();
+                    }
+                }
+            </script>
+{% endblock %}

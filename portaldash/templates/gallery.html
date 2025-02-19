@@ -1,0 +1,136 @@
+{% load static %}
+
+<!-- Gallery Modal (Grid) -->
+<div id="galleryModal" class="modal">
+    <div class="modal-content">
+        <span class="close gallery-close">&times;</span>
+        
+        <!-- Gallery Grid -->
+        <div class="gallery-grid">
+            {% for image in images %}
+                <img src="{{ image }}" class="gallery-image" onclick="openImagePopup('{{ image }}')">
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Image Popup Modal -->
+<div id="imagePopupModal" class="modal" onclick="closeImageModal(event)">
+    <div class="modal-content">
+        <span class="close image-close">&times;</span>
+        <img id="popupImage" src="" alt="Gallery Image">
+    </div>
+</div>
+
+<style>
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 10px;
+        border-radius: 10px;
+        position: relative;
+        width: 90%;
+        max-width: 800px;
+        max-height: 90%;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow: hidden; /* Prevents overflow in modal */
+    }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 25px;
+        cursor: pointer;
+        color: white;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 5px;
+        border-radius: 50%;
+    }
+
+    /* Gallery Grid Styles */
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        width: 100%;
+        height: 100%; /* Make sure the gallery fills the height of the modal */
+        margin-top: 20px;
+        overflow-y: auto; /* Allows scrolling if gallery content overflows */
+        max-height: 80vh; /* Limits gallery height to fit in modal and allows scrolling */
+    }
+
+    .gallery-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* Ensures the image fits within the grid cell without distortion */
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    /* Image Popup Styles */
+    #popupImage {
+        width: 100%;
+        max-width: 600px;
+        height: auto;
+        object-fit: contain; /* Maintain aspect ratio for the popup image */
+        border-radius: 10px;
+        margin-top: 20px; /* Adds spacing from the top */
+        margin-left: auto; /* Centers image horizontally */
+        margin-right: auto; /* Centers image horizontally */
+        margin-bottom: 20px; /* Adds spacing from the bottom */
+    }
+</style>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Modal open/close handlers
+        const galleryModal = document.getElementById("galleryModal");
+        const closeModal = document.querySelector(".gallery-close");
+        const imagePopupModal = document.getElementById("imagePopupModal");
+        const closeImagePopup = document.querySelector(".image-close");
+
+        closeModal.addEventListener("click", () => {
+            galleryModal.style.display = "none";
+        });
+
+        closeImagePopup.addEventListener("click", () => {
+            imagePopupModal.style.display = "none";
+        });
+
+        // Function to open gallery modal
+        function openGalleryModal() {
+            galleryModal.style.display = "flex";
+        }
+
+        // Function to show image popup
+        function openImagePopup(imageSrc) {
+            const popupImage = document.getElementById("popupImage");
+            popupImage.src = imageSrc;
+            imagePopupModal.style.display = "flex";
+        }
+
+        // Example of how you can trigger the modal to open
+        document.querySelectorAll(".gallery-image").forEach((image) => {
+            image.addEventListener("click", () => {
+                openImagePopup(image.src); // Show clicked image in popup
+            });
+        });
+    });
+</script>

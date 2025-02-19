@@ -1,0 +1,39 @@
+#--------------------------------------------------------------
+
+const myHeaders = new Headers();
+myHeaders.append("X-Auth-Key", "e32ebc1d-fe04-4bd7-9003-df5274c990e2");
+myHeaders.append("X-Username", "shubham_gpspl");
+
+const requestOptions = {
+  method: "GET",
+  headers: myHeaders,
+  redirect: "follow"
+};
+
+fetch("https://gpspl.geoplanetsolution.in/pincode/?lat=26.838216720003135&lon=75.8328841224954", requestOptions)
+  .then((response) => response.text())
+  .then((result) => console.log(result))
+  .catch((error) => console.error(error));
+
+#--------------------------------------------------------------
+
+
+#for github redis
+
+sudo apt update
+sudo apt install redis-server -y
+redis-server --daemonize yes
+docker run --name redis-container -d -p 6379:6379 redis
+docker ps
+docker exec -it redis-container redis-cli
+
+#----------------------------------------------------------
+
+
+# fro clear all history migrations conflict 
+
+find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+find . -path "*/migrations/*.pyc" -delete
+
+
+#---------------------------------------------------------------

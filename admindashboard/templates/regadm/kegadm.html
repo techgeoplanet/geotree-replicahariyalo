@@ -1,0 +1,362 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email and Password Login</title>
+        <link rel="stylesheet" href="{% static 'regadm/regadm2.css' %}">
+        <link rel="icon" href="{% static 'base/images/fiv-icon.png' %}">
+
+        <!-- Include Font Awesome -->
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+        <style>
+            #errorContainer p{
+                color: red;
+            }
+        </style>
+         <style>
+            .terms-container {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                margin-top: 20px;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                font-size: 12px;
+            }
+            .terms-container span {
+                margin: 0 2px; /* Adjust the margin as needed */
+            }
+            a {
+                color: #004e66;
+                font-weight: 600;
+                cursor: pointer;
+                text-decoration: none;
+            }
+        </style>
+
+    </head>
+
+    <body>
+        <div class="bg-container"
+            style="background-image: url('{% static 'baseadm/baseimages/bg.webp' %}')"></div>
+
+        <div class="login-container">
+            <img src="{% static 'home/images/logo.webp' %}" alt="Logo"
+                class="logo">
+
+            <form id="loginForm" onsubmit="return validateForm()">
+                <!-- Name input field -->
+                <div class="input-group">
+                    <label for="name" class="visually-hidden"></label>
+                    <input type="text" id="name" name="name" class="input-field"
+                        placeholder="Enter Name" required aria-label="Name">
+                </div>
+
+                <!-- Email input field -->
+                <div class="input-group">
+                    <label for="email" class="visually-hidden"></label>
+                    <input type="email" id="email" name="email"
+                        class="input-field" placeholder="Enter Email" required
+                        aria-label="Email">
+                </div>
+
+                <!-- Mobile number input field -->
+                <div class="input-group">
+                    <label for="mobile" class="visually-hidden"></label>
+                    <input type="tel" id="mobile" name="mobile"
+                        class="input-field" placeholder="Enter Mobile Number"
+                        required aria-label="Mobile Number">
+                </div>
+
+                <!-- Role dropdown -->
+                <div class="input-group custom-dropdown">
+                    <label for="departmentInput"
+                        class="visually-hidden"></label>
+                    <select id="departmentInput" class="input-field"
+                        name="department" required aria-label="Department">
+                        <option value disabled selected>Select
+                            Role</option>
+                        {% for role in role %}
+                        <option
+                            value="{{ role.reg_dep_name }}">{{role.reg_dep_name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Department dropdown -->
+                <div class="input-group custom-dropdown">
+                    <label for="departmentInput"
+                        class="visually-hidden"></label>
+                    <select id="user_departmentInput" class="input-field"
+                        name="user_departmentInput" required aria-label="user_departmentInput">
+                        <option value disabled selected>Select
+                            Department</option>
+                        {% for user_department in dept %}
+                        <option
+                            value="{{ user_department.department_name }}">{{user_department.department_name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Designation input field -->
+                <div class="input-group">
+                    <label for="destination_name" class="visually-hidden"></label>
+                    <input type="text" id="destination_name" name="destination_name" class="input-field"
+                        placeholder="Enter Designation Name" required aria-label="destination_name">
+                </div>
+
+                <!-- Password input field with toggle icon -->
+                <div class="input-group password-wrapper">
+                    <label for="password"
+                        class="visually-hidden">Password:</label>
+                    <input type="password" id="password" class="input-field"
+                        placeholder="Enter Password" required
+                        aria-label="Password">
+                    <div class="password-toggle-icon" id="togglePassword">
+                        <i class="fa fa-eye toggle-password"></i>
+                    </div>
+                </div>
+
+                <!-- Confirm Password input field with toggle icon -->
+                <div class="input-group password-wrapper">
+                    <label for="repassword" class="visually-hidden">Confirm
+                        Password:</label>
+                    <input type="password" id="repassword" class="input-field"
+                        placeholder="Confirm Password" required
+                        aria-label="Confirm Password">
+                    <div class="password-toggle-icon" id="toggleRepassword">
+                        <i class="fa fa-eye toggle-password"></i>
+                    </div>
+                </div>
+
+                <!-- Checkbox -->
+                <div class="input-group" style="flex-direction: row;">
+                    <input type="checkbox" id="terms" name="terms" required style="width: 25px; height: 25px; margin-right: 10px;">
+                    <div class="terms-container">
+                        <span>By Clicking, I accept</span>
+                        <span>
+                            <a href="https://geoplanetsolution.com/Policy/policy.html">Terms of Service</a>
+                        </span>
+                        <span>and</span>
+                        <span>
+                            <a href="https://geoplanetsolution.com/Policy/policy.html">Privacy Policy</a>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Password mismatch error message -->
+                <div class="input-group" id="passwordError"
+                    style="color: red; display: none;">
+                    Passwords do not match!
+                </div>
+
+                <div id="errorContainer"></div>
+
+                <!-- Register button -->
+                <!-- <button type="submit" class="login-btn">Register</button> -->
+                <button class="login-btn" id="registerButton"
+                    type="submit">Register</button>
+
+                <!-- Login links -->
+                <div>
+                    <a href="{% url 'loginadm' %}"
+                        style="text-decoration: none; color: black; font-size: 15px;">Login</a>
+                </div>
+                <div>
+                    <a href="{% url 'tempuser_login' %}"
+                        style="text-decoration: none; color: black; font-size: 15px; margin-top:5px;">Login
+                        as User</a>
+                </div>
+            </form>
+            <!-- <div class="terms-container">
+                <span>By Clicking, I accept</span>
+                <span>
+                    <a href="https://geoplanetsolution.com/Policy/policy.html">Terms of Service</a>
+                </span>
+                <span>and</span>
+                <span>
+                    <a href="https://geoplanetsolution.com/Policy/policy.html">Privacy Policy</a>
+                </span>
+            </div> -->
+        </div>
+
+        
+
+        <div class="footer">Powered by Geo Planet Solution Pvt. Ltd.</div>
+        <!-- <script src="{% static 'regadm/regadm5.js' %}"></script> -->
+        <script>
+            // / Function to toggle password visibility
+            function togglePasswordVisibility(passwordId, toggleIconId) {
+                const passwordField = document.getElementById(passwordId);
+                const toggleIcon = document.getElementById(toggleIconId).querySelector('i');
+
+                if (passwordField && toggleIcon) {
+                    if (passwordField.type === 'password') {
+                        passwordField.type = 'text';
+                        toggleIcon.classList.remove('fa-eye');
+                        toggleIcon.classList.add('fa-eye-slash');
+                    } else {
+                        passwordField.type = 'password';
+                        toggleIcon.classList.remove('fa-eye-slash');
+                        toggleIcon.classList.add('fa-eye');
+                    }
+                } else {
+                    console.error('Elements not found for', passwordId, toggleIconId);
+                }
+            }
+
+            // Add event listeners to the toggle icons
+            document.getElementById('togglePassword').addEventListener('click', function () {
+                togglePasswordVisibility('password', 'togglePassword');
+            });
+
+            document.getElementById('toggleRepassword').addEventListener('click', function () {
+                togglePasswordVisibility('repassword', 'toggleRepassword');
+            });
+
+            // Add input event listener to mobile number field
+            document.getElementById('mobile').addEventListener('input', function (event) {
+                const mobileField = event.target;
+                const mobileValue = mobileField.value;
+
+                // Allow only up to 10 digits
+                if (mobileValue.length > 10) {
+                    mobileField.value = mobileValue.slice(0, 10);
+                }
+
+                // Remove non-numeric characters
+                mobileField.value = mobileField.value.replace(/\D/g, '');
+            });
+
+            function validateForm() {
+                // Disable the register button immediately
+                const registerButton = document.getElementById('registerButton');
+                registerButton.disabled = true;
+                registerButton.classList.add('disabled');
+
+                const email = document.getElementById('email').value;
+                const mobile = document.getElementById('mobile').value;
+                const password = document.getElementById('password').value;
+                const repassword = document.getElementById('repassword').value;
+
+                // Email validation regex
+                const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                // Mobile number validation regex (10 digits, all numeric)
+                const mobilePattern = /^\d{10}$/;
+                // Password validation regex (minimum 6 characters, at least one uppercase letter, one special character, and one number)
+                const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
+
+                // Check email or mobile number validity
+                if (!emailPattern.test(email) && !mobilePattern.test(mobile)) {
+                    alert('Please enter a valid email or a 10-digit mobile number.');
+                    registerButton.disabled = false; // Re-enable the button if there's a validation error
+                    registerButton.classList.remove('disabled');
+                    return false;
+                }
+
+                // Validate mobile number
+                if (!mobilePattern.test(mobile) || parseInt(mobile, 10) <= 0) {
+                    alert('Please enter a valid 10-digit positive mobile number.');
+                    registerButton.disabled = false; // Re-enable the button if there's a validation error
+                    registerButton.classList.remove('disabled');
+                    return false;
+                }
+
+                // Validate password complexity
+                if (!passwordPattern.test(password)) {
+                    alert('Password must be at least 6 characters long, contain at least one uppercase letter, one special character, and one number.');
+                    registerButton.disabled = false; // Re-enable the button if there's a validation error
+                    registerButton.classList.remove('disabled');
+                    return false;
+                }
+
+                // Validate password match
+                if (password !== repassword) {
+                    alert('Passwords do not match!');
+                    document.getElementById('passwordError').style.display = 'block';
+                    registerButton.disabled = false; // Re-enable the button if there's a validation error
+                    registerButton.classList.remove('disabled');
+                    return false;
+                } else {
+                    document.getElementById('passwordError').style.display = 'none';
+                }
+
+                // Create the payload for the API request
+                const payload = {
+                    password: password,
+                    password2: repassword,
+                    email: email,
+                    mobilenumber: mobile,
+                    name: document.getElementById('name').value,
+                    department: document.getElementById('departmentInput').value,
+                    user_department: document.getElementById('user_departmentInput').value,
+                    distinations: document.getElementById('destination_name').value,
+                    tc: document.getElementById('terms').checked
+                };
+
+                fetch('/api/user/register/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => response.json().then(data => ({ status: response.status, body: data })))
+                .then(response => {
+                    if (response.status === 201) {
+                        alert('Registration successful! Your submited form will take upto 30 min for varification');
+                        registerButton.disabled = false; // Re-enable the button
+                        registerButton.classList.remove('disabled');
+                        window.location.reload();
+                    } else {
+                        console.log(response.body, "1"); 
+                        displayErrors(response.body.errors);
+                        registerButton.disabled = false; // Re-enable the button
+                        registerButton.classList.remove('disabled');
+                    }
+                })
+                .catch(error => {
+                    console.log(error, "2");
+                    alert('Error: ' + error.message);
+                    registerButton.disabled = false; // Re-enable the button
+                    registerButton.classList.remove('disabled');
+                });
+
+                return false; // Prevent default form submission
+            }
+
+            function displayErrors(errors) {
+                const errorContainer = document.getElementById('errorContainer');
+                errorContainer.innerHTML = ''; // Clear previous errors
+
+                if (Array.isArray(errors)) {
+                    errors.forEach(error => {
+                        const errorElement = document.createElement('p');
+                        errorElement.textContent = error;
+                        errorContainer.appendChild(errorElement);
+                    });
+                } else {
+                    // In case errors is an object with keys representing fields
+                    for (const key in errors) {
+                        if (errors.hasOwnProperty(key)) {
+                            errors[key].forEach(error => {
+                                const errorElement = document.createElement('p');
+                                errorElement.textContent = error;
+                                errorContainer.appendChild(errorElement);
+                            });
+                        }
+                    }
+                }
+            }
+         
+         </script>
+    </body>
+
+</html>

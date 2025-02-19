@@ -1,0 +1,146 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitor Count</title>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+    </style>
+</head>
+<body class="w-full h-screen">
+ 
+    <div class="w-full h-full fixed flex justify-center items-center bg-gradient-to-r from-pink-100 to-blue-100 relative overflow-hidden">
+
+        <div class="counter-view bg-white bg-opacity-30 rounded-2xl shadow-2 p-4 text-lg absolute text-pink-500 text-center flex justify-center items-center flex-col">
+            
+
+            <div class="center-div w-full flex justify-center items-center relative">
+                <div class="gif-view absolute z-0 w-full justify-center items-center flex max-w-lg mt-5">
+                    <dotlottie-player src="{% static 'publicqrcode/assets/earthrotate.lottie' %}" background="transparent" speed="1" style="width: 100%;" loop autoplay></dotlottie-player>
+                </div>
+
+                <div class="loader-animation w-24 z-10">
+                    <svg viewBox="0 0 200 200"><circle fill="none" stroke-opacity="1" stroke="#FF156D" stroke-width=".5" cx="100" cy="100" r="0"><animate attributeName="r" calcMode="spline" dur="2" values="1;80" keyTimes="0;1" keySplines="0 .2 .5 1" repeatCount="indefinite"></animate><animate attributeName="stroke-width" calcMode="spline" dur="2" values="0;25" keyTimes="0;1" keySplines="0 .2 .5 1" repeatCount="indefinite"></animate><animate attributeName="stroke-opacity" calcMode="spline" dur="2" values="1;0" keyTimes="0;1" keySplines="0 .2 .5 1" repeatCount="indefinite"></animate></circle></svg>
+                </div> 
+
+                <div class="map-point-icon absolute mb-20">
+                    <i class="fas fa-map-marker-alt text-red-500" style="font-size: 90px;"></i>
+                </div>
+            </div>
+
+            <div class="text-elements relative flex flex-col justify-center items-center">
+                <div class="thanks-section w-full flex items-center justify-center gap-4 p-4 text-center">
+                    <span class="before-div flex-1 bg-gradient-to-r from-pink-600 to-blue-300 rounded-lg h-1"></span>
+                    <p class="text-2xl font-bold bg-gradient-to-r from-blue-500 to-green-500 bg-clip-text text-transparent">Thank you !</p>
+                    <span class="after-div flex-1 bg-gradient-to-r to-pink-600 from-blue-300 rounded-lg h-1"></span>
+                </div>
+
+                <div class="text-center">
+                    <p class="text-gradient-bold text-5xl font-bold bg-gradient-to-r from-blue-500 to-green-500 bg-clip-text text-transparent">
+                        <i class="fas fa-seedling text-green-500"></i>
+                        +30 M
+                        <span class="text-lg">
+                            <br>Plant trees in Hariyalo, Rajasthan
+                        </span>
+                    </p>
+                </div>
+
+                <div class="qrcode-text bg-gradient-to-r from-blue-200 to-green-200 w-10/12 flex justify-center items-center flex-wrap p-2 rounded-xl">
+                    <div class="qr-scaned bg-gradient-to-r from-pink-500 to-blue-500 px-4 py-2 rounded-lg">
+                        <p class="text-white"> QR Code Scans: 
+                            <span id="total-count" class="hidden">{{total_count}}</span>
+                            <span id="visitor-count"></span>
+                        </p>
+                    </div>
+
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            let visitorCountElement = document.getElementById("visitor-count");
+                            let totalCountElement = document.getElementById("total-count");
+                            let startValue = 0;
+
+                            if (!visitorCountElement || !totalCountElement) return; // Exit if elements are missing
+
+                            let endValue = parseInt(totalCountElement.textContent) || 0; // Get total count from hidden span
+                            console.log(endValue)
+                            if (endValue >= 40){
+                                startValue = endValue - 40;
+                            }
+                            if (startValue < 0) startValue = 0; // Ensure no negative values
+
+                            function increaseVisitorCount() {
+                                if (startValue < endValue) {
+                                    startValue += Math.ceil((endValue - startValue) / 20); // Smooth increment
+                                    if (startValue > endValue) startValue = endValue;
+                                    visitorCountElement.textContent = startValue;
+
+                                    setTimeout(increaseVisitorCount, 50); // Adjust speed of increment
+                                }
+                            }
+
+                            increaseVisitorCount(); // Start animation
+                        });
+                    </script>
+
+                    <div class="mt-2 text-gray-600 text-sm flex text-center justify-center items-center flex-col">
+                        <p>Your planted tree will always be saved with your name and location.</p>
+                        <p class="m-2 p-2 bg-green-600 text-white rounded-xl">
+                            <a href=""><i class="fas fa-leaf"></i> ADD New Plant</a>  
+                        </p>
+                        <p>Creating a greener future for all.</p>
+                    </div>
+
+                </div>
+
+                <div class="qrcode-input flex items-center justify-center gap-2 mt-2 relative">
+                    <input type="text" placeholder="Enter QR Code" value="{{qrid}}" class="border-2 border-gray-300 bg-white h-10 px-4 pl-10 rounded-lg text-sm focus:outline-none">
+                    <i class="fas fa-qrcode absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <button type="submit" class="inline-block text-white bg-gradient-to-r to-pink-600 from-blue-300 border-0 py-1 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg animate-pulse">
+                        <span class="inline-flex items-center">
+                            <span id="search-text">Searching...</span>
+                        </span>
+                    </button>
+                </div>
+
+                <div class="terms-conditions-support flex flex-col items-center justify-center mt-4 text-sm">
+                    <div class="top-border-line w-full my-4 border-t border-gray-200"></div>
+                    <a href="/terms-and-conditions" class="text-gray-600 hover:text-gray-800">Terms & Conditions</a>
+                    <a href="/support" class="text-gray-600 hover:text-gray-800">Support</a>
+                </div>
+            </div>
+
+                
+            <!-- <p class="text-4xl font-bold">Thank you</p> -->
+            <!-- <p>
+                <span class="text-6xl font-bold font-mono">3 Cr.+ <br></span>
+                <span>Plant trees in Hariyalo, Rajasthan</span>
+            </p> -->
+            <!-- <p class="mt-2">
+                QR Code Scans: 
+                <input id="visitor-count" type="text" readonly class="text-center text-4xl font-bold bg-transparent border-none outline-none w-28" value="100">
+            </p> -->
+            <!-- <p>
+                <span>Your planted tree will always be saved with your name and location.</span>
+                <span><a href="">ADD New Plant</a></span>
+                <span>Creating a greener future for all.</span>
+            </p> -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.body.style.opacity = 1;
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+
+{% load static %}
+
+{% block content %}
+<div class="bg-red-200 rounded-3xl h-80 " style="padding: 4px;">
+
+        <div id="mapContainer" style="
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 20px;
+        ">
+            {% include 'map_web/map_web.html' with lat=25 long=74 %}
+        </div>
+</div>
+{% endblock %}

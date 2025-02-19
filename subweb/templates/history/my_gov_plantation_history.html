@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+History
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'history/css/history.css' %}">
+{% endblock %}
+{% block content %}
+    <nav class="top-nav" >
+        <a href="{%url 'home' %}"
+            style="justify-content: flex-end; align-items: center; display: flex; text-decoration: none;">
+            <i class="fa-solid fa-arrow-left"
+                style="margin: 0 15px; font-size: 28px; color: #fff;"></i>
+            <p>History</p>
+        </a>
+    </nav>
+
+    <div class="mian-section" style="display: flex; align-items: center; flex-direction: column; width: 100%; margin-top: 100px; ">
+        <div class="sub-mian-section" style="display: flex; align-items: center; flex-direction: column; width: 100%; max-width: 600px;">
+            <div class="route_btn">
+            <a href="{% url 'my_pvt_history' %}" style="text-decoration: none;">
+                <button class="head" >Private</button>
+            </a>
+            <a href="{% url 'my_gov_history' %}" style="text-decoration: none;">
+                <button class="head" style="background-color: var(--primary-color);">Government</button>
+            </a>
+            <a href="{% url 'my_ngo_history' %}" style="text-decoration: none;">
+                <button class="head">NGO</button>
+            </a>
+        </div>
+
+        {% if data %}
+            {% for tree in data %}
+            <div class="section-history">
+                <div class="info-section">
+                    <h3>{{ tree.plantation_name }} <span>(ID: GOV{{ tree.id }})</span></h3>
+                    <p><i>Date: {{ tree.created_at }}</i></p>
+                    <p><span>Location:</span> {{ tree.location_lat }} , {{ tree.location_long }}</p>
+                </div>
+                <div class="tree-details-section">
+                    <!-- <p><span>Plantation Land:</span> {{ tree.land }}</p> -->
+                    <p><span>Height:</span> {{ tree.plantation_height }} feet</p>
+                    <p><span>Status:</span> 
+                        {% if tree.status %}
+                            Approved
+                        {% else %}
+                            Approval Pending
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="images-grid"> 
+                    <div class="plant-image">
+                        {% if tree.image1 %}
+                            <button class="view-image-btn" data-image-url="{{ tree.image1.url }}">View Image</button>
+                        {% else %}
+                            Null
+                        {% endif %}
+                    </div>
+                    <div class="plant-image">
+                        {% if tree.image3 %}
+                            <button class="view-image-btn" data-image-url="{{ tree.image3.url }}">View Image</button>
+                        {% else %}
+                            Null
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="map-view-section">
+                    <div class="map-viewer-btn">
+                        <!-- Pass 'this' to the onclick function to reference the button -->
+                        <button onclick="toggleHeight(this)" class="map_btn">
+                            Geo Map
+                            <div class="arrow-icon"> ▼ </div>
+                        </button>
+                    </div>
+                    <div class="map-view-box" style="height: 0;">
+                        
+                        <!-- Assuming static iframe content for demonstration purposes -->
+                        <!-- <iframe src="https://geoplanetsolution.com/Geotree/geojson/index.php?lat={{tree.location_lat}}&long={{tree.location_long}}" frameborder="0" style="width: 100%; height: 300px;"></iframe> -->
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <!-- Trigger the modal -->
+        <script>
+            window.onload = function() {
+                alert('No data found. Please add a plant.');
+            };
+        </script>
+        {% endif %}
+
+
+    <div class="nomore-history" style="display: flex; justify-content: center; align-items: center; flex-direction: column; width: 100%;">
+        <p style="color: rgb(161, 161, 161); font-size: 12px;">No More History</p>
+        <div class="line-fal" style="width: 100%; border-top: 2px solid rgb(187, 187, 187);"></div>
+    </div>
+    </div>
+
+
+    <script>
+        function toggleHeight(button) {
+            // Find the closest '.section-history' container relative to the clicked button
+            var sectionHistory = button.closest('.section-history');
+            // Find the map view box within the '.section-history'
+            var mapSection = sectionHistory.querySelector('.map-view-box');
+            // Find the arrow icon within the clicked button
+            var arrowIcon = button.querySelector('.arrow-icon');
+
+            // Toggle the height and rotate arrow icon
+            if (mapSection.style.height === '300px') {
+                mapSection.style.height = '0';
+                arrowIcon.style.transform = 'rotate(0deg)';
+            } else {
+                mapSection.style.height = '300px';
+                arrowIcon.style.transform = 'rotate(180deg)';
+            }
+        }
+    </script>
+
+    <script>
+       document.addEventListener("DOMContentLoaded", function() {
+        const buttons = document.querySelectorAll('.view-image-btn');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                const imageUrl = this.getAttribute('data-image-url');
+                const imgElement = document.createElement('img');
+                imgElement.src = imageUrl;
+                imgElement.onload = function() {
+                    imgElement.classList.add('loaded');
+                };
+                const parent = this.parentElement;
+                parent.innerHTML = '';
+                parent.appendChild(imgElement);
+            });
+        });
+    });
+    </script>
+
+
+{% endblock %}

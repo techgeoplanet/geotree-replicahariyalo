@@ -1,0 +1,1764 @@
+from django.db import models
+from django.conf import settings
+from django.utils import timezone
+from api_nursery.models import GramPanchayat
+from api.models import land_ownershipby_gov_ngo, gov_department
+
+
+# Another model for reference
+class PlantHealthStatus(models.Model):
+    id = models.AutoField(primary_key=True)
+    health_status_en = models.CharField(max_length=255)
+    health_status_hi = models.CharField(max_length=255)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_99(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_99(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_100(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_100(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_100',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_101(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_101(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_101',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_102(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_102(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_103(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_103(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_104(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_104(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_105(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_105(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_106(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_106(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_107(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_107(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_108(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_108(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_109(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_109(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_110(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_110(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_111(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_111(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_112(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_112(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_113(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_113(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_114(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_114(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_115(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_115(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_116(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_116(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_117(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_117(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_118(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_118(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_119(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_119(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_120(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_120(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_121(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_121(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_122(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_122(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_123(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_123(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_124(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_124(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_125(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_125(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_126(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_126(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_127(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_127(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_128(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_128(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_129(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_129(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_130(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_130(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)
+
+# Abstract model for CenterIndividualPlantation
+class CenterIndividualPlantation_131(models.Model):
+    PLantid = models.CharField(primary_key=True, max_length=255)
+    plant_name = models.CharField(max_length=255, blank=True, null=True)
+    owner_name = models.CharField(max_length=255, blank=True, null=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address_gp_id = models.ForeignKey(
+        GramPanchayat, on_delete=models.CASCADE, related_name="center_plantations",blank=True, null=True
+    )
+    land_ownership = models.ForeignKey(
+        land_ownershipby_gov_ngo, on_delete=models.CASCADE, related_name="center_plantations", blank=True, null=True
+    )
+    imageurl_1 = models.CharField(max_length=500, blank=True, null=True)
+    imageurl_2 = models.CharField(max_length=500, blank=True, null=True)
+
+    submitted_by_user_id = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.CASCADE, related_name="center_plantations"
+    )
+    submitted_by_department_id = models.ForeignKey(
+        gov_department,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="center_plantations",
+    )
+    submitted_by_ngo_name = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    plant_alive_status = models.BooleanField(default=True)
+    any_update_status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+# UpdateData Model
+class UpdateData_131(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USERTEMP_MODEL, on_delete=models.PROTECT, related_name="update_data"
+    )
+    center_entry_plant = models.ForeignKey(
+        'CenterIndividualPlantation_99',  
+        on_delete=models.PROTECT,
+        related_name="update_data"
+    )
+    # current phase 
+    health_status = models.ForeignKey(PlantHealthStatus, on_delete=models.PROTECT, related_name="update_data")
+    Update_image1 = models.ImageField(upload_to="images/update_data/UpdateData_99/")
+    height_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    girth_infeet = models.DecimalField(max_digits=8, decimal_places=2)
+    canopy_infeet = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    status_date_mmyyyy = models.DateField(default=timezone.now)
+    status_time = models.TimeField(default=timezone.now)

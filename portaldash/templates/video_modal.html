@@ -1,0 +1,112 @@
+{% load static %}
+<!-- Video Modal -->
+<div id="videoModal" class="modal">
+    <div class="modal-content">
+        <span class="close video-close" id="closeVideoModal">&times;</span>
+        <div class="video-container">
+            <video id="tutorialVideo" controls>
+                <source src="{% static 'base_static/video_hariyalo_rajasthan.mp4' %}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Modal Styling */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        position: relative;
+        width: 90%;
+        max-width: 900px;
+        text-align: center;
+    }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #333;
+        font-weight: bold;
+    }
+
+    /* Video Container for proper scaling */
+    .video-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    video {
+        width: 100%;
+        max-height: 80vh;
+        border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+        .modal-content {
+            width: 95%;
+            padding: 10px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const videoModal = document.getElementById("videoModal");
+        const closeBtn = document.getElementById("closeVideoModal"); // Fixed selector
+        const video = document.getElementById("tutorialVideo");
+
+        // Open modal when clicking the "Video Tutorial" button
+        document.querySelector(".video-tutorial").addEventListener("click", function () {
+            videoModal.style.display = "flex";
+            video.play();
+        });
+
+        // Close modal when clicking the close button
+        closeBtn.addEventListener("click", function () {
+            videoModal.style.display = "none";
+            video.pause();
+            video.currentTime = 0; // Reset video
+        });
+
+        // Close modal when clicking outside the content
+        window.addEventListener("click", function (event) {
+            if (event.target === videoModal) {
+                videoModal.style.display = "none";
+                video.pause();
+                video.currentTime = 0; // Reset video
+            }
+        });
+
+        // Step 2: Logout and Refresh
+        function logoutAndRefresh() {
+            fetch("{% url 'logoutadm' %}", { method: 'GET' })
+                .then(response => response.text())
+                .then(data => {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    document.cookie = "sessionid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    window.location.reload();
+                });
+        }
+    });
+</script>

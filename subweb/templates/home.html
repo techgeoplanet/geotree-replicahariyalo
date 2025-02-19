@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Home
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'home/css/stylesh.css'%}">
+{% endblock %}
+{% block content %}
+
+<div class="mainContainer fadeIn">
+
+    <div style="width: 100%; display: flex; justify-content:space-between; align-items: center; flex-direction: row;">
+        <div class="left-side-btn" style="margin-left: 15px;">
+            <a href="{% url 'plantationtips' %}">
+                <button
+                    style="padding:5px 10px; border-radius: 10px; border: none; background-color: #0b5c30; font-size: 18px; color: #fff;">
+                    Plantation<br> Tutorial
+                </button>
+            </a>
+        </div>
+        <div class="right-side-btn"
+            style="display: flex; justify-content: center; align-items: center; flex-direction: row;">
+            <!-- <button id="language-btn" class="fas fa-language lang"
+                style="font-size: 35px; padding-right: 10px;"></button> -->
+
+            <a href="{% url 'logout_view' %}">
+                <button
+                    style="padding:5px 10px; border-radius: 10px; border: none; background-color: #0b5c30; font-size: 18px; color: #fff; margin:0 10px ;">
+                    Logout
+                </button>
+                <!-- <button class="fa fa-sign-out lang" style="font-size: 30px; padding-right: 10px;"></button> -->
+            </a>
+        </div>
+    </div>
+
+    <div id="language-popup" class="language-popup">
+        <label for="language-select">Choose Language</label>
+        <select id="language-select">
+            <option value="en">English</option>
+            <option value="hi">हिंदी</option>
+            <!-- Add more languages as needed -->
+        </select>
+        <button id="apply-btn">Apply</button>
+    </div>
+
+    <div class="section1">
+
+        <div id="addSection" class="section">
+
+            <div style="
+                display: flex;
+                justify-content: center;
+                animation: c;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+            ">
+                <div class="button button1" style="cursor: auto; background-image: url('{% static 'home/images/btn.webp' %}') ">
+                    <p class="txt">PLANT YOUR OWN FUTURE
+                    </p>
+                    <div class="con">
+                        <a href="/addplant/" class="add-button" id="add-button">Add Tree</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="moreSection" class="section">
+            <div class="fas-icon">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>More Details</span>
+            </div>
+            <div class="link-row">
+                <a href="{% url 'certificate' %}" class="link">Download Certificate</a>
+                <a href="{% url 'my_pvt_history' %}" class="link">Plantation History</a>
+                <a href="{% url 'rewards' %}" class="link">Reward Points</a>
+                <a href="{%url 'moreinformation' %}" class="link">More Information</a>
+            </div>
+        </div>
+    </div>
+    <div id="moreSection" class="section">
+        <img src="{% static 'home/images/pemplet.webp' %}" alt="pemplet" style="width: 100%; border-radius: 20px;">
+    </div>
+</div>
+
+<footer class="footer" style="position: relative;">
+    <div class="map_background"
+        style="display: flex; justify-content:center; align-items: center; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;">
+        <img src="{% static 'home/images/logo.webp' %}" alt="map">
+    </div>
+
+    <div class="bg">
+        <div class="footer-text">
+            <h3><b>"Haryalo-Rajasthan" (Ek Ped Maa ke Naam)</b></h3>
+            <p>With the vision to develop Rajasthan as a green state, the FY 2024-25 budget has set a goal through the
+                Mukhyamantri Vriksharopan Maha Abhiyan to involve every family in planting and nurturing 7 crore trees.
+                To sustain this effort, the mission "Haryalo-Rajasthan" has been declared as a Multi-Sectoral
+                Programme.</p>
+        </div>
+        <div class="footer-bottom" style="justify-content:space-between;">
+            <div class="footimg">
+                <img src="{% static 'home\images\company logo 1.webp'%}" alt="First Image">
+            </div>
+            <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+                <p>Mahatma Gandhi NREGA</p>
+                <p>(Dept. of Rural Development)</p>
+                <p>Govt. of Rajasthan</p>
+            </div>
+            <div class="footimg">
+                <img src="{% static 'home\images\manrega.webp'%}" alt="Third Image">
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var element = document.querySelector('.fadeIn');
+
+        // Check if the element exists (optional but recommended)
+        if (element) {
+            // Add the class to trigger animation
+            element.classList.add('fadeIn-animate');
+        }
+    });
+
+    document.getElementById('language-btn').addEventListener('click', function () {
+        var popup = document.getElementById('language-popup');
+        if (popup.style.display === 'none' || popup.style.display === '') {
+            popup.style.display = 'flex';
+        } else {
+            popup.style.display = 'none';
+        }
+    });
+    document.getElementById('apply-btn').addEventListener('click', function () {
+        var selectedLanguage = document.getElementById('language-select').value;
+        // Add your logic to handle the language change here
+        console.log('Selected Language:', selectedLanguage);
+        // Hide the popup after applying
+        document.getElementById('language-popup').style.display = 'none';
+    });
+    // Optional: Close the popup if clicked outside
+    document.addEventListener('click', function (event) {
+        var popup = document.getElementById('language-popup');
+        var languageBtn = document.getElementById('language-btn');
+
+        // Check if popup and languageBtn elements exist
+        if (popup && languageBtn) {
+            // Check if the click is outside the popup and the language button
+            if (!popup.contains(event.target) && !languageBtn.contains(event.target)) {
+                popup.style.display = 'none';
+            }
+        }
+    });
+    document.getElementById('apply-btn').addEventListener('click', function () {
+        var selectedLanguage = document.getElementById('language-select').value;
+        var baseUrl = window.location.origin; // Get the base URL (e.g., http://example.com)
+
+        if (selectedLanguage === 'hi') {
+            window.location.href = baseUrl + '/hi/home';
+        } else {
+            window.location.href = baseUrl + '/home';
+        }
+    });
+</script>
+
+{% endblock %}

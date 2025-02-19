@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  color: #004859;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  flex: 1 1 250px;
+  margin-bottom: 20px;
+}
+
+.card-header {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-value {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.card-percent {
+  font-size: 14px;
+  color: #4CAF50;
+  margin-bottom: 10px;
+}
+
+.card-icon {
+  display: inline-block;
+  margin-right: 10px;
+  color: #4CAF50;
+}
+
+.card-chart {
+  width: 100%;
+  height: 200px;
+  margin-top: 10px;
+}
+
+.card-legend {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.card-legend-item {
+  display: flex;
+  align-items: center;
+}
+
+.card-legend-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.card-legend-text {
+  font-size: 12px;
+}
+
+.card-button {
+  background-color: #004859;
+  color: #fff;
+  border: none;
+  border-radius: 15px;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 80%;
+}
+
+.card-button:hover {
+  background-color: #0062cc;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  padding: 10px 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+}
+
+.header-nav-item {
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.header-nav-item-icon {
+  margin-right: 5px;
+}
+
+.header-nav-item-text {
+  color: #004859;
+  cursor: pointer;
+}
+
+.footer {
+  background-color: #fff;
+  padding: 10px 20px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.footer-text {
+  font-size: 12px;
+}
+
+.header-nav-item-icon{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.search-bar {
+  /* background-color: #fff; */
+  border-radius: 5px;
+  /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+  padding: 10px 20px;
+  /* margin-top: 20px; */
+  display: flex;
+  /* align-items: center; */
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  padding: 8px;
+  font-size: 16px;
+  outline: 1px solid #004859;
+  border-radius: 15px;
+}
+
+.search-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 20px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.search-button:hover {
+  background-color: #0062cc;
+}
+.menu-btn {
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: #004859;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <button class="menu-btn">☰</button>
+  <h1 class="header-title"></h1>
+  <nav class="header-nav">
+    <div class="header-nav-item">
+      <i class="fas fa-bell header-nav-item-icon"></i>
+      <span class="header-nav-item-text"></span>
+    </div>
+    <div class="header-nav-item">
+      <img src="pr.jpeg" alt="" class="header-nav-item-icon">
+      <span class="header-nav-item-text">John Doe</span>
+    </div>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="card" style="background-color: #e8fbff;">
+    <div class="card-header">Tree Added Today</div>
+    <div class="card-content">
+      <div class="card-value">2500</div>
+      <div class="card-percent"><i class="fas fa-arrow-up card-icon"></i>23% from last week</div>
+    </div>
+  </div>
+
+  <div class="card" style="background-color: #e8fbff;">
+    <div class="card-header">Active User</div>
+    <div class="card-content">
+      <div class="card-value">1000</div>
+      <div class="card-percent"><i class="fas fa-arrow-up card-icon"></i>10% from last week</div>
+    </div>
+  </div>
+
+  <div class="card" style="background-color: #e8fbff;">
+    <div class="card-header">Species Added Today</div>
+    <div class="card-content">
+      <div class="card-value">100</div>
+      <div class="card-percent" style="color: #f44336;"><i class="fas fa-arrow-down card-icon"></i>23% from last week</div>
+    </div>
+  </div>
+
+  <div class="card" style="background-color: #e8fbff;">
+    <div class="card-header">Total Trees Added</div>
+    <div class="card-content">
+      <div class="card-value">15295</div>
+      <div class="card-percent"><i class="fas fa-arrow-up card-icon"></i>31% from last week</div>
+    </div>
+  </div>
+</div>
+
+<div class="container" style="display: flex; justify-content: space-between;">
+    <div class="search-bar">
+        <input type="text" class="search-input" placeholder="Search...">
+        <button class="search-button">Search</button>
+      </div>
+      <div class="loc">jaipur,India</div>
+</div>
+
+<div class="container">
+  <div class="card" style="flex: 1 1 600px;">
+    <div class="card-header">Carbon Footprint Chart</div>
+    <div class="card-content">
+      <div class="card-chart">
+        <canvas id="carbonChart"></canvas>
+      </div>
+      <div class="card-legend">
+        <div class="card-legend-item">
+          <div class="card-legend-color" style="background-color: #007bff;"></div>
+          <div class="card-legend-text">Carbon Sequestration</div>
+        </div>
+        <div class="card-legend-item">
+          <div class="card-legend-color" style="background-color: #f44336;"></div>
+          <div class="card-legend-text">Carbon Emission</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="flex: 1 1 300px;">
+    <div class="card-header">Species wise distribution</div>
+    <div class="card-content">
+      <div class="card-chart">
+        <canvas id="speciesChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="card" style="flex: 1 1 300px;">
+    <div class="card-header">Surveyor's Task</div>
+    <div class="card-content">
+        <ul style="list-style-type:'+'; font-size: 1.5em;">
+     <li> <button class="card-button" style="background-color: #004859;">KML Upload</button></li>
+     <li><button class="card-button" style="background-color: #004859;">Add Tasks</button></li>
+     <li>  <button class="card-button" style="background-color: #004859;">Add User</button></li>
+    </ul>
+    </div>
+  </div>
+
+  <div class="card" style="flex: 1 1 300px;">
+    <div class="card-content">
+      <div class="card-chart">
+        <canvas id="landCoverChart"></canvas>
+      </div>
+      <div class="card-legend">
+        <div class="card-legend-item">
+        </div>
+        <div class="card-legend-item">
+        </div>
+        <div class="card-legend-item">
+        </div>
+        <div class="card-legend-item">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="flex: 1 1 300px;">
+    <div class="card-header">Cutting and Pruning Requests</div>
+    <div class="card-content">
+      <div class="card-header">Requests</div>
+      <hr style="width: 80%; color: #004859; margin: 0; margin-top: -5px; ">
+      <div class="card-content">
+        <div>-Cutting Request</div>
+        <div>-Pruning Request</div>
+      </div>
+      <div class="card-header">Proposals</div>
+      <hr style="width: 80%; color: #004859; margin: 0;  ">
+      <div class="card-content"></div>
+      <div class="card-header">Tracking</div>
+      <hr style="width: 80%; color: #004859; margin: 0; margin-top: -5px; ">
+
+      <div class="card-content"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Carbon Footprint Chart
+  // Carbon Footprint Chart
+  const carbonChartCanvas = document.getElementById('carbonChart');
+  const carbonChart = new Chart(carbonChartCanvas, {
+    type: 'line',
+    data: {
+      labels: ['15 APRIL', '21 APRIL'],
+      datasets: [{
+        label: 'Carbon Sequestration',
+        data: [150, 200,170,150,140,240,180],
+        borderColor: '#007bff',
+        backgroundColor: 'rgba(0, 123, 255, 0.3)', // Area fill color
+        fill: true,
+        tension: 0.3
+      }, {
+        label: 'Carbon Emission',
+        data: [400, 250],
+        borderColor: '#f44336',
+        backgroundColor: 'rgba(244, 67, 54, 0.3)', // Area fill color
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+
+
+
+  // Species wise distribution Chart
+  const speciesChartCanvas = document.getElementById('speciesChart');
+  const speciesChart = new Chart(speciesChartCanvas, {
+    type: 'bar',
+    data: {
+      labels: ['Azadirachta indica', 'Senegalia catechu', 'Ficus religiosa', 'Sapindus mukorossi'],
+      datasets: [{
+        label: 'Species',
+        data: [80, 60, 70, 40],
+        backgroundColor: [
+          '#004859',
+          '#004859',
+          '#004859',
+          '#004859'
+        ],
+        borderColor: [
+          '#004859',
+          '#004859',
+          '#004859',
+          '#004859'
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      indexAxis: 'y', // Display the chart horizontally
+      scales: {
+        x: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  // Land cover Chart
+  const landCoverChartCanvas = document.getElementById('landCoverChart');
+  const landCoverChart = new Chart(landCoverChartCanvas, {
+    type: 'pie',
+    data: {
+      labels: ['Government Planted Trees', 'Private Planted Trees', 'Private Land', 'Unidentified Land'],
+      datasets: [{
+        label: 'Land Cover',
+        data: [45, 25, 15, 15],
+        backgroundColor: [
+          '#147ad6',
+          '#78d2de',
+          '#ec6666',
+          '#64868e'
+        ],
+        borderColor: [
+          '#147ad6',
+          '#78d2de',
+          '#ec6666',
+          '#64868e'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          align: 'center',
+          labels: {
+            usePointStyle: false,
+            pointStyleWidth: 0,
+          }
+        }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

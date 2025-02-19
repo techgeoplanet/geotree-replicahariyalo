@@ -1,0 +1,213 @@
+{% load static %}
+
+{% block extra_css %}
+<style>
+
+    /* Hide Google Branding */
+    .goog-logo-link,
+    .goog-te-gadget span,
+    .goog-te-banner-frame.skiptranslate {
+        display: none !important;
+    }
+
+    /* Prevent extra margin caused by hidden branding */
+    body {
+        top: 0px !important;
+    }
+
+    /* Style the Translate Dropdown */
+    #google_translate_element select {
+        background-color: #800000;
+        color: rgb(255, 255, 255);
+        border: 1px solid #fff;
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+        width: 150px;
+    }
+    
+    .VIpgJd-ZVi9od-ORHb-OEVmcd{
+        z-index: 1;
+    }
+    /* Custom Flag Buttons */
+    .custom-translate {
+        display: flex;
+        gap: 10px;
+        /* margin: 20px 0; */
+    }
+    .custom-translate img {
+        width: 40px;
+        height: 30px;
+        cursor: pointer;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+</style>
+
+<script>
+    // Function to format number with commas in Indian format
+    function formatNumber(num) {
+        const str = num.toString();
+        const lastThreeDigits = str.slice(-3);
+        const otherDigits = str.slice(0, -3);
+        const formattedOtherDigits = otherDigits.replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+        return otherDigits ? formattedOtherDigits + "," + lastThreeDigits : lastThreeDigits;
+    }
+
+    // Example numbers from backend
+    const siteVisit = {{ SiteVisit }};
+    const totalPlants = {{ TotalPlantations }};
+
+    // Set the formatted numbers in the HTML
+    document.getElementById('site-visit').textContent = formatNumber(siteVisit);
+    document.getElementById('total-plants').textContent = formatNumber(totalPlants);
+
+</script>
+
+
+
+{% endblock %}
+
+    <div class="bg-white rounded-lg flex justify-between items-center p-1 flex-wrap">
+        <div class="text-white text-center flex justify-center items-center md:flex-row gap-2 flex-wrap"> 
+            <button class="bg-red-800  px-4 py-1"><a href="/portaldash/portaldash/" style="text-decoration: none;">Home</a></button>
+           
+            <p class="bg-pink-900 bg-opacity-60 px-4 py-1 rounded-lg">Total Site Visit: +<span id="site-visit"></span></p>
+            <!-- <button class="btn login-button">Total Number Of Plants Added: +<span id="total-plants"></span></button> -->
+
+             <!-- Google Translate Dropdown -->
+             <div id="google_translate_element"></div>
+
+        </div>
+       
+
+        <!-- Google Translate Script -->
+        <script type="text/javascript">
+            function googleTranslateElementInit() {
+                new google.translate.TranslateElement({ pageLanguage: 'hi', includedLanguages: 'hi,en' }, 'google_translate_element');
+            }
+        </script>
+        <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
+        <div class="text-white gap-2 flex justify-center md:justify-end items-center flex-1">
+            <button class="bg-red-800 px-4 py-1" id="mediaGalleryBtn">Media Gallery</button>
+            <div id="galleryModalContainer"></div>
+            <!-- Include the Video Modal -->
+            {% include 'video_modal.html' %}
+            <!-- Video Tutorial Button -->
+            <button class="bg-red-800 px-4 py-1" id="videoTutorialBtn">Video Tutorial</button>
+          
+
+            <!-- Placeholder to Load Modal -->
+            <div id="videoModalContainer"></div>
+
+
+            <!-- <button class="bg-red-800 px-4 py-1">Video Tutorial</button> -->
+            {% if user.is_authenticated and user.is_admin %}
+                <button class="bg-red-800 px-4 py-1"><a href="{% url 'dashboardadm' %}" class="no-underline">Monitoring</a></button>
+                <button class="bg-red-800 px-4 py-1" onclick="logoutAndRefresh()">Logout</button>
+            {% else %}
+                <button class="bg-red-800 px-4 py-1"><a href="/admin/loginadm/" class="no-underline">Admin Login</a></button>
+            {% endif %}
+        </div>
+        <div id="videoModal" class="modal video-modal">
+            <div class="modal-content">
+                <span class="close video-close">&times;</span>
+                <video id="tutorialVideo" controls>
+                    <source src="{% static 'base_static/video_hariyalo_rajasthan.mp4' %}" type="video/mp4">
+                </video>
+            </div>
+        </div>
+        <script>
+            function logoutAndRefresh() {
+                fetch("{% url 'logoutadm' %}", {method: 'GET'})
+                .then(response => response.text()) // Handle HTML response
+                .then(data => {
+                    // Clear all web storage
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    // Remove cookies
+                    document.cookie = "sessionid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    // Refresh the page
+                    window.location.reload();
+                });
+            }
+        
+            document.addEventListener("DOMContentLoaded", function () {
+                // Video Modal Logic
+                const videoBtn = document.getElementById("videoTutorialBtn");
+                const videoModalContainer = document.getElementById("videoModalContainer");
+        
+                if (videoBtn) {
+                    videoBtn.addEventListener("click", function () {
+                        fetch("{% url 'video_modal' %}")  // Fetch video modal from Django view
+                        .then(response => response.text())
+                        .then(html => {
+                            videoModalContainer.innerHTML = html;  // Load modal content
+                            document.getElementById("videoModal").style.display = "flex";
+        
+                            // Add event listeners for closing the modal
+                            const videoCloseBtn = document.querySelector(".video-close");
+                            const video = document.getElementById("tutorialVideo");
+        
+                            videoCloseBtn.addEventListener("click", function () {
+                                document.getElementById("videoModal").style.display = "none";
+                                video.pause();
+                            });
+        
+                            window.addEventListener("click", function (event) {
+                                if (event.target === document.getElementById("videoModal")) {
+                                    document.getElementById("videoModal").style.display = "none";
+                                    video.pause();
+                                }
+                            });
+                        });
+                    });
+                }
+        
+                // Media Gallery Modal Logic (Step 6)
+                const mediaGalleryBtn = document.getElementById("mediaGalleryBtn");
+                const galleryModalContainer = document.getElementById("galleryModalContainer");
+        
+                if (mediaGalleryBtn) {
+                    mediaGalleryBtn.addEventListener("click", function () {
+                        fetch("{% url 'gallery_view' %}")  // Fetch gallery.html dynamically
+                        .then(response => response.text())
+                        .then(html => {
+                            galleryModalContainer.innerHTML = html;  // Load modal content
+                            document.getElementById("galleryModal").style.display = "flex";
+        
+                            // Close modal when clicking outside
+                            window.addEventListener("click", function (event) {
+                                if (event.target === document.getElementById("galleryModal")) {
+                                    document.getElementById("galleryModal").style.display = "none";
+                                }
+                            });
+        
+                            // Image Popup Modal Logic
+                            document.querySelectorAll(".gallery-image").forEach(image => {
+                                image.addEventListener("click", function () {
+                                    document.getElementById("popupImage").src = this.src;
+                                    document.getElementById("imagePopupModal").style.display = "flex";
+                                });
+                            });
+        
+                            document.querySelector(".image-close").addEventListener("click", function () {
+                                document.getElementById("imagePopupModal").style.display = "none";
+                            });
+        
+                            document.querySelector(".gallery-close").addEventListener("click", function () {
+                                document.getElementById("galleryModal").style.display = "none";
+                            });
+                        });
+                    });
+                }
+            });
+        </script>
+        
+        
+
+
+    </div>

@@ -1,0 +1,415 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Login</title>
+    <link rel="stylesheet" href="{% static 'login_template/css/otplogin_t.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" href="{% static 'base/images/fiv-icon.png' %}"
+    type="image/x-icon">
+    <style>
+         /* Container for the spinner with a border */
+         .spinner-container {
+            display: none;
+            width: 155px; /* Adjust width as needed */
+            height: 47px; /* Adjust height as needed */
+            border: 2px solid #ff006a;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: white; /* Background for the box */
+            margin: auto;
+        }
+
+        /* Hidden spinner by default */
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #ee4b00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Spinner animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <style>
+        .captach-show-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .captcha-box {
+            border-radius: 20px;
+            border: 2px solid;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 20px;
+            margin-left: 10px;
+            position: relative;
+        }
+
+        .captcha-box h3 {
+            padding: 0;
+            margin: 0;
+            z-index: 1;
+            position: relative;
+        }
+
+        .captcha-box img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+    </style>
+    <style>
+        .terms-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 12px;
+        }
+        .terms-container span {
+            margin: 0 2px; /* Adjust the margin as needed */
+        }
+        a {
+            color: #004e66;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+    </style>
+
+    
+</head>
+
+<body>
+
+    <div class="bg-container" style="background-image: url('{% static 'home/images/bg.webp' %}')"></div>
+
+    <div class="login-container">
+        <img src="{% static 'home/images/logo.webp' %}" alt="Logo" class="logo">
+
+        {% if not is_sent %}
+        <!-- <p>This is first login attempt</p> -->
+        <form method="POST" action="{% url 'tempuser_login' %}" id="SendOtpForm">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="tel" class="input-field" name="phone" placeholder="Enter Phone number" id="phone"
+                    pattern="[0-9]*" inputmode="numeric" required>
+            </div>
+            <button type="submit" id="sendOtpBtn" class="SendOtp-btn" disabled>Verify</button>
+
+            <div class="spinner-container" id="spinnerContainer">
+                <div class="loading-spinner" id="loadingSpinner"></div>
+            </div>
+
+            <div class="another">
+                <a href="{% url 'loginadm' %}">Link for Premisinet ID Only</a>
+            </div>
+        </form>
+        {% endif %}
+
+        {% if is_sent %}
+        <form method="POST" action="{% url 'tempuser_login' %}" id="loginForm">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="tel" class="input-field" name="phone" placeholder="Enter Phone number" id="phone"
+                    value="{{phonenumber}}" readonly>
+
+                <!-- Edit Button with Edit Icon -->
+                <a href="/accounts/login/?next=/hi-home/">
+                    <button type="button" onclick="goBack()" class="edit-number">
+                        <p>Edit</p>
+                        <i class="fa fa-edit fa-2x" style="margin:5px;"></i>
+                    </button>
+                </a>
+
+            </div>
+
+            <!-- new change -------------------  -->
+
+            <div class="captach-show-box">
+                <h3>CAPTCHA : </h3>
+                <div class="captcha-box">
+                    <!-- <img src="path/to/rough.png" alt="Rough PNG"> -->
+                    <h3>{{opt_captcha}}</h3>
+                </div>
+            </div>
+
+            <!-- new changfe end ---------------------- -->
+
+
+
+            <div class="otp-container">
+                <label for="otp-input">Enter CAPTCHA</label>
+                <div class="otp-input-group">
+                    <input type="number" maxlength="1" class="otp-input" placeholder="X">
+                    <input type="number" maxlength="1" class="otp-input" placeholder="X">
+                    <input type="number" maxlength="1" class="otp-input" placeholder="X">
+                    <input type="number" maxlength="1" class="otp-input" placeholder="X">
+                </div>
+
+                <input type="number" class="input-field hidden" name="otp">
+
+
+                <div style="display: flex; justify-content:flex-end; align-items:flex-end; flex-direction: column;">
+                    <button type="submit" id="resendOtpBtn" class="resendbtnstyl" disabled>Re-Send CAPTCHA</button>
+                    <div id="timer" class="hidden"
+                        style="font-size: 12px; color: green; opacity: 0.7; margin-top: 5px;"></div>
+                </div>
+            </div>
+
+            <button type="submit" id="loginBtn" class="login-btn">
+                <img id="loadingGif" class="loading" src="{% static 'login_template/images/loading_animation.gif' %}"
+                    alt="Loading...">
+            </button>
+
+            <div class="another">
+                <p style="color: green;">{{message}} 💬</p>
+            </div>
+            
+        </form>
+        {% endif %}
+
+        <div class="terms-container">
+            <span>By Clicking, I accept</span>
+            <span>
+                <a href="https://doitc.rajasthan.gov.in/Content/PrivacyPolicy.aspx">Terms of Service</a>
+            </span>
+            <span>and</span>
+            <span>
+                <a href="https://doitc.rajasthan.gov.in/Content/PrivacyPolicy.aspx">Privacy Policy</a>
+            </span>
+        </div>
+
+    </div>
+
+    <!-- <div class="footer">Developed by GPSPL</div> -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let otpInputs = document.querySelectorAll('.otp-input');
+            let phoneInput = document.getElementById('phone');
+            let sendOtpBtn = document.getElementById('sendOtpBtn');
+            let otpInput = document.querySelector('input[name="otp"]');
+            let resendOtpBtn = document.getElementById('resendOtpBtn');
+            let loginBtn = document.getElementById('loginBtn');
+            let timerDisplay = document.getElementById('timer');
+            let timerCount = 10 * 60; // 10 minutes in seconds
+
+            // Function to enable the Resend OTP button after 20 seconds if available
+            if (resendOtpBtn) {
+                setTimeout(function () {
+                    resendOtpBtn.disabled = false;
+                    resendOtpBtn.classList.add('enabled');
+                }, 60000);
+            }
+
+            
+
+            if (timerDisplay) {
+                startTimer();
+            }
+
+            // Function to change background color of disabled button
+            function updateSendOtpBtnAppearance() {
+                if (sendOtpBtn.disabled) {
+                    sendOtpBtn.style.backgroundColor = 'gray';
+                } else {
+                    sendOtpBtn.style.backgroundColor = ''; // Reset to default background color
+                }
+            }
+
+            // Handle phone number input and enable/disable Send OTP button
+            phoneInput.addEventListener('input', function () {
+                let cleanedValue = this.value.replace(/\D/g, ''); // Remove all non-digit characters
+                if (cleanedValue.length > 10) {
+                    cleanedValue = cleanedValue.slice(0, 10); // Restrict to 10 digits
+                }
+                this.value = cleanedValue;
+
+                // Enable the Send OTP button only if the phone number is 10 digits
+                sendOtpBtn.disabled = cleanedValue.length !== 10;
+                updateSendOtpBtnAppearance(); // Update button appearance
+            });
+
+            if (sendOtpBtn) {
+                // Handle click event for Send OTP button
+                sendOtpBtn.addEventListener('click', function () {
+
+                    if (sendOtpBtn.disabled) {
+                        alert('Please enter a valid 10-digit phone number first.');
+                        return;
+                    }
+
+                    // Change the border color to red
+                    sendOtpBtn.style.borderColor = 'red';
+                    sendOtpBtn.classList.add('hidden');                  // Set a timeout to reset the border color after 2 seconds
+                    setTimeout(function () {
+                        sendOtpBtn.style.borderColor = '';
+                    }, 2000);
+
+
+                    // Add code here to send OTP
+                    // Example: AJAX request to send OTP
+                    // After sending OTP, enable/disable buttons and start timer if necessary
+                });
+
+            }
+
+            // Function to set OTP input field value to empty string
+            function clearOtpInput() {
+                otpInput.value = '';
+            }
+
+            // Function to submit the form
+            function submitLoginForm() {
+                document.getElementById('loginForm').submit();
+            }
+
+
+            // Handle click event for Resend OTP button
+            if (resendOtpBtn) {
+                resendOtpBtn.addEventListener('click', function () {
+                    // Set the value of the OTP input field to an empty string
+                    clearOtpInput();
+
+                    // Submit the form
+                    submitLoginForm();
+                });
+            }
+
+            // Handle keypress event for phoneInput (to trigger Send OTP button on Enter)
+            phoneInput.addEventListener('keypress', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Prevent form submission
+                    sendOtpBtn.click(); // Simulate click on Send OTP button
+                    loginBtn.click();
+                }
+            });
+            function goBack() {
+                window.history.back();
+            }
+
+
+            // Function to start the timer
+            function startTimer() {
+                timerDisplay.classList.remove('hidden');
+                const interval = setInterval(() => {
+                    timerCount--;
+                    const minutes = Math.floor(timerCount / 60);
+                    const seconds = timerCount % 60;
+                    timerDisplay.textContent = `CAPTCHA Expire in ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    if (timerCount <= 0) {
+                        clearInterval(interval);
+                        timerDisplay.textContent = 'Generate Again CAPTCHA';
+                        timerDisplay.classList.add('hidden');
+                        sendOtpBtn.classList.remove('hidden');
+                        resendOtpBtn.classList.add('hidden');
+                    }
+                    if (timerCount <= 100) {
+                        resendOtpBtn.classList.remove('hidden')
+                    }
+                }, 1000); // 1 second interval
+            }
+
+            // Handle input events for OTP input boxes
+            otpInputs.forEach(function (input, index) {
+                input.addEventListener('input', function () {
+                    this.value = this.value.replace(/\D/g, ''); // Allow only digits (0-9)
+
+                    if (this.value.length >= 1) {
+                        if (index < otpInputs.length - 1) {
+                            otpInputs[index + 1].focus();
+                        } else {
+                            // Focus on the last box
+                            this.blur();
+                            otpInputs[otpInputs.length - 1].focus();
+
+                            // Check if all four OTP boxes are filled
+                            let otpValue = '';
+                            otpInputs.forEach(function (otpInput) {
+                                otpValue += otpInput.value;
+                            });
+
+                            if (otpValue.length === 4) {
+                                sendOtp(otpValue);
+                                // alert('OTP received: ' + otpValue);
+                            }
+                        }
+                    }
+                });
+
+                input.addEventListener('focus', function () {
+                    // Move the cursor to the end of input field when focused
+                    this.setSelectionRange(this.value.length, this.value.length);
+                });
+
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Backspace' && this.value.length === 0) {
+                        if (index > 0) {
+                            otpInputs[index - 1].focus();
+                        }
+                    }
+                });
+
+                // Prevent form submission on Enter key press in OTP input fields
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            });
+
+            // Placeholder function for sending OTP (replace with actual logic)
+            function sendOtp(otp_value) {
+                otpInput.value = otp_value;
+
+                if(otpInput.value.length === 4){
+                    // alert('OTP sent successfully!'+ otpInput.value );
+                    submitLoginForm(); 
+                }
+                // Simulate sending OTP
+            }
+
+        });
+    </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const button = document.getElementById('sendOtpBtn');
+        const spinnerContainer = document.getElementById('spinnerContainer');
+
+        spinnerContainer.style.display = 'none';
+        button.addEventListener('click', function () {
+            
+            button.style.display = 'none'; // Hide the button
+            spinnerContainer.style.display = 'flex'; // Show the spinner container with border
+        });
+    });
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Image
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="{% static 'cameraImage\css\comp.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="main-section">
+    <div class="sub-main-section main-grid">
+
+        <!-- First Grid Item -->
+        <div class="image-container">
+            <div class="image_c">
+                <button onclick="openCamera(this, 1)" class="imagecap_btn" id="imageCapBtn1"><i class="fa fa-picture-o" style="font-size: 30px; color: #ffff;"></i> <p>Capture Image</p></button>
+                <img id="capturedImage1" src="#" alt="Captured Image" style="max-width: 100%; display: none;"
+                    class="image">
+            </div>
+            <div class="image-text">
+                <p>Site Preparation</p>
+            </div>
+            <div class="close hide" onclick="removeImage(this, 'imageCapBtn1', 'capturedImage1')"></div>
+        </div>
+
+        <!-- Second Grid Item -->
+        <div class="image-container">
+            <div class="image_c">
+                <button onclick="openCamera(this, 1)" class="imagecap_btn" id="imageCapBtn2"><i class="fa fa-picture-o" style="font-size: 30px; color: #ffff;"></i> <p>Capture Image</p></button>
+                <img id="capturedImage2" src="#" alt="Captured Image" style="max-width: 100%; display: none;"
+                    class="image">
+            </div>
+            <div class="image-text">
+                <p>Digging </p>
+            </div>
+            <div class="close hide" onclick="removeImage(this, 'imageCapBtn2', 'capturedImage2')"></div>
+        </div>
+
+        <!-- Third Grid Item -->
+        <div class="image-container">
+            <div class="image_c">
+                <button onclick="openCamera(this, 1)" class="imagecap_btn" id="imageCapBtn3"><i class="fa fa-picture-o" style="font-size: 30px; color: #ffff;"></i> <p>Capture Image</p></button>
+                <img id="capturedImage3" src="#" alt="Captured Image" style="max-width: 100%; display: none;"
+                    class="image">
+            </div>
+            <div class="image-text">
+                <p>Plantation</p>
+            </div>
+            <div class="close hide" onclick="removeImage(this, 'imageCapBtn3', 'capturedImage3')"></div>
+        </div>
+
+        <!-- Add more image-container divs as needed -->
+    </div>
+</div>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+    <span class="close-modal">&times;</span>
+    <img class="modal-content" id="modalImage">
+</div>
+
+<script>
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the image and insert it inside the modal
+    var modalImg = document.getElementById("modalImage");
+
+    // Get all images with class="image" and attach click event listeners
+    var images = document.getElementsByClassName("image");
+    for (var i = 0; i < images.length; i++) {
+        images[i].onclick = function () {
+            modal.style.display = "block";
+            modalImg.src = this.src;
+        }
+    }
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close-modal")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    // Close modal when user clicks on the modal content (image)
+    modalImg.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    function openCamera(button, numOfImages) {
+        let capturedImages = [];
+        let imageCounter = 0;
+
+        function captureImage() {
+            if (imageCounter < numOfImages) {
+                let input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                input.capture = 'camera';
+                input.onchange = function (event) {
+                    let file = event.target.files[0];
+                    let reader = new FileReader();
+                    reader.onload = function () {
+                        let image = button.nextElementSibling;
+                        image.src = reader.result;
+                        alert(image.src);
+                        image.style.display = 'block';
+                        button.style.display = 'none';
+                        let closeButton = button.parentElement.nextElementSibling.nextElementSibling;
+                        closeButton.classList.remove('hide');
+                        capturedImages.push(reader.result);
+                        imageCounter++;
+                        if (imageCounter < numOfImages) {
+                            captureImage();
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                };
+                input.click();
+            }
+        }
+        
+        captureImage();
+    }
+
+    function removeImage(closeButton, buttonId, imageId) {
+        let button = document.getElementById(buttonId);
+        let image = document.getElementById(imageId);
+        image.src = '#';
+        image.style.display = 'none';
+        button.style.display = 'inline';
+        closeButton.classList.add('hide');
+    }
+    
+</script>
+
+
+
+{% endblock %}

@@ -1,0 +1,72 @@
+# Python-related
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+env/
+venv/
+myenv/
+ENV/
+ENV/*
+
+# Django-related
+*.log
+*.sqlite3
+db.sqlite3
+*.pot
+*.pyc
+
+# Django media and static files
+media/
+images/
+.mp4
+static/
+#json google storage bucket
+
+# VS Code settings
+.vscode/
+
+# IDEs and editors
+.idea/
+*.swp
+*.swo
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# MySQL and PostgreSQL
+*.sql
+*.sqlite3
+
+# Environment Variables
+.env
+*.env
+
+# Other
+*.coverage
+nosetests.xml
+coverage.xml
+*.log
+*.pot
+*.py[cod]
+
+# Docker
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Pytest
+.cache
+*.cover
+
+# Pipenv
+Pipfile.lock
+
+# Poetry
+poetry.lock

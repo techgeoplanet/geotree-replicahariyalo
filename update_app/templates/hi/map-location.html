@@ -1,0 +1,371 @@
+{% extends "subweb-base.html" %}
+{% load static %}
+
+{% block title %}
+map
+{% endblock %}
+
+{% block extra_css %}
+<script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<style>
+#map {
+    height: 100%;
+    width: 100%;
+    border-radius: 8px;
+}
+#refresh-btn, #zoom-to-current-btn, #zoom-to-tree-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 400;
+}
+#zoom-to-current-btn {
+    top: 50px;
+}
+#zoom-to-tree-btn {
+    top: 90px;
+}
+</style>
+
+<style>
+    .page-transition {
+        opacity: 0;
+        animation: fadeIn 0.5s ease-in forwards;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+
+
+{% endblock %}
+
+{% block content %}
+
+{% include 'header/headerbar.html' %}
+{% include 'header/header-route.html' with btn_text="" %}
+<div class="page-transition relative">
+
+    <!-- popup notificatio  -->
+    <div id="notification-modal" class="page-transition absolute hidden inset-0 bg-black bg-opacity-50 flex items-center justify-center transition-opacity duration-300 ease-in-out" style="z-index: 1001;">
+        <!-- Modal Content -->
+        <div class="bg-white rounded-lg p-8 max-w-md mx-4 relative transform transition-transform duration-300 ease-in-out">
+            <!-- Notification Content -->
+            <div class="text-center">
+                <div class="text-green-500 mb-4 flex justify-center content-center">
+                    <div class="center-wave flex justify-center content-center w-40 h-40">
+                        <dotlottie-player src="{% static 'updateapp/lottie/wave.lottie' %}" background="transparent" speed="1" loop autoplay></dotlottie-player>
+                    </div>
+                </div>
+                <div class="text-xl font-bold mb-4 p-4 leading-relaxed" id="modal-title">
+                    {% if error %}
+                        <p>{{error}}</p>
+                        <script>
+                            setTimeout(function() {
+                                window.history.back();
+                            }, 2000);
+                        </script>
+                    {% else %}
+                        <p id="message-paragraph" class="bg-gradient-to-r from-purple-600 to-green-500 text-transparent bg-clip-text">
+                            कृपया प्रतीक्षा करें, हम आपके पौधे की स्थिति की जाँच कर रहे हैं
+                        </p>
+                        <p id="date-paragraph" class="bg-gradient-to-r from-red-600 to-red-500 text-transparent bg-clip-text">
+
+                        </p>
+                        <input id="last-planted-date" type="text" value="{{last_update_details}}" class="rounded-lg border border-gray-300 p-2 hidden">
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+    function getCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    const accuracy = position.coords.accuracy;
+                    setTimeout(function() {
+                        closeModal();
+                        }, 2000);
+                },
+                (error) => {
+                    console.error('Error getting location:', error.message);
+                    document.getElementById('message-paragraph').textContent = 'कृपया अपने डिवाइस का लोकेशन ऑन करें';
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                }
+            );
+        } else {
+            console.error('Geolocation is not supported by this browser');
+            document.getElementById('message-paragraph').textContent = 'कृपया अपने डिवाइस का लोकेशन ऑन करें';
+        }
+    }
+
+    function showNotification() {
+        openModal();
+        // Get the last planted date from the input
+        const lastPlantedDate = document.getElementById('last-planted-date').value;
+
+        if (lastPlantedDate) {
+            // Convert dates to milliseconds for comparison
+            const lastDate = new Date(lastPlantedDate);
+            const today = new Date();
+
+            // Set both dates to midnight (00:00:00) to remove time differences
+            lastDate.setHours(0, 0, 0, 0);
+            today.setHours(0, 0, 0, 0);
+
+            // Calculate difference in days
+            const diffTime = Math.abs(today - lastDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            console.log(diffDays,"dddddd map134")
+            if (diffDays <= 3){
+                document.getElementById('message-paragraph').textContent = 'नया अपडेट करने के लिए कम से कम 3 महीने का अंतर होना चाहिए';
+                document.getElementById('date-paragraph').textContent = 'Last updated date: ' + lastDate.toLocaleDateString();
+                setTimeout(function() {
+                    window.history.back();
+                }, 3500);
+            }else{getCurrentLocation();}
+        } else {
+            getCurrentLocation();
+            
+        }
+    }
+
+
+    function closeModal() {
+        const modal = document.getElementById('notification-modal');
+        modal.classList.add('hidden');
+    }
+
+    function openModal() {
+        const modal = document.getElementById('notification-modal');
+        modal.classList.remove('hidden');
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100%';
+        modal.style.height = '100%';
+        modal.style.zIndex = '9999';
+    }
+
+    window.onload = function() {
+        showNotification();
+        
+    }
+    </script>
+
+        <!-- pop notification end  -->
+
+        <!-- Map -->
+        <div class="w-full flex flex-col items-center relative" style="height: calc(100vh - 150px);">
+            <div id="map"></div>
+            <div class="flex justify-between mt-4">
+                <!-- Refresh button on the left -->
+                <div class="flex justify-end absolute bottom-24 right-3">
+                    <button id="refresh-btn" class="bg-green-300 hover:bg-green-500 text-white font-bold py-2 px-4 rounded shadow-md">
+                        <span class="flex justify-center items-center">🔄</span>
+                    </button>
+                </div>
+            
+                <!-- Other buttons in the center -->
+                <div class="flex justify-center space-x-2">
+                    <button id="zoom-to-current-btn" class="border-blue-500 border-2 bg-blue-300 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded shadow-md">
+                        <span class="flex justify-center items-center">👨</span>
+                    </button>
+                    <button id="zoom-to-tree-btn" class="border-red-500 border-2 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow-md">
+                        <span class="flex justify-center items-center">🌳</span>
+                    </button>
+                </div>
+
+                <!-- Refresh button on the left -->
+                <div class="flex">
+                    <input id="last-planted-date" type="text" value="{{last_update_details}}" class="rounded-lg border border-gray-300 p-2 hidden">
+                    <div id="warning-10m" class="hidden hover:bg-red-300 text-white font-bold border-2 border-red-500 text-xl py-2 px-4 rounded shadow-md absolute bottom-40 left-10 mr-6 animate-bounce flex justify-center items-center flex-col" style=" z-index: 400; background-color: rgba(248, 31, 23, 0.589);">
+                        <p class="text-center">कृपया पौधे के 10 मीटर के दायरे में आएं ताकि उसकी स्थिति अपडेट की जा सके<br>या,</p>
+                        <button onclick="window.location.replace(`/update-phase/hi/aliveplant/?locup=true&treeID={{tree_id}}&districtcode={{District_code}}`)" class="bg-white hover:bg-red-100 text-red-500 font-bold py-2 px-4 rounded shadow-md mt-5">
+                            <span class="flex justify-center items-center">पुनः जियोटैग करें</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </div>
+
+        
+        <!-- Initialize Leaflet Map -->
+        <script>
+
+        let currentMarker;
+        let treeMarker;
+        let line;
+        let circle;
+
+        function initMap() {
+            // Get tree location from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const lat = parseFloat(urlParams.get('lat')) || 26.836743;
+            const lng = parseFloat(urlParams.get('long')) || 75.833990;
+
+            const map = L.map('map').setView([lat, lng], 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            }).addTo(map);
+
+            const treeIcon = L.icon({
+                iconUrl: "{% static 'updateapp/tree.png' %}",
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
+                popupAnchor: [0, -32],
+            });
+
+            const humanIcon = L.icon({
+                iconUrl: "{% static 'updateapp/human.png' %}",
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
+                popupAnchor: [0, -32],
+            });
+
+            treeMarker = L.marker([lat, lng], { icon: treeIcon })
+                .addTo(map)
+                .bindPopup("<b>Tree Location</b><br>Lat: " + lat + ", Long: " + lng)
+                .openPopup();
+
+            circle = L.circle([lat, lng], {
+                color: 'red',
+                fillColor: '#f03',
+                fillOpacity: 0.5,
+                radius: 10
+            }).addTo(map);
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const currentLat = position.coords.latitude;
+                    const currentLng = position.coords.longitude;
+                    const accuracy = position.coords.accuracy;
+
+                    const treeLocation = L.latLng(lat, lng);
+                    const currentLocation = L.latLng(currentLat, currentLng);
+                    const distance = (treeLocation.distanceTo(currentLocation) / 1000).toFixed(2);
+
+                    sendwarningdistan(distance)
+
+                    currentMarker = L.marker([currentLat, currentLng], { icon: humanIcon })
+                        .addTo(map)
+                        .bindPopup(
+                            `<b>Your Location</b><br>Lat: ${currentLat}, Long: ${currentLng}<br>Accuracy: ${accuracy} meters<br>Distance to tree: ${distance} kilometers`
+                        )
+                        .openPopup();
+
+                    L.circle([currentLat, currentLng], {
+                        color: 'blue',
+                        fillColor: '#03f',
+                        fillOpacity: 0.5,
+                        radius: 10
+                    }).addTo(map);
+
+                    line = L.polyline([[lat, lng], [currentLat, currentLng]], {color: 'red'}).addTo(map);
+
+                    map.flyTo([currentLat, currentLng], 15, {
+                        animate: true,
+                        duration: 1.5
+                    });
+                });
+            }
+
+            // Button event handlers
+            document.getElementById('refresh-btn').addEventListener('click', function() {
+                if (currentMarker) currentMarker.remove();
+                if (line) line.remove();
+                if (circle) circle.remove();
+                
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        const currentLat = position.coords.latitude;
+                        const currentLng = position.coords.longitude;
+                        const accuracy = position.coords.accuracy;
+
+                        map.flyTo([lat, lng], 18, {
+                            animate: true,
+                            duration: 1.5
+                        });
+
+                        setTimeout(function() {
+                            currentMarker = L.marker([currentLat, currentLng], { icon: humanIcon })
+                                .addTo(map)
+                                .bindPopup("<b>Your Location</b><br>Lat: " + currentLat + ", Long: " + currentLng + "<br>Accuracy: " + accuracy + " meters");
+
+                            L.circle([currentLat, currentLng], {
+                                color: 'blue',
+                                fillColor: '#03f',
+                                fillOpacity: 0.5,
+                                radius: 10
+                            }).addTo(map);
+
+                            line = L.polyline([[lat, lng], [currentLat, currentLng]], {color: 'red'}).addTo(map);
+
+                            map.flyTo([currentLat, currentLng], 9, {
+                                animate: true,
+                                duration: 1.5
+                            });
+                        }, 2000);
+                    });
+                }
+            });
+
+            document.getElementById('zoom-to-current-btn').addEventListener('click', function() {
+                if (currentMarker) {
+                    map.flyTo([currentMarker.getLatLng().lat, currentMarker.getLatLng().lng], 18, {
+                        animate: true,
+                        duration: 1.5
+                    });
+                }
+            });
+
+            document.getElementById('zoom-to-tree-btn').addEventListener('click', function() {
+                if (treeMarker) {
+                    map.flyTo([treeMarker.getLatLng().lat, treeMarker.getLatLng().lng], 18, {
+                        animate: true,
+                        duration: 1.5
+                    });
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", initMap);
+
+        function sendwarningdistan(distance) {
+            const warningElement = document.getElementById('warning-10m');
+            if (distance >= 0.07) { // 0.01 km = 10 meters
+                warningElement.classList.remove('hidden');
+            } else {
+                warningElement.classList.add('hidden');
+                
+                setTimeout(function() {
+                    window.location.replace(`/update-phase/hi/aliveplant/?treeID={{tree_id}}&districtcode={{District_code}}`);
+                }, 1000);
+            }
+        }
+
+        </script>
+
+{% endblock %}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+        #qr-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR Code Generator</h1>
+    <form id="qr-form">
+        <input type="text" id="qr-text" placeholder="Enter text for QR code" required>
+        <button type="submit">Generate QR Code</button>
+    </form>
+
+    <div id="qr-container"></div>
+
+    <!-- Include the qrcode.min.js library -->
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script>
+        // Handle form submission to generate QR Code
+        document.getElementById('qr-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get the text input value
+            var text = document.getElementById('qr-text').value;
+            
+            // Clear the previous QR code if it exists
+            document.getElementById('qr-container').innerHTML = '';
+
+            // Create the new QR code
+            var qrcode = new QRCode(document.getElementById("qr-container"), {
+                text: text,
+                width: 256,
+                height: 256
+            });
+        });
+    </script>
+</body>
+</html>

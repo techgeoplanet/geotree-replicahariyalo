@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Appreciation</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(120deg, #a8e063 0%, #56ab2f 10%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100svh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            text-align: center;
+            animation: pop-in 0.5s ease-out;
+        }
+        @keyframes pop-in {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        h1 {
+            color: #444;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .congratulations {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        .btn-open-modal {
+            padding: 10px 20px;
+            background: linear-gradient(90deg, #36d1dc, #5b86e5);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            font-size: 16px;
+            outline: none;
+        }
+        .btn-open-modal:hover {
+            transform: scale(1.1);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            animation: fade-in 0.5s ease;
+        }
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+            border-radius: 15px;
+            text-align: center;
+            animation: slide-down 0.5s ease;
+        }
+        @keyframes slide-down {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .close {
+            color: white;
+            position: absolute;
+            right: 25px;
+            top: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .close:hover,
+        .close:focus {
+            color: #000;
+        }
+        h3 {
+            margin: 5px 0 15px;
+            color: white;
+            font-size: 20px;
+        }
+        .modal-header {
+            padding: 10px 0;
+            background: #5cb85c;
+            color: white;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            font-size: 20px;
+        }
+        .modal-body {
+            padding: 10px 0;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+        }
+        .modal-footer {
+            padding: 15px 0;
+            text-align: center;
+            background-color: #f2f2f2;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: linear-gradient(90deg, #ff512f, #dd2476);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            outline: none;
+        }
+        .btn:hover {
+            transform: scale(1.1);
+        }
+        .input-name {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 30px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            outline: none;
+        }
+        .input-name:focus {
+            border-color: #5b86e5;
+        }
+        .file-upload {
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        .file-upload input {
+            display: none;
+        }
+        .file-upload label {
+            display: inline-block;
+            padding: 10px 20px;
+            color: white;
+            background-color: #36d1dc;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .file-upload label:hover {
+            background-color: #5b86e5;
+            transform: scale(1.1);
+        }
+        .img-preview-container {
+            position: relative;
+            display: none;
+            width: 150px;
+            height: 150px;
+            margin-top: 10px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .img-preview {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .remove-photo {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: transparent;
+            color: black;
+            border: none;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            line-height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .remove-photo:hover {
+            background-color: transparent;
+        }
+        .skip{
+            color: #000;
+            font-size: 1rem;
+        }
+
+        /* Mirrored Image CSS */
+        .mirrored {
+            transform: scaleX(-1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Certificate of Appreciation</h1>
+        <div class="congratulations">
+            <p>Congratulations! You have contributed to the Green Environment.</p>
+            <button class="btn-open-modal" onclick="openModal()">Get Certificate</button><br><br>
+            <a href="" class="skip">Skip</a>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h3>Generate Your Certificate</h3>
+            </div>
+            <div class="modal-body">
+                <label for="inputName">Enter your name:</label>
+                <input type="text" id="inputName" class="input-name" placeholder="Enter your name" pattern="[A-Za-z\s]*" title="Please enter alphabets only">
+                <div class="file-upload">
+                    <input type="file" id="fileUpload" accept="image/*" capture="user" onchange="previewImage(event)">
+                    <label for="fileUpload">Take a Photo</label>
+                </div>
+                <div class="img-preview-container">
+                    <img id="imgPreview" class="img-preview" alt="Image Preview">
+                    <button class="remove-photo" onclick="removePhoto()">&times;</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="generateCertificate()">Generate Certificate</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var modal = document.getElementById('myModal');
+        var inputName = document.getElementById("inputName");
+        var fileUpload = document.getElementById('fileUpload');
+        var imgPreviewContainer = document.querySelector('.img-preview-container');
+        var imgPreview = document.getElementById('imgPreview');
+        var fileUploadLabel = document.querySelector('.file-upload label');
+
+        function openModal() {
+            modal.style.display = "flex";
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+        }
+
+        inputName.addEventListener('input', function(event) {
+            var inputValue = event.target.value;
+            var sanitizedValue = inputValue.replace(/[^a-zA-Z\s]/g, '');
+            if (inputValue !== sanitizedValue) {
+                event.target.value = sanitizedValue;
+                alert("Only alphabets are allowed!");
+            }
+        });
+
+        function previewImage(event) {
+            imgPreview.src = URL.createObjectURL(event.target.files[0]);
+            imgPreviewContainer.style.display = 'block';
+            fileUploadLabel.style.display = 'none';
+
+            // Apply the mirrored effect
+            imgPreview.classList.add('mirrored');
+        }
+
+        function removePhoto() {
+            imgPreview.src = '';
+            imgPreviewContainer.style.display = 'none';
+            fileUpload.value = '';
+            fileUploadLabel.style.display = 'inline-block';
+
+            // Remove the mirrored effect
+            imgPreview.classList.remove('mirrored');
+        }
+
+        function generateCertificate() {
+            var name = inputName.value.trim();
+            var file = fileUpload.files[0];
+
+            if (name === "") {
+                alert("Please enter your name.");
+                return;
+            }
+
+            if (!file) {
+                alert("Please upload an image.");
+                return;
+            }
+
+            alert("Certificate for " + name + " generated successfully!");
+            resetForm();
+            closeModal();
+        }
+
+        function resetForm() {
+            inputName.value = '';
+            removePhoto();  // This will reset the photo and show the "Take a Photo" button again
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

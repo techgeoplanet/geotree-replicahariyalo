@@ -1,0 +1,389 @@
+{% extends "portal_base.html" %}
+{% load static %}
+
+{% block title %}
+नेवबार और अनुभागों के साथ वेबपेज
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'portal_dash/portaldash.css' %}">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Leaflet.js -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js"></script>
+<script src="https://unpkg.com/togeojson@0.16.0/dist/togeojson.js"></script>
+<script src="https://unpkg.com/leaflet-providers"></script>
+
+<!-- Include XLSX for Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<style>
+    .round-btn {
+        background-color: #4CAF50; /* Green background */
+        border: none; /* Remove borders */
+        color: white; /* White text */
+        padding: 5px 20px; /* Some padding */
+        text-align: center; /* Centered text */
+        text-decoration: none; /* Remove underline */
+        display: inline-block; /* Make the container element inline-block */
+        font-size: 14px; /* Increase font size */
+        border-radius: 12px; /* Rounded corners */
+        cursor: pointer; /* Pointer/hand icon */
+        transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+        margin-top: 5px;
+        }
+
+    .round-btn:hover {
+        background-color: #45a049; /* Darker green on hover */
+        }
+
+</style>
+{% endblock %}
+
+
+
+{% block content %}
+    {% include 'header.html' %}
+    <main>
+        {% include 'header-route-opr-btn.html' with SiteVisit=SiteVisit %}
+        <section>
+            <button id="backButton" class="round-btn">Back</button>
+        </section>
+        <div class="color_ramp" style="margin-top: 5px;">{% include 'color_ramp/color.html' %}</div>
+        <section class="section-one">
+            <div class="left-part">
+                <div class="additional-page " style= "height:540px; border-radius:15px;border: 3px solid black; padding: 10px;">
+                    <!-- <iframe src="portaldash/portal_map.html" width="100%" height="540px" style="border-radius:15px;border: 3px solid black; box-shadow:8px rgba(0, 0, 0, 0.1);"></iframe> -->
+                    {% include 'portal_gpmap.html' with BLOCK_C=BLOCK_C aggregated_data_list=aggregated_data_list %}
+                </div>
+                <div class="status-table">
+                    <p>{{BLOCK_N_DATA}} में कुल वृक्ष ब्लॉकवार वितरण 
+                        Total Plantation : (INDIVIDUAL + BLOCK) 
+                        <Span style="color: rgb(43, 151, 29); font-weight: 600; font-size: large;" id = "totalh4"></Span>
+                        <Span style="color: rgb(151, 29, 29); font-weight: 600; font-size: large;"> + </Span>
+                        <Span style="color: rgb(43, 151, 29); font-weight: 600; font-size: large;" id = "totalh5"></Span>
+                        <Span style="color: rgb(151, 29, 29); font-weight: 600; font-size: large;"> = </Span>
+                        <Span style="color: rgb(151, 29, 29); font-weight: 600; font-size: large;" id = "totalh6"></Span>
+                    </p>
+                    <div class="download-btn-section dflex" style="justify-content: space-between;">
+                        <p>{% now "d F Y" %} तक</p>
+                        {% if user.is_staff %}
+                        <button id="downloadBtn">Download Data</button>
+                        {% endif %}
+                    </div>
+                    <table id="leftTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ग्राम पंचायत</th>
+                                <th>कुल सत्यापित व्यक्तिगत वृक्ष</th>
+                                <th>कुल व्यक्तिगत वृक्ष</th>
+                                <th>कुल सत्यापित ब्लॉक वृक्ष</th>
+                                <th>कुल ब्लॉक वृक्षारोपण</th>
+
+                            </tr>
+                        </thead>
+
+                    <tbody> 
+                        <!-- change in tabe    -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Total</th>
+                            <th id="total-tag-tree-verify"></th>
+                            <th id="total-tag-tree-non-verify"></th>
+                            <th id="total-block-plantation-verify"></th>
+                            <th id="total-block-plantation-non-verify"></th>
+                        </tr>
+                    </tfoot>
+
+                    </table>
+                </div>
+                <!-- <div class="map"> -->
+                    <!-- <h3>मानचित्र</h3> -->
+                    <!-- <div id="map" class="map"></div> -->
+                    <!-- <div class="map">
+                        <img src="{% static 'portal_map/rajasthan_ponits.png' %}" style="height: 100%; width: 100%;">
+                    </div>
+                </div> -->
+
+                <!-- KML अपलोड मोडल -->
+                <!-- <div id="kmlUploadModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-button">&times;</span>
+                        <h2>KML अपलोड करें</h2>
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <input type="file" id="kmlFileInput" name="kmlFile" class="file-input" accept=".kml">
+                            <button type="submit" class="upload-button">अपलोड करें</button>
+                        </form>
+                    </div>
+                </div> -->
+
+                <!-- सर्वेक्षण बटन -->
+                <!-- <div class="survey">
+                    <div class="survey-tasks">
+                        <button id="uploadKmlButton">KML अपलोड करें</button>
+                        <button class="add-user" id="addUserButton">उपयोगकर्ता जोड़ें</button>
+                        <button class="download-report" id="downloadReportButton">रिपोर्ट डाउनलोड करें</button>
+                    </div>
+                </div> -->
+            </div>
+            <div class="right-part">
+                <!-- नया इंटरैक्टिव अनुभाग -->
+                <div class="status-tree-plantation">
+                    <h2 style="padding-left: 10px">
+                        <span style="color: #08519C;">{{BLOCK_N_DATA}} | </span>
+                        <span style="color: #FF9800;">वृक्षारोपण की स्थिति: </span>
+                    </h2>
+                    <div class="status-details">
+                        <div class="status-item1">
+                            <p style="color: #795548">कुल वृक्षों की संख्या दिनांक {% now "d F Y" %} तक</p>
+                            <h3 style="color: rgb(43, 151, 29);">+<Span style="color: rgb(43, 151, 29); font-weight: 600; font-size: large;" id = "totalh3"></Span></h3>
+                        </div>
+                        <div class="status-item2">
+                            <p style="color: #007BFF">कुल पौधारोपण साइट्स दिनांक {% now "d F Y" %} तक</p>
+                            <h3 style="color: #007BFF">{{TotalNumberOfInputsInBlockPlantations}}</h3>
+                        </div>
+                        <div class="status-item3">
+                            <p style="color: #008000">पौधों की प्रजातियों की संख्या दिनांक {% now "d F Y" %} तक</p>
+                            <h3 style="color: #008000">+{{number_of_species}}</h3>
+                        </div>
+                    </div>
+                    <div class="additional-details">
+                        <div style="color: #3F51B5">
+                            <p>दिनांक {% now "d F Y" %} तक कुल हेक्टेयर</p>
+                            <h3>Coming Soon ...</h3>
+                        </div>
+                        <div style="color: #3F51B5">
+                            <p>कुल ग्राम पंचायत की संख्या</p>
+                            <h3 id="totalRows" ></h3>
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- <div class="remaining-trees">
+                        <p>बचे हुए वृक्ष दिनांक {% now "d F Y" %} तक</p>
+                        <h3>--</h3>
+                    </div> -->
+                </div>
+
+
+                <div class="growth-chart">
+                    <h3>विकास चार्ट:</h3>
+                    <canvas id="myChart" width="400" height="200"></canvas>
+                </div>
+
+
+                <div class="department-distribution">
+                    <h3>विभागवार वृक्षारोपण वितरण</h3>
+                    <table id="departmentTable">
+                        <thead>
+                            <tr>
+                                <th>विभाग का नाम</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in DepartmentList %}
+                            <tr>
+                                <td>{{ entry.department_name }}</td>
+                                <td><a class="upload-button" 
+                                style="background-color: #800000; padding: 5px 10px; text-decoration: none;" 
+                                href="{% url 'departmentdatagp' %}?blockid={{BLOCK_C}}&blockname={{BLOCK_N_DATA}}&dep={{ entry.id }}&depName={{ entry.department_name }}" 
+                                target="_blank">View</a></td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    {% include 'hi/footer/footer.html' %}
+
+    <script>
+        document.getElementById("backButton").addEventListener("click", function() {
+            window.history.back(); // Navigate back to the previous page
+        });
+
+    </script>
+
+    <script>
+        // Check if DataTable is already initialized
+        if ($.fn.DataTable.isDataTable('#departmentTable')) {
+            // Destroy the existing instance
+            $('#departmentTable').DataTable().destroy();
+        }
+        
+        $(document).ready(function() {
+            $('#departmentTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Download Excel',
+                        exportOptions: {
+                            columns: ':visible'
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+
+    <script>
+        // Pass Django context data to JavaScript
+        var aggregated_data_list = {{ aggregated_data_list |safe }};
+        // Log the data to the console
+        // console.log("Aggregated Data:", aggregated_data_list);
+    
+        $(document).ready(function() {
+            // Populate table with aggregated data
+            var tableBody = $('#leftTable tbody');
+            aggregated_data_list.forEach(function(item) {
+                var row = '<tr>' +
+                    '<td>' + item.GP_FINAL_N + '</td>' +
+                    '<td>' + item.total_tag_tree_verify + '</td>' +
+                    '<td>' + item.total_tag_tree_non_verify + '</td>' +
+                    '<td>' + item.total_block_plantation_verify + '</td>' +
+                    '<td>' + item.total_block_plantation_non_verify + '</td>' +
+                    '</tr>';
+                tableBody.append(row);
+            });
+
+            // Update the total number of rows
+            var totalRowsElement = document.getElementById('totalRows');
+            var totalRows = aggregated_data_list.length;
+            totalRowsElement.innerHTML = totalRows;
+    
+            // Initialize DataTables and calculate totals
+            var table = $('#leftTable').DataTable({
+                "footerCallback": function (row, data, start, end, display) {
+                    var api = this.api();
+    
+                    // Calculate totals
+                    var totalTagTreeVerify = api.column(1).data().reduce(function (a, b) {
+                        return parseInt(a, 10) + parseInt(b, 10);
+                    }, 0);
+    
+                    var totalTagTreeNonVerify = api.column(2).data().reduce(function (a, b) {
+                        return parseInt(a, 10) + parseInt(b, 10);
+                    }, 0);
+    
+                    var totalBlockPlantationVerify = api.column(3).data().reduce(function (a, b) {
+                        return parseInt(a, 10) + parseInt(b, 10);
+                    }, 0);
+    
+                    var totalBlockPlantationNonVerify = api.column(4).data().reduce(function (a, b) {
+                        return parseInt(a, 10) + parseInt(b, 10);
+                    }, 0);
+    
+                    // Update footer
+                    $(api.column(1).footer()).html(totalTagTreeVerify);
+                    $(api.column(2).footer()).html(totalTagTreeNonVerify);
+                    $(api.column(3).footer()).html(totalBlockPlantationVerify);
+                    $(api.column(4).footer()).html(totalBlockPlantationNonVerify);
+    
+                    // Calculate and update total of non-verified
+                    var totalNonVerify = totalTagTreeNonVerify + totalBlockPlantationNonVerify;
+                    $('#totalh3').html(totalNonVerify);
+                    $('#totalh4').html(totalTagTreeNonVerify);
+                    $('#totalh5').html(totalBlockPlantationNonVerify);
+                    $('#totalh6').html(totalNonVerify);
+                }
+            });
+            document.getElementById('downloadBtn').addEventListener('click', function() {
+                // Disable pagination
+                table.page.len(-1).draw();
+
+                // Export the table
+                var currentDateTime = new Date().toISOString().replace(/T/, '_').replace(/\..+/, '');
+                var filename = currentDateTime + '_hariaylorajasthan';
+                exportTableToExcel('leftTable', filename);
+
+                // Restore pagination
+                table.page.len(10).draw();
+            });
+        });
+
+       
+
+        function exportTableToExcel(tableID, filename = '') {
+            var wb = XLSX.utils.book_new();
+            var ws = XLSX.utils.table_to_sheet(document.getElementById(tableID));
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+            XLSX.writeFile(wb, filename ? filename + '.xlsx' : 'table-data.xlsx');
+        }
+
+        var ctx = document.getElementById('myChart').getContext('2d');
+
+        // Extracting labels and data from aggregated_data_list
+        var labels = aggregated_data_list.map(item => item.GP_FINAL_N);
+        var totalTagTreeVerify = aggregated_data_list.map(item => item.total_tag_tree_verify);
+        var totalTagTreeNonVerify = aggregated_data_list.map(item => item.total_tag_tree_non_verify);
+        var totalBlockPlantationVerify = aggregated_data_list.map(item => item.total_block_plantation_verify);
+        var totalBlockPlantationNonVerify = aggregated_data_list.map(item => item.total_block_plantation_non_verify);
+
+        var chartData = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Tagged Tree Verified',
+                    data: totalTagTreeVerify,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Tagged Tree Non-Verified',
+                    data: totalTagTreeNonVerify,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Block Plantation Verified',
+                    data: totalBlockPlantationVerify,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Block Plantation Non-Verified',
+                    data: totalBlockPlantationNonVerify,
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    borderWidth: 1
+                }
+            ]
+        };
+
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: chartData,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        </script>
+
+    <script src="{%static 'portal_dash/portaldash.js' %}"></script>
+{% endblock %}

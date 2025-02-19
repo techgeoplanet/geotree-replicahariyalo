@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Camera Image Capture</title>
+</head>
+
+<body>
+    <h1>Camera Image Capture Example 2</h1>
+    <video id="videoElement" autoplay></video>
+    <button onclick="startCamera()">Start Camera</button>
+    <button onclick="captureImage()">Capture Image</button>
+    <canvas id="canvasElement" style="display: none;"></canvas>
+    <img id="capturedImage" src="#" alt="Captured Image" style="max-width: 100%; display: none;">
+    <div id="errorDisplay" style="color: red; display: none;"></div>
+
+    <script>
+        var video = document.getElementById('videoElement');
+        var canvas = document.getElementById('canvasElement');
+        var image = document.getElementById('capturedImage');
+        var errorDisplay = document.getElementById('errorDisplay');
+        var mediaStream;
+
+        function startCamera() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    mediaStream = stream;
+                    video.srcObject = stream;
+                })
+                .catch(function (error) {
+                    console.log("Error accessing camera:", error);
+                    errorDisplay.textContent = "Error accessing camera: " + error.message;
+                    errorDisplay.style.display = 'block';
+                });
+        }
+
+        function captureImage() {
+            if (mediaStream) {
+                var context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                var imageDataURL = canvas.toDataURL('image/png');
+                image.src = imageDataURL;
+                image.style.display = 'block';
+                errorDisplay.style.display = 'none'; // Hide any previous error messages
+            } else {
+                errorDisplay.textContent = "Camera is not started. Please start the camera first.";
+                errorDisplay.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+
+</html>

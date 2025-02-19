@@ -1,0 +1,50 @@
+{% load static %}
+<head>
+    <link rel="stylesheet" href="{% static 'components/color-ramp.css' %}">
+</head>
+<body>
+    <div id="container_color">
+        <div id="colorBar"></div>
+        <div id="labelStart" class="label">0%</div>
+        <div id="labelEnd" class="label">100%</div>
+    </div>
+
+    <script>
+        // Define the color ramp
+        const colorRamp = [
+            { "value": 0, "color": "#FF9B0F" },
+            { "value": 5.00, "color": "#F49B0F" },
+            { "value": 10.00, "color": "#EA9B0F" },
+            { "value": 15.00, "color": "#DF9C10" },
+            { "value": 20.00, "color": "#D59C10" },
+            { "value": 25.00, "color": "#CA9D11" },
+            { "value": 30.00, "color": "#C09D11" },
+            { "value": 35.00, "color": "#B59D12" },
+            { "value": 40.00, "color": "#AB9E12" },
+            { "value": 45.00, "color": "#A09E13" },
+            { "value": 50.00, "color": "#969F13" },
+            { "value": 55.00, "color": "#8B9F13" },
+            { "value": 60.00, "color": "#819F14" },
+            { "value": 65.00, "color": "#76A014" },
+            { "value": 70.00, "color": "#6CA015" },
+            { "value": 75.00, "color": "#61A115" },
+            { "value": 80.00, "color": "#57A116" },
+            { "value": 85.00, "color": "#4CA116" },
+            { "value": 90.00, "color": "#42A217" },
+            { "value": 95.00, "color": "#37A217" },
+            { "value": 100, "color": "#2DA318" }
+        ];
+
+        // Get the color bar container
+        const colorBar = document.getElementById('colorBar');
+
+        // Create color segments based on the color ramp
+        colorRamp.forEach(segment => {
+            const div = document.createElement('div');
+            div.className = 'colorSegment';
+            div.style.backgroundColor = segment.color;
+            colorBar.appendChild(div);
+        });
+    </script>
+</body>
+</html>

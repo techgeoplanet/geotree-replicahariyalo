@@ -1,0 +1,149 @@
+{% extends "subweb-base.html"%}
+{% load static %}
+{% block title %}
+ग्रीन प्रोजेक्ट्स होमपेज
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'home/css/stylesh.css'%}">
+{% endblock %}
+
+
+{% block content %}
+{% include 'header/headerbar.html' %}
+{% include 'header/backbg.html' %}
+
+<div class="mainContainer fadeIn">
+
+    <div style="width: 100%; display: flex; justify-content:space-between; align-items: center; flex-direction: row;">
+        <div class="left-side-btn" style="margin-left: 15px;">
+            <a href="{% url 'hi-plantationtips' %}">
+                <button
+                    style="padding:5px 10px; border-radius: 10px; border: none; background-color: #0b5c30; font-size: 18px; color: #fff;">
+                    वृक्षारोपण<br> सुझाव
+                </button>
+            </a>
+        </div>
+        <div class="right-side-btn"
+            style="display: flex; justify-content: center; align-items: center; flex-direction: row;">
+            <!-- <button id="language-btn" class="fas fa-language lang"
+                style="font-size: 35px; padding-right: 10px;"></button> -->
+            <a href="{% url 'logout_view' %}">
+                <button
+                    style="padding:5px 10px; border-radius: 10px; border: none; background-color: #0b5c30; font-size: 18px; color: #fff; margin:0 10px ;">
+                    लॉगआउट
+                </button>
+                <!-- <button class="fa fa-sign-out lang" style="font-size: 30px; padding-right: 10px;"></button> -->
+            </a>
+        </div>
+    </div>
+    <div id="language-popup" class="language-popup">
+        <label for="language-select">भाषा चुनें</label>
+        <select id="language-select">
+            <option value="hi">हिंदी</option>
+            <option value="en">English</option>
+
+            <!-- Add more languages as needed -->
+        </select>
+        <button id="apply-btn">लागू</button>
+    </div>
+    <div class="section1">
+        <div id="addSection" class="section">
+
+            <div style="
+                display: flex;
+                justify-content: center;
+                animation: c;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+            ">
+                <div class="button button1" style="cursor: auto; background-image: url('{% static 'home/images/btn.webp' %}')">
+                    <p class="txt">अपने भविष्य का पौधा लगाएं
+                    </p>
+                    <div class="con">
+                        <a href="/hi/addplant/" class="add-button" id="add-button">पेड़ जोड़ें</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="moreSection" class="section">
+            <div class="fas-icon">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>अधिक विवरण</span>
+            </div>
+            <div class="link-row">
+                <a href="{% url 'hi-certificate' %}" class="link">प्रशस्ति पत्र डाउनलोड करें</a>
+                <a href="{% url 'hi-my_pvt_history' %}" class="link">पौधरोपण इतिहास</a>
+                <a href="{% url 'hi-rewards' %}" class="link">पुरस्कार अंक</a>
+                <a href="{% url 'hi-moreinformation' %}" class="link">अधिक जानकारी</a>
+            </div>
+        </div>
+    </div>
+    <div id="moreSection" class="section">
+        <a href="{% url 'portaldash' %}" target="_blank" class="playstore-btn flex justify-center items-center flex-row bg-pink-900 bg-opacity-60 shadow-2xl text-white text-xl p-1 px-4" style="border-radius: 20px 20px 0px 0px;" >
+            <p class="mr-2">डैशबोर्ड पर जाएं</p>
+            <!-- <i class="fa fa-chart-line" aria-hidden="true"></i> -->
+            <i class="fa-solid fa-up-right-from-square text-lg"></i>
+        </a>
+        <img src="{% static 'home/images/pre-post.webp' %}" alt="pemplet" style="width: 100%; border-radius: 0px 0px 20px 20px; margin-top: -2px;">
+        <img src="{% static 'home/images/pemplet.webp' %}" alt="pemplet" style="width: 100%; border-radius: 20px;" class="mt-2">
+    </div>
+</div>
+
+{% include 'hi/footer/footer.html' %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var element = document.querySelector('.fadeIn');
+
+        // Check if the element exists (optional but recommended)
+        if (element) {
+            // Add the class to trigger animation
+            element.classList.add('fadeIn-animate');
+        }
+    });
+
+    // document.getElementById('language-btn').addEventListener('click', function () {
+    //     var popup = document.getElementById('language-popup');
+    //     if (popup.style.display === 'none' || popup.style.display === '') {
+    //         popup.style.display = 'flex';
+    //     } else {
+    //         popup.style.display = 'none';
+    //     }
+    // });
+    document.getElementById('apply-btn').addEventListener('click', function () {
+        var selectedLanguage = document.getElementById('language-select').value;
+        // Add your logic to handle the language change here
+        console.log('Selected Language:', selectedLanguage);
+        // Hide the popup after applying
+        document.getElementById('language-popup').style.display = 'none';
+    });
+    // Optional: Close the popup if clicked outside
+    document.addEventListener('click', function (event) {
+        var popup = document.getElementById('language-popup');
+        var languageBtn = document.getElementById('language-btn');
+
+        // Check if popup and languageBtn elements exist
+        if (popup && languageBtn) {
+            // Check if the click is outside the popup and the language button
+            if (!popup.contains(event.target) && !languageBtn.contains(event.target)) {
+                popup.style.display = 'none';
+            }
+        }
+    });
+
+    document.getElementById('apply-btn').addEventListener('click', function () {
+        var selectedLanguage = document.getElementById('language-select').value;
+        var baseUrl = window.location.origin; // Get the base URL (e.g., http://example.com)
+
+        if (selectedLanguage === 'hi') {
+            window.location.href = baseUrl + '/hi/home';
+        } else {
+            window.location.href = baseUrl + '/home';
+        }
+    });
+
+</script>
+
+{% endblock %}

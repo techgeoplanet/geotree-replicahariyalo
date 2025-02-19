@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+छवि
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="{% static 'cameraImage/css/comp.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="main-section">
+    <div class="sub-main-section main-grid">
+
+        <!-- पहला ग्रिड आइटम -->
+        <div class="image-container">
+            <div class="image_c">
+                <button onclick="openCamera(this, 1)" class="imagecap_btn" id="imageCapBtn1"><i class="fa fa-picture-o" style="font-size: 30px; color: #ffff;"></i> <p>छवि कैप्चर करें</p></button>
+                <img id="capturedImage1" src="#" alt="Captured Image" style="max-width: 100%; display: none;"
+                    class="image">
+            </div>
+            <div class="image-text">
+                <p>स्थल तैयारी</p>
+            </div>
+            <div class="close hide" onclick="removeImage(this, 'imageCapBtn1', 'capturedImage1')"></div>
+        </div>
+
+        <!-- दूसरा ग्रिड आइटम -->
+        <div class="image-container">
+            <div class="image_c">
+                <button onclick="openCamera(this, 1)" class="imagecap_btn" id="imageCapBtn2"><i class="fa fa-picture-o" style="font-size: 30px; color: #ffff;"></i> <p>छवि कैप्चर करें</p></button>
+                <img id="capturedImage2" src="#" alt="Captured Image" style="max-width: 100%; display: none;"
+                    class="image">
+            </div>
+            <div class="image-text">
+                <p>खोदाई</p>
+            </div>
+            <div class="close hide" onclick="removeImage(this, 'imageCapBtn2', 'capturedImage2')"></div>
+        </div>
+
+        <!-- तीसरा ग्रिड आइटम -->
+        <div class="image-container">
+            <div class="image_c">
+                <button onclick="openCamera(this, 1)" class="imagecap_btn" id="imageCapBtn3"><i class="fa fa-picture-o" style="font-size: 30px; color: #ffff;"></i> <p>छवि कैप्चर करें</p></button>
+                <img id="capturedImage3" src="#" alt="Captured Image" style="max-width: 100%; display: none;"
+                    class="image">
+            </div>
+            <div class="image-text">
+                <p>पौधारोपण</p>
+            </div>
+            <div class="close hide" onclick="removeImage(this, 'imageCapBtn3', 'capturedImage3')"></div>
+        </div>
+
+        <!-- जरूरत अनुसार और छवि-कंटेनर डिव्हस जोडा जातो -->
+
+    </div>
+</div>
+
+<!-- मॉडल -->
+<div id="myModal" class="modal">
+    <span class="close-modal">&times;</span>
+    <img class="modal-content" id="modalImage">
+</div>
+
+<script>
+    // मॉडल जो स्थापित केला जातो
+    var modal = document.getElementById("myModal");
+
+    // छवि आणि मॉडलमध्ये तो सुरू करण्यासाठी आता किंवा त्यात प्रविष्ट करा
+    var modalImg = document.getElementById("modalImage");
+
+    // "छवि" सारख्या सर्व छव्या घेऊन त्यांच्यासोबत क्लिक ईवेंट शाखेतिल घेऊन त्यांची सुनवाई करा
+    var images = document.getElementsByClassName("image");
+    for (var i = 0; i < images.length; i++) {
+        images[i].onclick = function () {
+            modal.style.display = "block";
+            modalImg.src = this.src;
+        }
+    }
+
+    // मॉडल बंद करण्यासाठी <span> घेणारा घेता
+    var span = document.getElementsByClassName("close-modal")[0];
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    // जेव्हा वापरकर्ता <span> (x) वर क्लिक करतो, तेव्हा मॉडल बंद करा
+    modalImg.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    // कॅमेरा खोलण्यासाठी आणि छव्या कॅप्चर करण्यासाठी
+    function openCamera(button, numOfImages) {
+        let capturedImages = [];
+        let imageCounter = 0;
+
+        function captureImage() {
+            if (imageCounter < numOfImages) {
+                let input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                input.capture = 'camera';
+                input.onchange = function (event) {
+                    let file = event.target.files[0];
+                    let reader = new FileReader();
+                    reader.onload = function () {
+                        let image = button.nextElementSibling;
+                        image.src = reader.result;
+                        alert(image.src);
+                        image.style.display = 'block';
+                        button.style.display = 'none';
+                        let closeButton = button.parentElement.nextElementSibling.nextElementSibling;
+                        closeButton.classList.remove('hide');
+                        capturedImages.push(reader.result);
+                        imageCounter++;
+                        if (imageCounter < numOfImages) {
+                            captureImage();
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                };
+                input.click();
+            }
+        }
+        
+        captureImage();
+    }
+
+    // छवि काढण्याचे संकेत करण्यासाठी
+    function removeImage(closeButton, buttonId, imageId) {
+        let button = document.getElementById(buttonId);
+        let image = document.getElementById(imageId);
+        image.src = '#';
+        image.style.display = 'none';
+        button.style.display = 'inline';
+        closeButton.classList.add('hide');
+    }
+</script>
+
+{% endblock %}

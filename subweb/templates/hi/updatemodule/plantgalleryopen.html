@@ -1,0 +1,7 @@
+<script>
+    function redirectToGallery(active, treeId, districtC) {
+        // Construct the URL dynamically
+        const url = `{% url 'hiplantgallery' %}?pid=${active.toLowerCase()}-${treeId}&tbn=${districtC}`;
+        window.location.href = url; // Redirect the user
+    }
+</script>

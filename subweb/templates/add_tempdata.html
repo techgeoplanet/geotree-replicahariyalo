@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>CSRF Example</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- Include jQuery library -->
+    </head>
+
+    <body>
+        <h1>Submit Form</h1>
+        <h2></h2>
+        <form id="post-form">
+            {% csrf_token %}
+            <label for="data">Data:</label>
+            <input type="text" id="data" name="data" required>
+            <!-- <input type="text" id="data-2" name="data-2"> -->
+            <button type="submit">Submit</button>
+        </form>
+
+        {% if message %}
+        <p>{{ message }}</p>
+        <p>Submitted Data: {{ data }}</p>
+        {% endif %}
+
+        <a href="{% url 'logout_view' %}">Logout</a>
+
+        <script>
+            $(document).on('submit', '#post-form', function (e) {
+                e.preventDefault();
+            
+                var form = $('#post-form')[0]; // Get the form element
+                var formData = new FormData(form);
+                let dataSendUri = '/add-tempdata/';
+                formData.append('data', $('#data').val());
+            
+                fetch(dataSendUri, { // Use the variable directly
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Plant added successfully!'+data.data);
+                    } else {
+                        alert('Error' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('error occurred ');
+                });
+            });
+            </script>
+
+<!-- 
+        <script type="text/javascript">
+
+        $(document).on('submit', '#post-form', function (e) {
+            e.preventDefault();
+
+            var form = $('#post-form')[0]; // Get the form element
+            var formData = new FormData(form);
+            let dataSendUri = '/add-tempdata/';
+            formData.append('data', $('#data').val());
+
+            fetch(dataSendUri, { // Use the variable directly
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Plantation created successfully!');
+                } else {
+                    alert('Error creating plantation: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while creating the plantation.');
+            });
+        });
+
+
+        // $(document).on('submit', '#post-form', function (e) {
+        //     e.preventDefault();
+
+        //     var formData = new FormData(form);
+        //     let dataSendUri = '/add-tempdata/';
+        //     formData.append('data', $('#data').val());
+
+            
+
+        //     fetch('dataSendUri', {
+        //     method: 'POST',
+        //     headers: {
+        //         'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+        //     },
+        //     body: formData
+        //     })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.success) {
+        //             alert('Plantation created successfully!');
+        //         } else {
+        //             alert('Error creating plantation: ' + data.error);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error('Error:', error);
+        //         alert('An error occurred while creating the plantation.');
+        //     });
+        //     // $.ajax({
+        //     //     type: 'POST',
+        //     //     url: '/add-tempdata/',
+        //     //     data: {
+        //     //         data: $('#data').val(),
+        //     //         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+        //     //     },
+        //     //     dataType: 'json',  // Ensure that the expected response type is JSON
+        //     //     success: function (response) {
+        //     //         // Parse JSON response
+        //     //         console.log(response);
+        //     //         $('h2').html(response.data);  // Assuming 'foo' is the key in your JSON response
+        //     //     },
+        //     //     error: function (xhr, status, error) {
+        //     //         // Handle error
+        //     //         console.error(xhr.responseText);
+        //     //     }
+        //     // });
+        //     });
+    
+    
+        </script> -->
+
+    </body>
+
+</html>

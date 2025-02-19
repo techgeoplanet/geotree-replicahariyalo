@@ -1,0 +1,72 @@
+{% extends "subweb-base.html" %}
+{% load static %}
+
+{% block title %}
+पुरस्कार और प्रमाणपत्र
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'rewards/css/reward.css' %}">
+{% endblock %}
+
+{% block content %}
+{% include 'header/headerbar.html' %}
+{% include 'header/backbg.html' %}
+{% include 'header/header-route.html' with btn_text="पुरस्कार" %}
+<div class="mainContainer">
+    <!-- Tree Points Section -->
+    <section class="points-section">
+        <div class="points-info">
+            <h2>1 पेड़ लगाया = 1 पेड़ बिंदु</h2>
+            <img src="{% static 'rewards/images/coin_tree.webp' %}" alt="Tree Icon" class="tree-icon">
+        </div>
+        <div class="points-total">
+            <h3 style="display: flex; justify-content: center; align-items: center;">कुल बिंदु: <img src="{% static 'rewards/images/coin_tree.webp' %}" alt="Tree Icon" style="width: 24px; height: 24px; object-fit: fill; margin-left: 20px;  margin-right: 3px;"> <span id="total-points" style="color: #2e7d32;"></span>  </h3>
+        </div>
+        <div class="points-history">
+            <h3>पुरस्कार इतिहास</h3>
+            <div class="history-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>लगाया गया</th>
+                            <th>पौधे का नाम</th>
+                            <th>बिंदु</th>
+                        </tr>
+                    </thead>
+                    <tbody id="points-history-body">
+                        <!-- Rows will be added dynamically here -->
+                        {% for type, plantations in tree_records.items %}
+                            {% for plantation in plantations %}
+                                <tr>
+                                    <td>{{ plantation.created_at }}</td>
+                                    <td>{{ plantation.plantation_name }}</td>
+                                    <td><span style="color: #2e7d32;">+ 1</span></td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get the total points span
+        var totalPointsElement = document.getElementById("total-points");
+        
+        // Get the table body
+        var pointsHistoryBody = document.getElementById("points-history-body");
+        
+        // Calculate the total points based on the number of rows
+        var totalPoints = pointsHistoryBody.rows.length;
+        
+        // Update the total points span
+        totalPointsElement.innerHTML = totalPoints;
+    });
+</script>
+
+{% endblock %}

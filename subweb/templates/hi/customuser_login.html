@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>कस्टम उपयोगकर्ता लॉगिन</title>
+</head>
+
+<body>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="email">ईमेल:</label>
+        <input type="email" name="email" id="email" required><br>
+        <label for="password">पासवर्ड:</label>
+        <input type="password" name="password" id="password" required><br>
+        <button type="submit">लॉगिन</button>
+    </form>
+</body>
+
+</html>

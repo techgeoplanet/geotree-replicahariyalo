@@ -1,0 +1,276 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>फोन लॉगिन</title>
+    <link rel="stylesheet" href="{% static 'login_template/css/otplogin_t.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+    <div class="bg-container" style="background-image: url('{% static 'home/images/bg.webp' %}')"></div>
+
+    <div class="login-container">
+        <img src="{% static 'login_template/images/logo.png' %}" alt="Logo" class="logo">
+
+        {% if not is_sent %}
+        <!-- <p>This is first login attempt</p> -->
+        <form method="POST" action="{% url 'tempuser_login' %}" id="SendOtpForm">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="tel" class="input-field" name="phone" placeholder="फोन नंबर दर्ज करें" id="phone"
+                    pattern="[0-9]*" inputmode="numeric" required>
+            </div>
+            <button type="submit" id="sendOtpBtn" class="SendOtp-btn" disabled>OTP भेजें</button>
+            <div class="another">
+                <a href="/admin/">सर्वेयर का लॉगिन</a>
+            </div>
+        </form>
+        {% endif %}
+
+        {% if is_sent %}
+        <form method="POST" action="{% url 'tempuser_login' %}" id="loginForm">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="tel" class="input-field" name="phone" placeholder="फोन नंबर दर्ज करें" id="phone"
+                    value="{{phonenumber}}" readonly>
+
+                <!-- संपादन बटन और संपादन चिन्ह के साथ संपादित बटन -->
+                <a href="/accounts/login/?next=/home/">
+                    <button type="button" onclick="goBack()" class="edit-number">
+                        <p>संपादित करें</p>
+                        <i class="fa fa-edit fa-2x" style="margin:5px;"></i>
+                    </button>
+                </a>
+
+            </div>
+
+            <div class="otp-container">
+                <label for="otp-input">OTP दर्ज करें</label>
+                <div class="otp-input-group">
+                    <input type="number" maxlength="1" class="otp-input" placeholder="X">
+                    <input type="number" maxlength="1" class="otp-input" placeholder="X">
+                    <input type="number" maxlength="1" class="otp-input" placeholder="X">
+                    <input type="number" maxlength="1" class="otp-input" placeholder="X">
+                </div>
+
+                <input type="number" class="input-field hidden" name="otp">
+
+
+                <div style="display: flex; justify-content:flex-end; align-items:flex-end; flex-direction: column;">
+                    <button type="submit" id="resendOtpBtn" class="resendbtnstyl" disabled>OTP फिर से भेजें</button>
+                    <div id="timer" class="hidden"
+                        style="font-size: 12px; color: green; opacity: 0.7; margin-top: 5px;"></div>
+                </div>
+            </div>
+
+            <button type="submit" id="loginBtn" class="login-btn">
+                <img id="loadingGif" class="loading" src="{% static 'login_template/images/loading_animation.gif' %}"
+                    alt="लोड हो रहा है...">
+            </button>
+
+            <div class="another">
+                <p style="color: green;">{{message}} 💬</p>
+            </div>
+            
+        </form>
+        {% endif %}
+    </div>
+
+    <div class="footer">विकसित किया गया द्वारा GPSPL</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let otpInputs = document.querySelectorAll('.otp-input');
+            let phoneInput = document.getElementById('phone');
+            let sendOtpBtn = document.getElementById('sendOtpBtn');
+            let otpInput = document.querySelector('input[name="otp"]');
+            let resendOtpBtn = document.getElementById('resendOtpBtn');
+            let loginBtn = document.getElementById('loginBtn');
+            let timerDisplay = document.getElementById('timer');
+            let timerCount = 10 * 60; // 10 मिनट का समय सेकंड में
+
+            // Function to enable the Resend OTP button after 20 seconds if available
+            if (resendOtpBtn) {
+                setTimeout(function () {
+                    resendOtpBtn.disabled = false;
+                    resendOtpBtn.classList.add('enabled');
+                }, 10000);
+            }
+
+            if (timerDisplay) {
+                startTimer();
+            }
+
+            // Function to change background color of disabled button
+            function updateSendOtpBtnAppearance() {
+                if (sendOtpBtn.disabled) {
+                    sendOtpBtn.style.backgroundColor = 'gray';
+                } else {
+                    sendOtpBtn.style.backgroundColor = ''; // डिफ़ॉल्ट पृष्ठभूमि रंग पर रीसेट करें
+                }
+            }
+
+            // Handle phone number input and enable/disable Send OTP button
+            phoneInput.addEventListener('input', function () {
+                let cleanedValue = this.value.replace(/\D/g, ''); // सभी गैर-अंक वाले वर्ण हटा दो
+                if (cleanedValue.length > 10) {
+                    cleanedValue = cleanedValue.slice(0, 10); // 10 अंकों के लिए सीमित करें
+                }
+                this.value = cleanedValue;
+
+                // यदि फोन नंबर 10 अंक है, तो केवल OTP भेजें बटन को सक्षम करें
+                sendOtpBtn.disabled = cleanedValue.length !== 10;
+                updateSendOtpBtnAppearance(); // बटन की दिखने की अद्यतना
+            });
+
+            if (sendOtpBtn) {
+                // Send OTP बटन के लिए क्लिक इवेंट को हैंडल करें
+                sendOtpBtn.addEventListener('click', function () {
+                    if (sendOtpBtn.disabled) {
+                        alert('कृपया पहले एक वैध 10 अंकों का फोन नंबर दर्ज करें।');
+                        return;
+                    }
+
+                    // सीमा रंग को लाल करो
+                    sendOtpBtn.style.borderColor = 'red';
+
+                    // 2 सेकंड के बाद सीमा रंग को रीसेट करने के लिए एक समय सेट करें
+                    setTimeout(function () {
+                        sendOtpBtn.style.borderColor = '';
+                    }, 2000);
+
+
+                    // OTP भेजने के लिए यहां कोड जोड़ें
+                    // उदाहरण: OTP भेजने के लिए AJAX अनुरोध
+                    // OTP भेजने के बाद, बटन को सक्षम / अक्षम करें और आवश्यक हो तो टाइमर शुरू करें
+                });
+
+            }
+
+            // OTP इनपुट फ़ील्ड को खाली स्ट्रिंग मान सेट करने के लिए फ़ंक्शन
+            function clearOtpInput() {
+                otpInput.value = '';
+            }
+
+            // फ़ॉर्म सबमिट करने के लिए फ़ंक्शन
+            function submitLoginForm() {
+                document.getElementById('loginForm').submit();
+            }
+
+
+            // Resend OTP बटन के लिए क्लिक इवेंट को हैंडल करें
+            if (resendOtpBtn) {
+                resendOtpBtn.addEventListener('click', function () {
+                    // OTP इनपुट फ़ील्ड का मान खाली स्ट्रिंग पर सेट करें
+                    clearOtpInput();
+
+                    // फ़ॉर्म सबमिट करें
+                    submitLoginForm();
+                });
+            }
+
+            // phoneInput के लिए कीप्रेस इवेंट को हैंडल करने के लिए (ईंटर पर ओटीपी बटन को ट्रिगर करने के लिए)
+            phoneInput.addEventListener('keypress', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // फ़ॉर्म सबमिशन को रोकें
+                    sendOtpBtn.click(); // OTP भेजें बटन पर क्लिक करें
+                    loginBtn.click();
+                }
+            });
+            function goBack() {
+                window.history.back();
+            }
+
+
+            // टाइमर शुरू करने के लिए फ़ंक्शन
+            function startTimer() {
+                timerDisplay.classList.remove('hidden');
+                const interval = setInterval(() => {
+                    timerCount--;
+                    const minutes = Math.floor(timerCount / 60);
+                    const seconds = timerCount % 60;
+                    timerDisplay.textContent = `OTP ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    if (timerCount <= 0) {
+                        clearInterval(interval);
+                        timerDisplay.textContent = 'OTP पुन: भेजें';
+                        timerDisplay.classList.add('hidden');
+                        sendOtpBtn.classList.remove('hidden');
+                        resendOtpBtn.classList.add('hidden');
+                    }
+                    if (timerCount <= 100) {
+                        resendOtpBtn.classList.remove('hidden')
+                    }
+                }, 1000); // 1 सेकंड अंतराल
+            }
+
+            // OTP इनपुट बॉक्स के लिए इनपुट इवेंट को हैंडल करने के लिए
+            otpInputs.forEach(function (input, index) {
+                input.addEventListener('input', function () {
+                    this.value = this.value.replace(/\D/g, ''); // केवल अंक (0-9) की अनुमति
+
+                    if (this.value.length >= 1) {
+                        if (index < otpInputs.length - 1) {
+                            otpInputs[index + 1].focus();
+                        } else {
+                            // अंतिम बॉक्स पर फोकस
+                            this.blur();
+                            otpInputs[otpInputs.length - 1].focus();
+
+                            // सभी चार OTP बॉक्स भरे गए हैं या नहीं यह जांचें
+                            let otpValue = '';
+                            otpInputs.forEach(function (otpInput) {
+                                otpValue += otpInput.value;
+                            });
+
+                            if (otpValue.length === 4) {
+                                sendOtp(otpValue);
+                                // alert('OTP received: ' + otpValue);
+                            }
+                        }
+                    }
+                });
+
+                input.addEventListener('focus', function () {
+                    // जब फोकस होता है, इनपुट फ़ील्ड के अंत में कर्सर मूव करें
+                    this.setSelectionRange(this.value.length, this.value.length);
+                });
+
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Backspace' && this.value.length === 0) {
+                        if (index > 0) {
+                            otpInputs[index - 1].focus();
+                        }
+                    }
+                });
+
+                // OTP इनपुट फ़ील्ड में ईंटर की प्रेस पर फ़ॉर्म सबमिशन को रोकने के लिए
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            });
+
+            // OTP भेजने के लिए फ़ंक्शन (वास्तविक तरीके से तथ्य के साथ बदलें)
+            function sendOtp(otp_value) {
+                otpInput.value = otp_value;
+
+                if(otpInput.value.length === 4){
+                    // alert('OTP sent successfully!'+ otpInput.value );
+                    submitLoginForm(); 
+                }
+                // OTP भेजने का अनुकरण करें
+            }
+
+        });
+    </script>
+
+</body>
+
+</html>

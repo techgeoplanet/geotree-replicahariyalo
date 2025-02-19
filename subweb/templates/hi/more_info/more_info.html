@@ -1,0 +1,106 @@
+{% extends "subweb-base.html" %}
+{% load static %}
+{% block title %}
+अधिक जानकारी
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .container {
+        max-width: 600px;
+        margin: auto;
+        /* background-color: #fff; */
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .section {
+        margin-bottom: 30px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-title {
+        font-size: 2em;
+        margin-bottom: 10px;
+        color: #4CAF50;
+        text-align: center;
+    }
+
+    .section-content {
+        font-size: 1em;
+        color: #555;
+    }
+
+    .benefits {
+        padding-left: 20px;
+        font-size: 1em;
+    }
+
+    .benefits li {
+        margin-bottom: 8px;
+    }
+
+    .button_join {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        border: none;
+        height: auto;
+        font-size: 14px;
+        width: auto;
+    }
+
+    .button_join:hover {
+        background-color: #45a049;
+    }
+</style>
+{% endblock %}
+{% block content %}
+{% include 'header/headerbar.html' %}
+{% include 'header/backbg.html' %}
+{% include 'header/header-route.html' with btn_text="हरियालो के बारे में" %}
+<div class="container">
+    <div class="section">
+        <h1 class="section-title">दृष्टि</h1>
+        <p class="section-content">राजस्थान को एक हरे-भरे राज्य में परिवर्तित करने के लिए सामूहिक प्रयासों का आयोजन
+            करना, भविष्य की पीढ़ियों के लिए एक सतत पर्यावरण सुनिश्चित करना।</p>
+    </div>
+
+    <div class="section">
+        <h1 class="section-title">मिशन</h1>
+        <p class="section-content">राजस्थान के सभी जिलों में 7 करोड़ पेड़ लगाना, समुदाय की भागीदारी और उन्नत तकनीक का
+            उपयोग करते हुए पौधारोपण प्रक्रिया की प्रभावी निगरानी और प्रबंधन करना।</p>
+    </div>
+
+    <div class="section">
+        <h1 class="section-title">परिचय</h1>
+        <p class="section-content">मुख्यमंत्री वृक्षारोपण महाअभियान राजस्थान सरकार की एक महत्वाकांक्षी पहल है जिसका
+            उद्देश्य राज्य के हरे कवर को काफी बढ़ाना है। इस बड़े पैमाने पर पौधारोपण अभियान में सरकारी विभाग और नागरिक
+            दोनों शामिल हैं, जो पर्यावरण संरक्षण के लिए एक सामुदायिक-चालित दृष्टिकोण को बढ़ावा देते हैं। इस पहल की सफलता
+            की निगरानी “हरयाळो–राजस्थान" मोबाइल एप्लिकेशन का उपयोग करके की जाएगी, जो उपयोगकर्ताओं को पेड़ों के विकास और
+            अस्तित्व को पंजीकृत करने, ट्रैक करने और सुनिश्चित करने की अनुमति देता है।</p>
+    </div>
+
+    <div class="section">
+        <h1 class="section-title">लाभ</h1>
+        <ul class="section-content benefits">
+            <li>जैव विविधता संरक्षण</li>
+            <li>मृदा एवं जल संरक्षण</li>
+            <li>जलवायु परिवर्तन का निराकरण</li>
+            <li>समुदाय की सहभागिता</li>
+            <li>शहरी हरियाली का संवर्धन</li>
+        </ul>
+    </div>
+
+    <div style="text-align: center;">
+        <a href="{% url 'hi-addplant' %}" class="button_join">राजस्थान को हरित प्रदेश बनाने में हमारे साथ शामिल हों।</a>
+    </div>
+</div>
+{% endblock %}

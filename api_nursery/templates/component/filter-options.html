@@ -1,0 +1,616 @@
+<div class="sec-2 w-full">
+    <div class="filter-opt card p-4 shadow-soft-md rounded-lg bg-white flex-1">
+        <style>
+                .gradient-border {
+                  border-bottom: 5px solid;
+                  border-image: linear-gradient(310deg, #7928ca, #ff0080)1;
+                  padding-bottom: 10px;
+                  padding-right: 20px;
+                  display: inline-block; /* Ensure the span adjusts to its content */
+                }
+              </style>
+
+        <h1 class="text-3xl font-bold mb-10 text-start w-full">
+            <span class="gradient-border text-purple-800">Filter
+                Report</span>
+        </h1>
+
+        <div
+            class="filter-options w-full justify-center items-center">
+            <div
+                class="filter-btn-section flex border-4 border-pink-200 rounded-2xl overflow-hidden w-full">
+                <button
+                    class="filter-btn bg-gradient-fuchsia font-bold p-auto text-lg flex-1 transition duration-500 ease-in-out hover:bg-pink-100"
+                    id="total-btn">Total</button>
+                <button
+                    class="filter-btn p-auto text-lg flex-1 transition duration-500 ease-in-out hover:bg-pink-100 "
+                    id="today-btn">Today's</button>
+                <button
+                    class="filter-btn p-auto text-lg flex-1 transition duration-500 ease-in-out hover:bg-pink-100 "
+                    id="gp-btn">Gram Panchayat</button>
+                <button
+                    class="filter-btn p-auto text-lg flex-1 transition duration-500 ease-in-out hover:bg-pink-100 "
+                    id="block-btn">Block</button>
+                <button
+                    class="filter-btn p-auto text-lg flex-1 transition duration-500 ease-in-out hover:bg-pink-100 "
+                    id="district-btn">District</button>
+            </div>
+
+            <div class="filter-section hidden"
+                id="gramp-filter-section">
+                <div class="addresh-picker mt-5">
+                    <div
+                        class="p-4 space-y-4 bg-pink-100 rounded-md relative">
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- State Section -->
+                            <div class="flex flex-col">
+                                <label for="State"
+                                    class="mb-2 font-medium text-gray-700">State:</label>
+                                <div class="relative">
+                                    <select id="State"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200 focus:outline-none appearance-none">
+                                        <option disabled
+                                            selected>Rajasthan</option>
+                                    </select>
+                                    <svg
+                                        class="absolute top-3 right-3 h-4 w-4 text-gray-500 pointer-events-none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- District Section -->
+                            <div class="flex flex-col"
+                                id="districtOpsation">
+                                <label for="district"
+                                    class="mb-2 font-medium text-gray-700">District:</label>
+                                <div class="relative">
+
+                                    <select id="district-selection"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200 focus:outline-none appearance-none">
+                                        {% if district_in %}
+                                            <option value="{{district_in}}" selected>{{district_t}}</option>
+                                        {% else %}
+                                            <option value="" disabled selected>Select District</option>
+                                        {% endif %}
+                                    </select>
+                                    <svg
+                                        class="absolute top-3 right-3 h-4 w-4 text-gray-500 pointer-events-none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Block Section -->
+                            <div class="flex flex-col"
+                                id="blockOpsation">
+                                <label for="block"
+                                    class="mb-2 font-medium text-gray-700">Block:</label>
+                                <div class="relative">
+                                    <select id="block-selection"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200 focus:outline-none appearance-none">
+                                        {% if block_in %}
+                                            <option value="{{block_in}}" selected>{{block_t}}</option>
+                                        {% else %}
+                                            <option value="" disabled selected>Select Block</option>
+                                        {% endif %}
+
+                                        <!-- <option disabled
+                                            selected>Select
+                                            Block</option>
+                                        <option>Option 1</option>
+                                        <option>Option 2</option>
+                                        <option>Option 3</option> -->
+                                    </select>
+                                    <svg
+                                        class="absolute top-3 right-3 h-4 w-4 text-gray-500 pointer-events-none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Gram Panchayat Section -->
+                            <div class="flex flex-col"
+                                id="grampanOpsation">
+                                <label for="gram-panchayat"
+                                    class="mb-2 font-medium text-gray-700">Gram
+                                    Panchayat:</label>
+                                <div class="relative">
+                                    <select id="gram-panchayat-selection" name="grampanch_in"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200 focus:outline-none appearance-none">
+                                        {% if grampanch_in %}
+                                            <option value="{{grampanch_in}}" selected>{{grampanch_t}}</option>
+                                        {% else %}
+                                            <option value="" disabled selected>Select Garm Panchayat</option>
+                                        {% endif %}
+                                        
+                                        <!-- <option value="" {% if not grampanch_in %}selected{% endif %}>Select Gram Panchayat</option>
+                                        {% for grampanchayat in grampanchayats %}
+                                            <option value="{{ grampanchayat.name }}" {% if grampanch_in == grampanchayat.name %}selected{% endif %}>
+                                                {{ grampanchayat.name }}
+                                            </option>
+                                        {% endfor %} -->
+                                    </select>
+                                    <svg
+                                        class="absolute top-3 right-3 h-4 w-4 text-gray-500 pointer-events-none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="model-fetching-animation absolute inset-0 flex items-center justify-center hidden" id="featching-model">
+                            <div class="flex flex-col items-center bg-pink-200 p-4 rounded-xl">
+                                <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-pink-600"></div>
+                                <span class="mt-2 text-pink-600">Fetching...</span>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-section w-full"
+                id="total-filter-section">
+                <div
+                    class="date-picker-section w-full flex flex-row justify-center items-center mt-10">
+                    <h2 class="mr-4 font-bold text-xl">Date:</h2>
+                    <div class="flex gap-4 items-center">
+                        <label for="total-from-date"
+                            class="font-bold text-sm">From</label>
+                        <div class="w-full">
+                            <div
+                                class="p-2 border border-gray-300 rounded-md shadow-sm transition-all duration-300 ease-in-out focus-within:ring-4 focus-within:ring-pink-200 focus-within:border-pink-400">
+                                <input
+                                    type="date"
+                                    class="form-input block w-full outline-none sm:text-sm" id="date_from" name="date_from" value="{% if date_from %}{{date_from}}{% endif %}">
+                            </div>
+                        </div>
+
+                        <label for="total-to-date"
+                            class="font-bold text-sm">To</label>
+                        <div class="w-full">
+                            <div
+                                class="p-2 border border-gray-300 rounded-md shadow-sm transition-all duration-300 ease-in-out focus-within:ring-4 focus-within:ring-pink-200 focus-within:border-pink-400">
+                                <input
+                                    type="date"
+                                    class="form-input block w-full outline-none sm:text-sm"  id="date_to" name="date_to" value="{% if date_to %}{{date_to}}{% endif %}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error message -->
+                <p id="date-error"
+                    class="text-red-500 text-sm mt-2 hidden">"To"
+                    date cannot be earlier than "From" date.</p>
+            </div>
+
+
+            <div
+                class="apply-btn mt-10 w-full flex justify-end items-end">
+                <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+                <button
+                    class="bg-gradient-fuchsia font-bold py-2 text-lg transition duration-500 ease-in-out hover:bg-pink-100 rounded-3xl opacity-50 cursor-not-allowed justify-center items-center" style="width: 150px; height: 60px;"
+                    disabled id="appply-btn">
+                    <span class="" id="apply-text">Apply</span>
+                </button>
+                <div class="bg-gradient-fuchsia font-bold py-2 text-lg transition duration-500 ease-in-out hover:bg-pink-100 rounded-3xl opacity-50 cursor-not-allowed justify-center items-center hidden" style="width: 150px; height: 60px;" id="apply-process-animation">
+                    <dotlottie-player src="https://lottie.host/88db664e-0907-4874-ad42-6a4f5143cb4a/petCStl3sq.lottie" background="transparent" speed="1" loop autoplay ></dotlottie-player>
+                </div>
+            </div>
+            
+        </div>
+
+        <script>
+            const fetchingModel = document.getElementById("featching-model");
+            function desableFeatching(){
+                fetchingModel.classList.add("hidden");
+            }
+            function enableFeatching(){
+                fetchingModel.classList.remove("hidden"); 
+            }
+
+
+            let DistrictOptions = {};
+            let BlockOptions = {};
+            let GrampanchOptions = {};
+            
+            function fetchDistrict() {
+                enableFeatching();
+                fetch("{% url 'districtlist' %}")
+                    .then(response => response.json())
+                    .then(data => {
+                        desableFeatching();
+                        if (!data.success) {
+                            alert(data.error);
+                            return;
+                        }
+                        // Store district data
+                        DistrictOptions = data.districts;
+                        
+                        // Get the select element
+                        const districtSelect = document.getElementById('district-selection');
+                        
+                        // Clear existing options except the first one
+                        districtSelect.options.length = 1; // This line replaces the while loop to clear options
+                        
+                        // Add new options
+                        data.districts.forEach(district => {
+                            const option = document.createElement('option');
+                            option.value = district.District_id;
+                            option.text = district.District_name;
+                            districtSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        alert('Error fetching districts: ' + error);
+                        desableFeatching();
+                    });
+
+            }
+
+            
+
+            function fetchBlock() {
+                // TODO: Implement block fetching logic based on selected district
+                
+                enableFeatching();
+                // Define the base URL
+                const baseUrl = "{% url 'blocklist' %}";
+
+                // Define your parameters
+                const params = new URLSearchParams({
+                    district_id: document.getElementById('district-selection').value,   // Example parameter
+                });
+
+                // Construct the full URL with parameters
+                const urlWithParams = `${baseUrl}?${params.toString()}`;
+
+                // Make the fetch request
+                fetch(urlWithParams, {
+                        method: 'GET', // or 'POST' if you're sending data
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token for POST requests in Django
+                        }
+                    })
+
+                    .then(response => response.json())
+                    .then(data => {
+                        desableFeatching();
+                        if (!data.success) {
+                            alert(data.error);
+                            return;
+                        }
+                        // Store district data
+                        BlockOptions = data.blocks;
+                        
+                        // Get the select element
+                        const blockSelect = document.getElementById('block-selection');
+                        
+                        // Clear existing options except the first one
+                        blockSelect.options.length = 1; // This line replaces the while loop to clear options
+                        
+                        // Add new options
+                        data.blocks.forEach(block => {
+                            const option = document.createElement('option');
+                            option.value = block.block_id;
+                            option.text = block.block_name;
+                            blockSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        alert('Error fetching Block: ' + error);
+                        desableFeatching();
+                    });
+            }
+            
+
+
+            function fetchGrampanch() {
+                const baseUrl = "{% url 'gplist' %}";
+
+                // Define your parameters
+                const params = new URLSearchParams({
+                    block_id: document.getElementById('block-selection').value,   // Example parameter
+                });
+
+                // Construct the full URL with parameters
+                const urlWithParams = `${baseUrl}?${params.toString()}`;
+
+                // Make the fetch request
+                fetch(urlWithParams, {
+                        method: 'GET', // or 'POST' if you're sending data
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token for POST requests in Django
+                        }
+                    })
+
+                    .then(response => response.json())
+                    .then(data => {
+                        desableFeatching();
+                        if (!data.success) {
+                            alert(data.error);
+                            return;
+                        }
+                        // Store district data
+                        gpOptions = data.gps;
+                        
+                        // Get the select element
+                        const gpSelect = document.getElementById('gram-panchayat-selection');
+                        
+                        // Clear existing options except the first one
+                        gpSelect.options.length = 1; // This line replaces the while loop to clear options
+                        
+                        // Add new options
+                        data.gps.forEach(gp => {
+                            const option = document.createElement('option');
+                            option.value = gp.gp_id;
+                            option.text = gp.gp_name;
+                            gpSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        alert('Error fetching Gram Panchayat: ' + error);
+                        desableFeatching();
+                    });
+
+            }
+
+
+
+
+            document.getElementById('district-selection').addEventListener('click', function() {
+                if (Object.keys(DistrictOptions).length === 0) {
+                    fetchDistrict();
+                }
+                console.log(this.value,"selected value district ")
+            });
+
+            document.getElementById('district-selection').addEventListener('change', function() {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('district_in', this.value);
+                currentUrl.searchParams.set('district_t', this.options[this.selectedIndex].text);
+                currentUrl.searchParams.delete('grampanch_in');
+                currentUrl.searchParams.delete('grampanch_t');
+                currentUrl.searchParams.delete('block_in');
+                currentUrl.searchParams.delete('block_t');
+                window.history.pushState({}, '', currentUrl);
+                // Clear existing block and grampanch options
+                BlockOptions = {};
+                // Get the select element
+                const blockSelect = document.getElementById('block-selection');
+                blockSelect.options.length = 1; // This line replaces the while loop to clear options
+
+                GrampanchOptions = {};
+                fetchBlock();
+            });
+
+            document.getElementById('block-selection').addEventListener('change', function() {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('block_in', this.value);
+                currentUrl.searchParams.set('block_t', this.options[this.selectedIndex].text);
+                currentUrl.searchParams.delete('grampanch_in');
+                currentUrl.searchParams.delete('grampanch_t');
+                window.history.pushState({}, '', currentUrl);
+                // Clear existing grampanch options
+                GrampanchOptions = {};
+                fetchGrampanch(); 
+            });
+
+            document.getElementById('gram-panchayat-selection').addEventListener('change', function() {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('grampanch_in', this.value);
+                currentUrl.searchParams.set('grampanch_t', this.options[this.selectedIndex].text);
+                window.history.pushState({}, '', currentUrl);
+            });
+
+        </script>
+
+        <script>
+                const fromDateInput = document.getElementById("date_from");
+                const toDateInput = document.getElementById("date_to");
+                const errorElement = document.getElementById("date-error");
+                const applyBtn = document.getElementById("appply-btn");
+                const applyBtnAnimation = document.getElementById("apply-process-animation");
+
+                function validateDates() {
+                    const fromDate = new Date(fromDateInput.value);
+                    const toDate = new Date(toDateInput.value);
+
+                    // Clear any existing error
+                    errorElement.classList.add("hidden");
+
+                    // Check if both dates are filled and valid
+                    if (fromDateInput.value && toDateInput.value && !isNaN(fromDate) && !isNaN(toDate)) {
+                        // Check if "To" date is earlier than "From" date
+                        if (toDate < fromDate) {
+                            errorElement.classList.remove("hidden");
+                            disableApplyButton();
+                        } else {
+                            // console.log('From date:', fromDate);
+                            // console.log('To date:', toDate);
+                            enableApplyButton();
+                        }
+                    } else {
+                        disableApplyButton();
+                    }
+                }
+
+                function disableApplyButton() {
+                    applyBtn.disabled = true;
+                    applyBtn.classList.add("opacity-50", "cursor-not-allowed");
+                }
+
+                function enableApplyButton() {
+                    applyBtn.disabled = false;
+                    applyBtn.classList.remove("opacity-50", "cursor-not-allowed");
+                }
+
+                function enableApplyButtonAnimation() {
+                    applyBtn.classList.add("hidden");
+                    applyBtnAnimation.classList.remove("hidden");
+
+                }
+
+                // Add event listeners to validate on input change
+                fromDateInput.addEventListener("input", validateDates);
+                toDateInput.addEventListener("input", validateDates);
+
+                // Initial validation
+                validateDates();
+
+                // Add click event listener to apply button
+                applyBtn.addEventListener("click", function() {
+                    enableApplyButtonAnimation();
+                    const currentUrl = new URL(window.location.href);
+                    // console.log(currentUrl,"currentUrl")
+                    currentUrl.searchParams.set("date_from", fromDateInput.value);
+                    currentUrl.searchParams.set("date_to", toDateInput.value);
+                    window.location.href = currentUrl.toString();
+                });
+
+                const totalSection = document.getElementById("total-filter-section");
+                const grampanSection = document.getElementById("gramp-filter-section");
+                const grampanSct = document.getElementById("gram-panchayat-selection");
+                const blockSct = document.getElementById("block-selection");
+
+                function set_today_date() {
+                    const today = new Date().toISOString().split('T')[0];
+                    fromDateInput.value = today;
+                    toDateInput.value = today;
+                    validateDates();
+                }
+
+
+                function active_filter(btnid) {
+                    const currentUrl = new URL(window.location.href);
+                    if (btnid === "today-btn") {
+                        set_today_date();
+                        grampanSection.classList.add("hidden");
+
+                        currentUrl.searchParams.delete('grampanch_in');
+                        currentUrl.searchParams.delete('grampanch_t');
+                        currentUrl.searchParams.delete('block_in');
+                        currentUrl.searchParams.delete('block_t');
+                        currentUrl.searchParams.delete('district_in');
+                        currentUrl.searchParams.delete('district_t');
+                    }
+                    else if (btnid === "gp-btn") {
+                        grampanSection.classList.remove("hidden");
+                        blockSct.classList.remove('cursor-not-allowed');
+                        blockSct.disabled = false;
+                        grampanSct.classList.remove('cursor-not-allowed');
+                        grampanSct.disabled = false;
+                        
+                    }
+                    else if (btnid === "block-btn") {
+                        grampanSection.classList.remove("hidden");
+                        blockSct.classList.remove('cursor-not-allowed');
+                        blockSct.disabled = false;
+                        grampanSct.classList.add('cursor-not-allowed');
+                        grampanSct.disabled = true;
+
+                        currentUrl.searchParams.delete('grampanch_in');
+                        currentUrl.searchParams.delete('grampanch_t');
+
+                    }
+                    else if (btnid === "district-btn") {
+                        grampanSection.classList.remove("hidden");
+                        blockSct.classList.add('cursor-not-allowed');
+                        blockSct.disabled = true;
+                        grampanSct.classList.add('cursor-not-allowed');
+                        grampanSct.disabled = true;
+
+                        currentUrl.searchParams.delete('grampanch_in');
+                        currentUrl.searchParams.delete('grampanch_t');
+                        currentUrl.searchParams.delete('block_in');
+                        currentUrl.searchParams.delete('block_t');
+                    }
+                    else {
+                        totalSection.classList.remove("hidden");
+                        grampanSection.classList.add("hidden");
+
+                        currentUrl.searchParams.delete('grampanch_in');
+                        currentUrl.searchParams.delete('grampanch_t');
+                        currentUrl.searchParams.delete('block_in');
+                        currentUrl.searchParams.delete('block_t');
+                        currentUrl.searchParams.delete('district_in');
+                        currentUrl.searchParams.delete('district_t');
+                    }
+                    // console.log(btnid,"btnid")
+                    currentUrl.searchParams.set('filter_active', btnid);
+                    window.history.pushState({}, '', currentUrl);
+                }
+
+                // Select all buttons with the 'filter-btn' class
+                const buttons = document.querySelectorAll(".filter-btn");
+
+                // Get filter_active param from URL if it exists
+                const urlParams = new URLSearchParams(window.location.search);
+                const activeFilter = urlParams.get('filter_active');
+
+                // Function to activate button styles
+                const activateButton = (button) => {
+                    buttons.forEach((btn) => {
+                        btn.classList.remove("bg-gradient-fuchsia", "font-bold");
+                        btn.classList.add("hover:text-pink-700");
+                    });
+                    button.classList.add("bg-gradient-fuchsia", "font-bold");
+                    button.classList.remove("hover:text-pink-700");
+                };
+
+                // If filter_active param exists, activate that button
+                if (activeFilter) {
+                    const activeButton = document.getElementById(activeFilter);
+                    if (activeButton) {
+                        activateButton(activeButton);
+                        active_filter(activeFilter);
+                    }
+                }
+
+                // Loop through buttons and add click event listeners
+                buttons.forEach((button) => {
+                    button.addEventListener("click", function () {
+                        activateButton(this);
+                        active_filter(this.id);
+                    });
+                });
+
+        </script>
+
+    </div>
+</div>
+</div>

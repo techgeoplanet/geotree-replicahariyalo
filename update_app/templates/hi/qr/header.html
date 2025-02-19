@@ -1,0 +1,238 @@
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dropdown-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .group:hover .dropdown-content {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 250px;
+            height: 100vh;
+            background: white;
+            transition: 0.3s;
+            z-index: 40;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        .mobile-menu.active {
+            left: 0;
+        }
+        .header_text_c{
+            font-size: 1.5rem;
+        }
+    </style>
+ </head>
+ <body>
+
+    <!-- Main Content -->
+ <header class="header-fixed py-3 flex justify-center items-center px-4 z-30">
+    <!-- Burger Icon (visible on mobile/tablet) -->
+     <div class="header-box bg-white rounded-full w-full md:block flex items-center justify-between " style="max-width: 1400px;">
+        
+        <div class="flex justify-between items-center p-2 bg-green-200 rounded-full sm:w-full">
+            <div class="mr-10">
+                <img src="./Main Logo.png" alt="Logo" class="aspect-auto" style="width: 100%;">
+            </div>
+
+            <!-- Navbar Links -->
+            <div class="w-fit flex flex-row items-center justify-start hidden md:flex">
+                <div class="el1 w-max px-4 relative group">
+                    <div class="meterline flex items-center justify-evenly cursor-pointer">
+                        <div class="absolute inset-0 bg-blue-100 rounded-full scale-0 group-hover:scale-100 transition-all duration-300 ease-in-out p-5"></div>
+                        <div class="progress mr-2 header_text_c transition-transform duration-300 group-hover:scale-110">Product</div>
+                        <i class="material-icons header_text_c transition-transform duration-300 group-hover:rotate-180">keyboard_arrow_down</i>
+                    </div>
+                    <!-- Dropdown -->
+                    <div class="dropdown-content absolute top-full left-0 w-fit text-black z-50">
+                        <div class="p-4 space-y-2 shadow-[0_4px_6px_-1px_rgba(1,35,108,0.1),0_2px_4px_-1px_rgba(1,35,108,0.06)] bg-white mt-10 rounded-lg">
+                            <a href="#" class="block px-4 py-2 hover:bg-blue-50 rounded-lg transition-colors duration-300 ease-in-out">
+                                <div class="flex items-center">
+                                    <span class="text-sm">SERVICES 1</span>
+                                </div>
+                            </a>
+                            <a href="#" class="block px-4 py-2 hover:bg-blue-50 rounded-lg transition-colors duration-300 ease-in-out">
+                                <div class="flex items-center">
+                                    <span class="text-sm">SERVICES 2</span>
+                                </div>
+                            </a>
+                            <a href="#" class="block px-4 py-2 hover:bg-blue-50 rounded-lg transition-colors duration-300 ease-in-out">
+                                <div class="flex items-center">
+                                    <span class="text-sm">SERVICES 3</span>
+                                </div>
+                            </a>
+                            <a href="#" class="block px-4 py-2 hover:bg-blue-50 rounded-lg transition-colors duration-300 ease-in-out">
+                                <div class="flex items-center">
+                                    <span class="text-sm">SERVICES 4</span>
+                                </div>
+                            </a>
+                            <a href="#" class="block px-4 py-2 hover:bg-blue-50 rounded-lg transition-colors duration-300 ease-in-out">
+                                <div class="flex items-center">
+                                    <span class="text-sm">SERVICES 5</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="el2 w-max px-4 relative group">
+                    <div class="meterline flex items-center justify-evenly cursor-pointer">
+                        <div class="absolute inset-0 bg-blue-100 rounded-full scale-0 group-hover:scale-100 transition-all duration-300 ease-in-out p-5"></div>
+                        <div class="progress mr-2 header_text_c transition-transform duration-300 group-hover:scale-110">Resources</div>
+                        <i class="material-icons header_text_c transition-transform duration-300 group-hover:rotate-180">keyboard_arrow_down</i>
+                    </div>
+                    <!-- Dropdown -->
+                    <div class="dropdown-content absolute top-full left-0 w-fit text-black z-50">
+                        <div class="p-4 space-y-2 shadow-[0_4px_6px_-1px_rgba(1,35,108,0.1),0_2px_4px_-1px_rgba(1,35,108,0.06)] bg-white mt-10 rounded-lg">
+                            <a href="#" class="block px-4 py-2 hover:bg-blue-50 rounded-lg transition-colors duration-300 ease-in-out">
+                                <div class="flex items-center">
+                                    <span class="text-sm">Product 1</span>
+                                </div>
+                            </a>
+                            <a href="#" class="block px-4 py-2 hover:bg-blue-50 rounded-lg transition-colors duration-300 ease-in-out">
+                                <div class="flex items-center">
+                                    <span class="text-sm">Product 2</span>
+                                </div>
+                            </a>
+                            <a href="#" class="block px-4 py-2 hover:bg-blue-50 rounded-lg transition-colors duration-300 ease-in-out">
+                                <div class="flex items-center">
+                                    <span class="text-sm">Product 3</span>
+                                </div>
+                            </a>
+                            <a href="#" class="block px-4 py-2 hover:bg-blue-50 rounded-lg transition-colors duration-300 ease-in-out">
+                                <div class="flex items-center">
+                                    <span class="text-sm">Product 4</span>
+                                </div>
+                            </a>
+                            <a href="#" class="block px-4 py-2 hover:bg-blue-50 rounded-lg transition-colors duration-300 ease-in-out">
+                                <div class="flex items-center">
+                                    <span class="text-sm">Product 5</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="el3 w-max px-4" onclick="scrollToSection('pricing')">
+                    <div class="meterline flex items-center justify-evenly cursor-pointer group">
+                        <div class="progress mr-2 p-4 header_text_c rounded-full hover:scale-105 transition-all duration-300 ease-in-out relative overflow-hidden group">
+                            <div class="absolute inset-0 bg-blue-100 rounded-full scale-0 group-hover:scale-150 transition-all duration-300 ease-in-out"></div>
+                                <span class="relative z-10 select-none">Pricing</span>
+                                <span class="absolute inset-0 bg-gray-200 opacity-0 group-hover:opacity-25 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-in-out"></span>
+                            </div>
+                        </div>
+                </div>
+                
+            </div>
+
+            <div class="w-fit hidden lg:flex justify-center items-center space-x-1 bg-green-500 p-2 md:p-4 rounded-full">
+                <button
+                    class="px-4 py-1 flex items-center rounded-full hover:scale-105 transition-all duration-300 ease-in-out relative overflow-hidden group">
+                    <i class="fab fa-facebook-f text-white text-xl"></i>
+                    <span
+                        class="absolute inset-0 bg-gray-200 opacity-0 group-hover:opacity-25 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-in-out"></span>
+                </button>
+                <button
+                    class="px-4 py-1 flex items-center rounded-full hover:scale-105 transition-all duration-300 ease-in-out relative overflow-hidden group">
+                    <i class="fab fa-instagram text-white text-xl"></i>
+                    <span
+                        class="absolute inset-0 bg-gray-200 opacity-0 group-hover:opacity-25 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-in-out"></span>
+                </button>
+                <button
+                    class="px-4 py-1 flex items-center rounded-full hover:scale-105 transition-all duration-300 ease-in-out relative overflow-hidden group">
+                    <i class="fas fa-envelope text-white text-xl"></i>
+                    <span
+                        class="absolute inset-0 bg-gray-200 opacity-0 group-hover:opacity-25 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-in-out"></span>
+                </button>
+            </div>
+
+            <div class="md:hidden mr-4">
+                <button id="burger" class="text-4xl focus:outline-none">
+                    <i class="material-icons text-4xl primary_text_c">menu</i>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="overlay" class="fixed inset-0 bg-black opacity-50 z-30 hidden"></div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="mobile-menu">
+            <button id="close-menu" class="absolute top-4 right-4">
+                <i class="material-icons text-2xl primary_text_c">close</i>
+            </button>
+            <div class="mt-12 space-y-4">
+                <div class="px-4 py-2">
+                    <div class="font-medium header_text_c">Product</div>
+                    <div class="ml-4 mt-2 space-y-2">
+                        <a href="#" class="block text-sm">SERVICES 1</a>
+                        <a href="#" class="block text-sm">SERVICES 2</a>
+                        <a href="#" class="block text-sm">SERVICES 3</a>
+                        <a href="#" class="block text-sm">SERVICES 4</a>
+                        <a href="#" class="block text-sm">SERVICES 5</a>
+                    </div>
+                </div>
+                <div class="px-4 py-2">
+                    <div class="font-medium header_text_c">Resources</div>
+                    <div class="ml-4 mt-2 space-y-2">
+                        <a href="#" class="block text-sm">Product 1</a>
+                        <a href="#" class="block text-sm">Product 2</a>
+                        <a href="#" class="block text-sm">Product 3</a>
+                        <a href="#" class="block text-sm">Product 4</a>
+                        <a href="#" class="block text-sm">Product 5</a>
+                    </div>
+                </div>
+                <div class="px-4 py-2">
+                    <a href="#" onclick="scrollToSection('pricing')" class="font-medium header_text_c">Pricing</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Mobile menu functionality
+        document.getElementById('burger').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.add('active');
+            document.getElementById('overlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        });
+
+        document.getElementById('close-menu').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.remove('active');
+            document.getElementById('overlay').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        });
+
+        document.getElementById('overlay').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.remove('active');
+            this.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        });
+    </script>
+
+</header>
+    
+ </body>
+ </html>

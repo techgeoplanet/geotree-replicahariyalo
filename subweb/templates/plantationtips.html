@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Plantation Tips
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'plantationtips/css/styles.css' %}">
+<style>
+    .top-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    height: 40px;
+    width: 100%;
+    top: 70px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    z-index: 100;
+    }
+
+    .top-section {
+        height: 100px;
+        width: 100%;
+    }
+
+    .top-nav p {
+        margin: 0;
+        font-size: 1.5rem;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<nav class="top-nav"
+    style="display: flex; justify-content: flex-start; align-items: center;">
+    <a href="{%url 'home' %}"
+        style="justify-content: flex-end; align-items: center; display: flex; text-decoration: none;">
+        <i class="fa-solid fa-arrow-left"
+            style="margin: 0 15px; font-size: 28px; color: #fff;"></i>
+            <p style="color: #ffff;">Tips<i class="fab fa-pagelines" style="color: #ffff;"></i></p></a>
+        </a>
+</nav>
+
+<div style="height: 20px;">
+</div>
+
+<div class="mainContainer" style="padding-top: 100px;">
+    <!-- Video Section -->
+    <div class="video-container">
+        <video controls>
+            <source src="{% static 'assets/sujhoVedio/video.mp4' %}"
+                type="video/mp4" muted>
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div class="btn-redirect-addplantation" style="width: 100%; display: flex; justify-content: end; align-items: center; margin-right: 40px;">
+        <button onclick="redirectTo('/addplant/')" style="padding: 5px 15px; color: #ffff; background-color: #2e7d32; border: none; border-radius: 10px; ">Go to Add Plantation</button>
+    </div>
+
+    <script>
+        function redirectTo(url) {
+            window.location.href = url;
+        }
+    </script>
+
+    <!-- Paragraph Section -->
+    <div class="text-container">
+        <h2>Gardening in Rajasthan</h2>
+        <p>Planting and maintaining a garden in Rajasthan, which is
+            characterized by its arid and semi-arid climate, requires careful
+            selection of plants and specific techniques to conserve water and
+            ensure plant health. Here are some tips to help you successfully
+            cultivate a garden in this region:</p>
+
+        <h3>Plant Selection</h3>
+        <h4>Drought-Resistant Plants</h4>
+        <p>Choose plants that can tolerate dry conditions. Native plants are
+            often the best choice. Some examples include:</p>
+        <ul>
+            <li><strong>Trees</strong>: Neem, Peepal, Babool (Acacia), and
+                Khejri (Prosopis cineraria).</li>
+            <li><strong>Shrubs</strong>: Bougainvillea, Oleander, and
+                Cassia.</li>
+            <li><strong>Flowers</strong>: Marigold, Gazania, and Zinnia.</li>
+            <li><strong>Succulents/Cacti</strong>: Aloe vera, Agave, and various
+                cacti species.</li>
+        </ul>
+
+        <h4>Vegetables and Herbs</h4>
+        <p>Opt for hardy vegetables like beans, okra, and cucumbers. Herbs like
+            basil, mint, and rosemary also do well.</p>
+
+        <h3>Soil Preparation</h3>
+        <ul>
+            <li><strong>Soil Enrichment</strong>: Enhance soil fertility by
+                mixing in organic compost or well-decomposed manure.</li>
+            <li><strong>Mulching</strong>: Use organic mulch (like straw or
+                leaves) to cover the soil. This helps retain moisture, suppress
+                weeds, and regulate soil temperature.</li>
+        </ul>
+
+        <h3>Water Conservation</h3>
+        <ul>
+            <li><strong>Drip Irrigation</strong>: Install a drip irrigation
+                system to deliver water directly to the roots, minimizing
+                evaporation and water wastage.</li>
+            <li><strong>Watering Schedule</strong>: Water plants early in the
+                morning or late in the evening to reduce evaporation.</li>
+            <li><strong>Rainwater Harvesting</strong>: Collect and store
+                rainwater for use during dry periods.</li>
+        </ul>
+
+        <h3>Planting Techniques</h3>
+        <ul>
+            <li><strong>Planting Depth and Spacing</strong>: Ensure correct
+                planting depth and proper spacing to allow air circulation and
+                reduce competition for resources.</li>
+            <li><strong>Shade and Wind Protection</strong>: Use shade nets or
+                plant taller species to provide shade for smaller plants.
+                Windbreaks can help protect plants from hot, drying winds.</li>
+        </ul>
+
+        <h3>Maintenance</h3>
+        <ul>
+            <li><strong>Regular Monitoring</strong>: Check plants regularly for
+                signs of stress or pests and take prompt action.</li>
+            <li><strong>Pruning</strong>: Regularly prune plants to remove dead
+                or diseased parts and promote healthy growth.</li>
+            <li><strong>Fertilization</strong>: Apply fertilizers as needed,
+                based on soil tests and plant requirements.</li>
+        </ul>
+
+        <h3>Additional Tips</h3>
+        <ul>
+            <li><strong>Use Pots and Containers</strong>: For easier management
+                and mobility, consider growing plants in pots and
+                containers.</li>
+            <li><strong>Select Hardy Varieties</strong>: Research and choose
+                plant varieties known for their hardiness and suitability to
+                Rajasthan’s climate.</li>
+        </ul>
+
+        <p>By following these tips, you can create a thriving garden that
+            withstands the challenging conditions of Rajasthan.</p>
+    </div>
+</div>
+
+{% endblock %}

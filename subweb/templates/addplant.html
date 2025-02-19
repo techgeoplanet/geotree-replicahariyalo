@@ -1,0 +1,1307 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+पेड़ जोड़ें
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'addplant/css/sty.css' %}">
+<link rel="stylesheet" href="{% static 'cameraImage/css/comp.css' %}">
+<link rel="stylesheet"
+    href="{% static 'addplant/css/certificate_input_info.css' %}">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<style>
+        .expandable-content{
+            margin-top: 20px;
+        }
+       /* Disabled button style */
+       #btnSubmit:disabled {
+            background-color: #cce5ff;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+         /* Container for the spinner with a border */
+         .spinner-container {
+            display: none;
+            width: 110px; /* Adjust width as needed */
+            height: 40px; /* Adjust height as needed */
+            border: 2px solid #007BFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: white; /* Background for the box */
+            margin: auto;
+        }
+
+        /* Hidden spinner by default */
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #007BFF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Spinner animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .certificate-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            height: 40px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+       
+
+        /* Change color on click */
+        .indicator-button:active {
+            background-color: #0056b3;
+        }
+        .dropdown-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            margin-bottom:20px;
+        }
+
+        /* The input field for search */
+        .dropdown-input {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* The dropdown list container */
+        .dropdown-list {
+            display: none; /* Hidden by default */
+            position: absolute;
+            z-index: 10;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            max-height: 200px; /* Max height for the list */
+            overflow-y: auto; /* Add scroll if necessary */
+            background-color: white;
+        }
+
+        /* Dropdown list items */
+        .dropdown-item {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        /* Highlight the item on hover */
+        .dropdown-item:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Show the dropdown list */
+        .dropdown-container.open .dropdown-list {
+            display: block;
+        }
+
+</style>
+
+<!-- style for selection drop down  -->
+
+<style>
+    .dropdown-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            margin-bottom:20px;
+        }
+
+        /* The input field for search */
+        .dropdown-input {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* The dropdown list container */
+        .dropdown-list {
+            display: none; /* Hidden by default */
+            position: absolute;
+            z-index: 1;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            max-height: 200px; /* Max height for the list */
+            overflow-y: auto; /* Add scroll if necessary */
+            background-color: white;
+        }
+
+        /* Dropdown list items */
+        .dropdown-item {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        /* Highlight the item on hover */
+        .dropdown-item:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Show the dropdown list */
+        .dropdown-container.open .dropdown-list {
+            display: block;
+        }
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="main">
+
+    <nav class="top-nav"
+        style="display: flex; justify-content: flex-start; align-items: center; top: 70px;">
+        <a href="{%url 'home' %}"
+            style="justify-content: flex-end; align-items: center; display: flex; text-decoration: none;">
+            <i class="fa-solid fa-arrow-left"
+                style="margin: 0 15px; font-size: 28px; color: #fff;"></i>
+            <p>Add Tree</p>
+        </a>
+    </nav>
+    <div class="top-section"></div>
+    <div class="main-section">
+        <div class="content-box">
+            <h3
+                style="color: green; width: 100%; margin: 10px; text-align: center;">Capture
+                Plantation images <span
+                    style="color: rgb(207, 0, 0);">*</span></h3>
+            <!-- implement image selection here  -->
+            <div class="imageCompSection"
+                style="padding: 10px; width: 100%; display: flex; justify-content: center; align-items: center;">
+
+                <div class="main-section">
+                    <div class="sub-main-section main-grid">
+                        <!-- Image Containers (existing code remains unchanged) -->
+                        <div class="image-container">
+
+                            <div class="image_c">
+                                <button class="button-addplant imageCap-btn"
+                                    onclick="openCamera(this, 1, 'image1')"
+                                    class="imagecap_btn" id="imageCapBtn1">
+                                    <i class="fa fa-picture-o"
+                                        style="font-size: 30px; color: #fff;"></i>
+                                    <i class="fa fa-camera"
+                                        style="font-size:40px"></i>
+                                </button>
+                                <img id="capturedImage1" src="#"
+                                    alt="Captured Image"
+                                    style="max-width: 100%; display: none;"
+                                    class="image">
+                            </div>
+                            <div class="image-text">
+                                <p>Site Preparation<br>(स्थल तैयारी)</p>
+                            </div>
+                            <div class="close hide"
+                                onclick="removeImage('imageCapBtn1', 'capturedImage1', 'image1')"></div>
+                        </div>
+
+                        <!-- <div class="image-container">
+                            <div class="image_c">
+                                <button class="button-addplant imageCap-btn"
+                                    onclick="openCamera(this, 1, 'image2')"
+                                    class="imagecap_btn" id="imageCapBtn2">
+                                    <i class="fa fa-picture-o"
+                                        style="font-size: 30px; color: #fff;"></i>
+                                    <i class="fa fa-camera"
+                                        style="font-size:40px"></i>
+                                </button>
+                                <img id="capturedImage2" src="#"
+                                    alt="Captured Image"
+                                    style="max-width: 100%; display: none;"
+                                    class="image">
+                            </div>
+                            <div class="image-text">
+                                <p>Digging<br>(खुदाई)</p>
+                            </div>
+                            <div class="close hide"
+                                onclick="removeImage('imageCapBtn2', 'capturedImage2', 'image2')"></div>
+                        </div> -->
+
+                        <div class="image-container">
+                            <div class="image_c">
+                                <button class="button-addplant imageCap-btn"
+                                    onclick="openCamera(this, 1, 'image3')"
+                                    class="imagecap_btn" id="imageCapBtn3">
+                                    <i class="fa fa-picture-o"
+                                        style="font-size: 30px; color: #fff;"></i>
+                                    <i class="fa fa-camera"
+                                        style="font-size:40px"></i>
+                                </button>
+                                <img id="capturedImage3" src="#"
+                                    alt="Captured Image"
+                                    style="max-width: 100%; display: none;"
+                                    class="image">
+                            </div>
+                            <div class="image-text">
+                                <p>Plantation<br>(पौधारोपण)</p>
+                            </div>
+                            <div class="close hide"
+                                onclick="removeImage('imageCapBtn3', 'capturedImage3', 'image3')"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- The Modal -->
+            <div id="myModal" class="modal">
+                <span class="close-modal">&times;</span>
+                <img class="modal-content" id="modalImage">
+            </div>
+
+            <form class="form" id="post-form-addplant"
+                enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="search-container">
+                    <input type="text" id="search"
+                        placeholder="Search tree names..."
+                        oninput="showSuggestions()" required>
+                    <div id="suggestions" class="suggestions"></div>
+                </div>
+                <label class="label" for="ownership">Plantation Ownership <span
+                        style="color: rgb(207, 0, 0);">*</span></label><br>
+
+                <select id="plantation_ownership" name="plantation_ownership"
+                    onchange="showHideSections(this.value)"
+                    required><option value="1">Private /
+                        Individual</option>
+                    <option value="2">Government</option>
+                    <option value="3">NGO</option>
+
+                </select><br><br>
+
+                <!-- if selection goverment  -->
+                <div class="Optation-box "
+                    id="condation_plantation_ownership_goverment"
+                    style="display: none;">
+                    <label class="label" for="ownership" style="z-index: 8;">Government Department
+                        <span
+                            style="color: rgb(207, 0, 0); ">*</span></label><br>
+
+                    <div class="dropdown-container">
+                        <!-- Search input field -->
+                        <input type="text" id="searchInput"
+                            class="dropdown-input"
+                            placeholder="Select department">
+                        {% comment %} <div class="dropdown-arrow"></div> {%endcomment %}
+                        <!-- Dropdown list -->
+                        <div id="dropdownList" class="dropdown-list">
+
+                            {% for item in departments %}
+                                 <div class="dropdown-item" data-value="{{ item.id }}">{{ item.department_name }}</div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="selectedValue"
+                        name="government_department" required>
+                    <br>
+
+                    
+                    <label class="label" for="ownership">Land Ownership<span
+                            style="color: rgb(207, 0, 0);">*</span></label><br>
+                    <select id="landownership_bygov" name="landownership_bygov"
+                        required>
+                        <option value>Select Ownership</option>
+                        <option value="1">Forest Land</option>
+                        <option value="10">Goshala</option>
+                        <option value="2">Government Building / Premise</option>
+                        <option value="11">Near Temple</option>
+                        <option value="3">Pasture Land</option>
+                        <option value="4">Private Land</option>
+                        <option value="5">Public Park</option>
+                        <option value="6">River Side</option>
+                        <option value="9">Roadside</option>
+                        <option value="7">School</option>
+                        <option value="8">Waste Land</option>
+                        <option value="12">Others</option>
+
+                    </select><br><br>
+
+                </div>
+                <!-- End  -->
+                <div class="Optation-box "
+                    id="condation_plantation_ownership_NGO"
+                    style="display: none;">
+                    <!-- if selection NGO  -->
+                    <label class="label" for="ngo_name">Name of Your NGO<span
+                            style="color: rgb(207, 0, 0);">*</span></label><br>
+                    <input type="text" id="ngo_name" name="ngo_name"
+                        placeholder="Enter Name of Your NGO"
+                        required><br><br>
+
+                    <label class="label" for="landownership_byngo">Land
+                        Ownership<span
+                            style="color: rgb(207, 0, 0);">*</span></label><br>
+                    <select id="landownership_byngo" name="landownership_byngo"
+                        onchange="saveSelect('landownership_byngo')" required>
+                        <option value>Select Ownership</option>
+                        <option value="1">Forest Land</option>
+                        <option value="10">Goshala</option>
+                        <option value="2">Government Building / Premise</option>
+                        <option value="11">Near Temple</option>
+                        <option value="3">Pasture Land</option>
+                        <option value="4">Private Land</option>
+                        <option value="5">Public Park</option>
+                        <option value="6">River Side</option>
+                        <option value="9">Roadside</option>
+                        <option value="7">School</option>
+                        <option value="8">Waste Land</option>
+                        <option value="12">Others</option>
+                    </select><br><br>
+                </div>
+                <!-- End  -->
+
+                <label class="label" for="treeHeight">Tree Height (in feet)
+                    <span
+                        style="color: rgb(207, 0, 0);">*</span></label><br>
+                <!-- <input type="number" id="treeHeight" name="treeHeight"
+                    placeholder="Enter Tree Height" step="0.01"
+                    style="width:inherit;" required> -->
+                <select id="treeHeight" name="treeHeight"
+                    onchange="saveSelect('treeHeight')" required>
+
+                    <option value="1">0 - 2 ( feet )</option>
+                    <option value="2">3 - 4 ( feet )</option>
+                    <option value="3">5 - 6 ( feet )</option>
+                    <option value="4">6 + ( feet )</option></select>
+
+                <br><br>
+
+
+                <div style="height: 400px; border-radius: 20px; overflow: hidden;">
+                   
+                    <div id="mapContainer" style="
+                        width: 100%;
+                        height: 100%;
+                    ">
+                        {% include 'map_web/map_web.html' with lat=25 long=74 %}
+                    </div>
+                <br>
+
+
+
+
+                <!-- <div
+                    style="height: 400px; border-radius: 20px; overflow: hidden;">
+                    <iframe id="locationFrame"
+                        src="{% url 'mapcontent' %}"
+                        style="width: 100%; height: 100%;"></iframe>
+                </div> -->
+                
+
+
+                </div> 
+
+                <input type="text" id="locationLat" name="locationLat"
+                    placeholder="Enter Location" value readonly hidden
+                    required>
+                <input type="text" id="locationLong" name="locationLong"
+                    placeholder="Enter Location" value readonly hidden
+                    required>
+
+                <input type="text" id="plantation_id_bypvt"
+                    name="plantation_id_bypvt"
+                    placeholder="Enter Location" value readonly hidden
+                    required>
+                <input type="text" id="plantation_id_byngo"
+                    name="plantation_id_byngo"
+                    placeholder="Enter Location" value readonly hidden
+                    required>
+                <input type="text" id="plantation_id_bygov"
+                    name="plantation_id_bygov"
+                    placeholder="Enter Location" value readonly hidden
+                    required>
+
+                <div class="btn-div"
+                    style=" width: 100%;  display: flex; justify-content: center; align-items: center; margin-top: 10px;">
+                    <button class="button-addplant" type="button"
+                        onclick="createPlant()"
+                        style="padding: 15px; text-align: center; border-radius: 20px; width: auto; font-size: x-large;aspect-ratio: auto;"
+                        id="btnSubmit">Add Plant</button>
+
+                        <div class="spinner-container" id="addplant-spinnerContainer">
+                            <div class="loading-spinner" id="addplant-loadingSpinner"></div>
+                        </div>
+
+                </div>
+
+                </div>
+                <br>
+                <br>
+                <br>
+                <br>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="full-body-main" id='full-body-main-hideShow'>
+    <div class="certificate-container">
+        <h1 class="h1Coa">Certificate of Appreciation</h1>
+        <div class="certificate-congratulations">
+            <p>Congratulations! You have contributed to the Green
+                Environment.</p>
+            <br>
+            <button class="certificate-btn-open-modal"
+                onclick="certificateopenModal()">Get
+                Certificate</button><br><br>
+            <a href="{% url 'home' %}" class="certificate-skip"
+                id="skip-link">Skip</a>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="CertificateModal" class="certificate-modal">
+        <div class="certificate-modal-content">
+            <div class="certificate-modal-header">
+                <span class="certificate-close"
+                    onclick="certificatecloseModal()">&times;</span>
+                <h3 class="h3Goc">Generate Your Certificate</h3>
+            </div>
+            <div class="certificate-modal-body">
+                <form enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <label for="inputName">Enter your name:</label>
+                    <input type="text" id="inputName"
+                        class="certificate-input-name"
+                        placeholder="Enter your name" pattern="[A-Za-z\s]*"
+                        title="Please enter alphabets only">
+                    <div class="certificate-file-upload">
+                        <input type="file" id="fileUpload" accept="image/*"
+                            capture="user"
+                            onchange="certificatepreviewImage(event)">
+                        <label for="fileUpload">Take a Photo</label>
+                    </div>
+                    <div class="certificate-img-preview-container">
+                        <img id="imgPreview" class="certificate-img-preview"
+                            alt="Image Preview">
+                        <span class="certificate-close"
+                            style="top: -10px; right: -10px; color: red;"
+                            onclick="certificateRemovePhoto()">&times;</span>
+                        <!-- <button class="certificate-remove-photo"
+                            onclick="certificateremovePhoto()">&times;</button> -->
+                    </div>
+                </form>
+            </div>
+            <div class="certificate-modal-footer">
+                <button id="indicatorButton" class="certificate-btn"
+                    onclick="certificategenerateCertificate()">Generate
+                    Certificate</button>
+                    <div class="spinner-container" id="spinnerContainer">
+                        <div class="loading-spinner" id="loadingSpinner"></div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- shohide  -->
+
+<script>
+    // example.js
+    const imageUrl = "{% static 'path/to/image.jpg' %}";
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+        if (!isMobile) {
+            // Apply styles and display message for desktop users
+            document.body.className = 'desktop';
+            document.body.innerHTML = `
+                <div class="message-box" style=" text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            ">
+                    <h1>Access Denied</h1>
+                    <p>This page is only accessible on iOS and Android devices.</p>
+                    <p>Please visit us on a mobile device.</p>
+                </div>
+            `;
+        }
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+     const searchInput = document.getElementById('searchInput');
+     const dropdownList = document.getElementById('dropdownList');
+     const dropdownContainer = document.querySelector('.dropdown-container');
+     const selectedValue = document.getElementById('selectedValue');
+ 
+     // Toggle the dropdown list on input click
+     searchInput.addEventListener('click', function () {
+         if (!dropdownContainer.classList.contains('open')) {
+             dropdownContainer.classList.add('open');
+         }
+     });
+ 
+     // Filter dropdown items based on input
+     searchInput.addEventListener('input', function () {
+         const filter = searchInput.value.trim().toLowerCase();
+         const items = dropdownList.getElementsByClassName('dropdown-item');
+ 
+         let found = false;
+         Array.from(items).forEach(function (item) {
+             const text = item.textContent.trim().toLowerCase();
+             if (text.includes(filter)) {
+                 item.style.display = 'block'; // Show matching item
+                 found = true;
+             } else {
+                 item.style.display = 'none'; // Hide non-matching items
+             }
+         });
+ 
+         if (filter === '') {
+             Array.from(items).forEach(function (item) {
+                 item.style.display = 'block'; // Show all items when input is empty
+             });
+             dropdownContainer.classList.remove('open'); // Close dropdown if input is empty
+         } else {
+             dropdownContainer.classList.add('open'); // Open dropdown if there is a match
+         }
+     });
+ 
+     // Handle item selection and hide the dropdown list
+     dropdownList.addEventListener('click', function (e) {
+         const target = e.target;
+         if (target.classList.contains('dropdown-item')) {
+             searchInput.value = target.textContent.trim();
+             selectedValue.value = target.getAttribute('data-value');
+             dropdownContainer.classList.remove('open'); // Hides the list
+             searchInput.blur(); // Remove focus from the input field
+         }
+     });
+ 
+     // Handle Enter key press to prevent input if not matching
+     searchInput.addEventListener('keypress', function (e) {
+         if (e.key === 'Enter') {
+             e.preventDefault(); // Prevent form submission or input acceptance
+             const filter = searchInput.value.trim().toLowerCase();
+             const items = dropdownList.getElementsByClassName('dropdown-item');
+ 
+             let found = false;
+             Array.from(items).forEach(function (item) {
+                 const text = item.textContent.trim().toLowerCase();
+                 if (text === filter) {
+                     found = true;
+                 }
+             });
+ 
+             if (!found) {
+                 searchInput.value = ''; // Clear input if no items match exactly
+             }
+ 
+             dropdownContainer.classList.remove('open'); // Close dropdown
+         }
+     });
+ 
+     // Close the dropdown if clicking outside without selecting an option
+     document.addEventListener('click', function (e) {
+         if (!dropdownContainer.contains(e.target) && e.target !== searchInput) {
+             if (searchInput.value.trim() === '') {
+                 dropdownContainer.classList.remove('open');
+                 Array.from(dropdownList.getElementsByClassName('dropdown-item')).forEach(function (item) {
+                     item.style.display = 'block'; // Show all items when clearing search input
+                 });
+             }
+         }
+     });
+ });
+ 
+ </script>  
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const button = document.getElementById('indicatorButton');
+        const spinnerContainer = document.getElementById('spinnerContainer');
+        spinnerContainer.style.display = 'none';
+        button.addEventListener('click', function () {
+            
+            button.style.display = 'none'; // Hide the button
+            spinnerContainer.style.display = 'flex'; // Show the spinner container with border
+        });
+    });
+</script>
+
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const button = document.getElementById('btnSubmit');
+        const spinnerContainer = document.getElementById('addplant-spinnerContainer');
+        spinnerContainer.style.display = 'none';
+        button.addEventListener('click', function () {
+            
+            button.style.display = 'none'; // Hide the button
+            spinnerContainer.style.display = 'flex'; // Show the spinner container with border
+        });
+    });
+</script> -->
+
+
+<script>
+
+    function showHideSections(value) {
+        var govermentSection = document.getElementById("condation_plantation_ownership_goverment");
+        var ngoSection = document.getElementById("condation_plantation_ownership_NGO");
+        
+        govermentSection.style.display = "none";
+        ngoSection.style.display = "none";
+        
+
+        if (value === "2") {
+            govermentSection.style.display = "block";
+        } else if (value === "3") {
+            ngoSection.style.display = "block";
+    
+            }
+        }
+
+    function validateForm() {
+        var selectedValue_w = document.getElementById("plantation_ownership").value;
+        if (selectedValue_w === "Select Ownership") {
+            alert("Please select Ownership.");
+            return false;
+        }
+        // Add more validation here if needed
+
+        return true;
+    }
+</script>
+
+<script>
+//     function adop_value(){
+//     var location_dist_code_value = document.getElementById('location_dist_code').value;
+//     var location_ps_code_value = document.getElementById('location_ps_code').value;
+//     var location_gp_code_value = document.getElementById('location_gp_code').value;
+
+//     console.log(location_gp_code_value,location_ps_code_value,location_dist_code_value,"-----")
+// }
+</script>
+
+<script>
+    var plantation_bygov = '';
+    var plantation_byngo = '';
+    var plantation_bypvt = '';
+
+    const addpant_spinnerContainer = document.getElementById('addplant-spinnerContainer');
+    addpant_spinnerContainer.style.display = 'none';
+
+    function dataURItoBlob(dataURI) {
+        var byteString = atob(dataURI.split(',')[1]);
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+        var ab = new ArrayBuffer(byteString.length);
+        var ia = new Uint8Array(ab);
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([ab], {type: mimeString});
+    }
+    
+
+    function createPlant() {
+        // adop_value();
+        var btnSubmit = document.getElementById("btnSubmit");
+        btnSubmit.style.display = 'none';
+        addpant_spinnerContainer.style.display = 'flex';
+
+        // // btnSubmit.disabled = true;
+
+        // // const button = document.getElementById('indicatorButton');
+        // const spinnerContainer = document.getElementById('spinnerContainer');
+        // spinnerContainer.style.display = 'none';
+        // button.addEventListener('click', function () {
+            
+        //     button.style.display = 'none'; // Hide the button
+        //     spinnerContainer.style.display = 'flex'; // Show the spinner container with border
+        // });
+
+        var form = document.getElementById('post-form-addplant');
+        var formData = new FormData(form);
+
+        let dataSendUri = '/plantation_bypvt/';
+
+        let image1 = document.getElementById('capturedImage1').src;
+        // let image2 = document.getElementById('capturedImage2').src;
+        let image3 = document.getElementById('capturedImage3').src;
+
+        if (image1.length <= 50 || image1 === "#" ||  
+            image3.length <= 50 || image3 === "#") {
+            alert('Both images are mandatory and must be valid!');
+            console.log('Image 1:', image1);
+            // console.log('Image 2:', image2);
+            console.log('Image 3:', image3);
+            btnSubmit.style.display = 'flex';
+            addpant_spinnerContainer.style.display = 'none';
+            return;
+        }
+
+    let plantation_name = document.getElementById('search').value.trim();
+    let plantation_height = document.getElementById('treeHeight').value.trim();
+    let location_lat = document.getElementById('locationLat').value.trim();
+    let location_long = document.getElementById('locationLong').value.trim();
+    let plantation_ownership = document.getElementById('plantation_ownership').value.trim();
+
+
+    if (!plantation_name || !plantation_height || !location_lat || !location_long || !plantation_ownership) {
+        alert('All fields are mandatory!');
+        console.log('plantation_name:', plantation_name, 'plantation_height:', plantation_height, 'plantation_ownership:', plantation_ownership);
+        if ( !location_lat || !location_long){
+            alert('Please Refresh Page or Enable Location!')
+            console.log('Location:', location_lat, location_long);
+        }
+        btnSubmit.style.display = 'flex';
+        addpant_spinnerContainer.style.display = 'none';
+
+     return;
+     
+    }
+
+    if (plantation_ownership === "2"){
+        dataSendUri = '/plantation_bygov/' 
+        let gov_department_id = document.getElementById('selectedValue').value.trim();
+        let land_ownership = document.getElementById('landownership_bygov').value.trim();
+        console.log(gov_department_id)
+
+        if (!gov_department_id || !land_ownership) {
+            alert('Department and ownership is mandatory');
+            console.log('gov_department_id:', gov_department_id , 'land_ownership:', land_ownership);
+            btnSubmit.style.display = 'flex';
+            addpant_spinnerContainer.style.display = 'none';
+            return;
+
+        }
+        formData.append('gov_department_id', gov_department_id);
+        formData.append('land_ownership', land_ownership);
+    }
+
+    if (plantation_ownership === "3"){
+        dataSendUri = '/plantation_byngo/'
+        let ngo_name = document.getElementById('ngo_name').value.trim();
+        let land_ownership = document.getElementById('landownership_byngo').value.trim();
+
+        if (!ngo_name || !land_ownership) {
+            alert('NGO name and ownership is mandatory!');
+            console.log('ngo_name:', ngo_name , 'land_ownership:', land_ownership);
+            btnSubmit.style.display = 'flex';
+            addpant_spinnerContainer.style.display = 'none';
+
+            return;
+        }
+        formData.append('ngo_name', ngo_name);
+        formData.append('land_ownership', land_ownership);
+    }
+
+    // let csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+    // formData.append('csrfmiddlewaretoken', csrfToken);
+    // console.log(document.getElementById('location_dist_code').value,document.getElementById('location_ps_code').value,document.getElementById('location_gp_code').value, "this is form data which send over api");
+    formData.append('dict_code', document.getElementById('location_dist_code').value);
+    formData.append('block_code', document.getElementById('location_ps_code').value);
+    formData.append('gp_code', document.getElementById('location_gp_code').value);
+
+
+    formData.append('plantation_name', plantation_name);
+    formData.append('plantation_height', plantation_height);
+    formData.append('location_lat', location_lat);
+    formData.append('location_long', location_long);
+    formData.append('image1', dataURItoBlob(image1), 'image1.jpg');
+    // formData.append('image2', dataURItoBlob(image2), 'image2.jpg');
+    formData.append('image3', dataURItoBlob(image3), 'image3.jpg');
+
+
+    // console.log(formData, "this is form data which send over api");
+
+    fetch(dataSendUri, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // alert('Plant Added successfully!'+data.plantation_id_bygov);
+            // console.log(data)
+            // clearAll();
+            btnSubmit.style.display = 'flex';
+            addpant_spinnerContainer.style.display = 'none';
+            if (data.plantation_id_bygov){
+                plantation_bygov = data.plantation_id_bygov;
+                // document.getElementById('plantation_id_bygov').value = data.plantation_id_bygov;
+            }
+            else if(data.plantation_id_byngo){
+                plantation_byngo = data.plantation_id_byngo;
+                // document.getElementById('plantation_id_byngo').value = data.plantation_id_byngo;
+            }
+            else if(data.plantation_id_bypvt){
+                plantation_bypvt = data.plantation_id_bypvt;
+                // document.getElementById('plantation_id_bypvt').value = data.plantation_id_bypvt;
+            }
+
+            document.getElementById('full-body-main-hideShow').style.display = 'flex';
+
+        } else {
+            alert('Error ' + data.error);
+            btnSubmit.style.display = 'flex';
+            addpant_spinnerContainer.style.display = 'none';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error occurred.');
+        btnSubmit.style.display = 'flex';
+        addpant_spinnerContainer.style.display = 'none';
+    });
+}
+
+</script>
+
+<!-- Include scripts at the end of the body for better performance -->
+<script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
+<script src="{% static 'addplant/js/scrp.js' %}"></script>
+
+<!-- Define your custom JavaScript functions -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const skipLink = document.getElementById('skip-link');
+        if (skipLink) {
+            skipLink.addEventListener('click', function(event) {
+                event.preventDefault();  // Prevent the default action of the link
+                clearAll();  // Call the function to clear the form
+                window.location.href = this.href;  // Navigate to the URL in the href attribute
+            });
+        }
+    });
+
+    function clearAll() {
+        // Clear all input fields
+        document.querySelectorAll('.input-container input[type="text"]').forEach(function (input) {
+            input.value = '';
+        });
+
+        // Clear all select fields
+        document.querySelectorAll('.input-container select').forEach(function (select) {
+            select.selectedIndex = 0;
+        });
+
+        // Clear localStorage for inputs
+        localStorage.removeItem('treeHeight');
+        // Optionally, you can clear other localStorage items here (for images, etc.)
+        localStorage.removeItem('image1');
+        // localStorage.removeItem('image2');
+        localStorage.removeItem('image3');
+        
+        // Clear localStorage for select fields
+
+        // Reload the page or update UI as needed
+        location.reload(); // Reloads the page to reflect cleared inputs
+    }
+
+    // Assuming you have a save function for saving select values to localStorage
+    function saveSelectValues() {
+        document.querySelectorAll('.input-container select').forEach(function (select, index) {
+            localStorage.setItem('select' + (index + 1), select.value);
+        });
+    }
+
+// Call saveSelectValues() whenever you need to save the select values
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Load images from localStorage
+        loadImage('capturedImage1', 'imageCapBtn1', 'image1');
+        // loadImage('capturedImage2', 'imageCapBtn2', 'image2');
+        loadImage('capturedImage3', 'imageCapBtn3', 'image3');
+
+        // Load input values from localStorage
+        loadInput('treeHeight');
+
+        // Modal setup (existing code remains unchanged)
+        var modal = document.getElementById("myModal");
+        var modalImg = document.getElementById("modalImage");
+        var images = document.getElementsByClassName("image");
+
+        for (var i = 0; i < images.length; i++) {
+            images[i].onclick = function () {
+                modal.style.display = "block";
+                modalImg.src = this.src;
+            }
+        }
+
+        var span = document.getElementsByClassName("close-modal")[0];
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        modalImg.onclick = function () {
+            modal.style.display = "none";
+        }
+    });
+
+    function compressImage(file, callback) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function (event) {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = function () {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const maxWidth = 800; // You can adjust the max width as needed
+                const scaleFactor = maxWidth / img.width;
+
+                canvas.width = maxWidth;
+                canvas.height = img.height * scaleFactor;
+
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                // Reduce the image quality by setting it to 0.7 (70%)
+                const compressedImage = canvas.toDataURL('image/jpeg', 0.7);
+                callback(compressedImage);
+            };
+        };
+    }
+
+    function openCamera(button, numOfImages, localStorageKey) {
+        let capturedImages = [];
+        let imageCounter = 0;
+
+        function captureImage() {
+            if (imageCounter < numOfImages) {
+                let input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                input.capture = 'camera';
+                input.onchange = function (event) {
+                    let file = event.target.files[0];
+                    compressImage(file, function (compressedImage) {
+                        let image = button.nextElementSibling;
+                        image.src = compressedImage;
+                        image.style.display = 'block';
+                        button.style.display = 'none';
+                        let closeButton = button.parentElement.nextElementSibling.nextElementSibling;
+                        closeButton.classList.remove('hide');
+
+                        localStorage.setItem(localStorageKey, compressedImage);
+                        // Remove the removed flag if it exists
+                        localStorage.removeItem(localStorageKey + '_removed');
+                        capturedImages.push(compressedImage);
+                        imageCounter++;
+                        if (imageCounter < numOfImages) {
+                            captureImage();
+                        }
+                    });
+                };
+                input.click();
+            }
+        }
+
+        captureImage();
+    }
+
+    function removeImage(buttonId, imageId, localStorageKey) {
+        let button = document.getElementById(buttonId);
+        let image = document.getElementById(imageId);
+        image.src = '#';
+        image.style.display = 'none'; 
+        button.style.display = 'inline';
+        let closeButton = button.parentElement.nextElementSibling.nextElementSibling;
+        closeButton.classList.add('hide');
+        // Set a flag indicating the image has been removed
+        localStorage.setItem(localStorageKey + '_removed', 'true');
+    }
+
+    function loadImage(imageId, buttonId, localStorageKey) {
+        // Check if the image is marked as removed
+        if (localStorage.getItem(localStorageKey + '_removed') !== 'true') {
+            let storedImage = localStorage.getItem(localStorageKey);
+            if (storedImage) {
+                let image = document.getElementById(imageId);
+                let button = document.getElementById(buttonId);
+                image.src = storedImage;
+                image.style.display = 'block';
+                button.style.display = 'none';
+                let closeButton = button.parentElement.nextElementSibling.nextElementSibling;
+                closeButton.classList.remove('hide');
+            }
+        }
+    }
+
+    function saveInput(inputId) {
+        let input = document.getElementById(inputId);
+        localStorage.setItem(inputId, input.value);
+    }
+
+    function loadInput(inputId) {
+        let savedValue = localStorage.getItem(inputId);
+        if (savedValue !== null) {
+            let input = document.getElementById(inputId);
+            input.value = savedValue;
+        }
+    }
+
+    function saveSelect(selectId) {
+            let select = document.getElementById(selectId);
+            localStorage.setItem(selectId, select.value);
+        }
+
+    function loadSelect(selectId) {
+        let savedValue = localStorage.getItem(selectId);
+        if (savedValue !== null) {
+            let select = document.getElementById(selectId);
+            select.value = savedValue;
+        }
+    }
+
+    // Add event listeners to save input on change
+
+    // tree height input
+    document.getElementById('treeHeight').addEventListener('input', function () {
+        saveInput('treeHeight');
+    });
+
+
+</script>
+
+<script>
+    window.onload = function() {
+        if (navigator.geolocation) {
+            fetchLocation();
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    };
+
+    function fetchLocation() {
+        navigator.geolocation.getCurrentPosition(success, error, {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+        });
+    }
+
+    function success(position) {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var accuracy = position.coords.accuracy;
+
+        if (accuracy) {
+            document.getElementById('locationLat').value = latitude;
+            document.getElementById('locationLong').value = longitude;
+            updateIframeSrc(latitude, longitude);
+         } else {
+            console.log('Accuracy is over acurracy meters. Retrying...');
+            setTimeout(fetchLocation, 1000); // Retry after 1 second
+        }
+    }
+
+    function error(err) {
+        console.warn(`ERROR(${err.code}): ${err.message}`);
+        setTimeout(fetchLocation, 1000); // Retry after 1 second on error
+    }
+
+    function updateIframeSrc(lat, long) {
+            var iframe = document.getElementById('locationFrame');
+            // iframe.src = ``;
+        }
+    // function updateMapContainer(lat, long) {
+    //         $.ajax({
+    //             url: "{% url 'mapcontent' %}",
+    //             data: {
+    //                 lat: lat,
+    //                 long: long
+    //             },
+    //             success: function(response) {
+    //                 $('#mapContainer').html(response.html);
+    //             },
+    //             error: function(xhr, status, error) {
+    //                 console.error('Error updating map content:', error);
+    //             }
+    //         });
+    //     }
+
+
+
+</script>
+
+<!-- for certificate input info script  -->
+<script>
+     function certi_compressImage(file, callback) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function (event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function () {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const fixedWidth = 350; // Set the fixed width
+                    const fixedHeight = 600; // Set the fixed height
+
+                    canvas.width = fixedWidth;
+                    canvas.height = fixedHeight;
+
+                    // Draw the image with the fixed width and height
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    // Reduce the image quality by setting it to 0.7 (70%)
+                    const compressedImage = canvas.toDataURL('image/jpeg', 0.8);
+                    callback(compressedImage);
+                };
+            };
+        }
+
+    var modal = document.getElementById('CertificateModal');
+    var inputName = document.getElementById("inputName");
+    var fileUpload = document.getElementById('fileUpload');
+    var imgPreviewContainer = document.querySelector('.certificate-img-preview-container');
+    var imgPreview = document.getElementById('imgPreview');
+    var fileUploadLabel = document.querySelector('.certificate-file-upload label');
+
+    function certificateopenModal() {
+        CertificateModal.style.display = "flex";
+    }
+    function certificatecloseModal() {
+        CertificateModal.style.display = "none";
+    }
+    inputName.addEventListener('input', function(event) {
+    var inputValue = event.target.value;
+    // Regex to allow English letters, spaces, and Hindi characters
+    var sanitizedValue = inputValue.replace(/[^a-zA-Z\s\u0900-\u097F]/g, '');
+    if (inputValue !== sanitizedValue) {
+        event.target.value = sanitizedValue;
+        alert("Only alphabets in English and Hindi are allowed!");
+    }
+});
+
+    function certificatepreviewImage(event) {
+        imgPreview.src = URL.createObjectURL(event.target.files[0]);
+        imgPreviewContainer.style.display = 'block';
+        fileUploadLabel.style.display = 'none';
+        // Apply the mirrored effect
+        imgPreview.classList.add('mirrored');
+    }
+    function certificateRemovePhoto() {
+        console.log('remove image btn pressed');
+        imgPreview.src = '';
+        imgPreviewContainer.style.display = 'none';
+        fileUpload.value = '';
+        fileUploadLabel.style.display = 'inline-block';
+        // // Remove the mirrored effect
+        imgPreview.classList.remove('mirrored');
+    }
+    function certificategenerateCertificate() {
+        var name = inputName.value.trim();
+        var file = fileUpload.files[0];
+
+        if (name === "") {
+            alert("Please enter your name.");
+            return;
+        }
+
+        if (!file) {
+            alert("Please upload an image.");
+            return;
+        }
+        certi_compressImage(file, function(compressedSelfiImage) {
+                const formData = new FormData();
+                // formData.append('plantation_id_bypvt', document.getElementById('plantation_id_bypvt').value);
+                // formData.append('plantation_id_bygov', document.getElementById('plantation_id_bygov').value);
+                // formData.append('plantation_id_byngo', document.getElementById('plantation_id_byngo').value);
+
+
+                formData.append('plantation_id_bypvt', plantation_bypvt);
+                formData.append('plantation_id_bygov', plantation_bygov);
+                formData.append('plantation_id_byngo', plantation_byngo);
+                formData.append('certificate_holder_name', name);
+                formData.append('selfi_image', dataURItoBlob(compressedSelfiImage),'slf.jpg');
+
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);
+                }
+
+
+                fetch("{% url 'postCerti' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Certificate information submitted successfully!');
+                        clearAll(); // Assuming clearAll is a function that clears your form
+                        window.location.href = "{% url 'home' %}";
+                    } else {
+                        alert('Error: got by' + JSON.stringify(data.errors));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error occurred: ' + error);
+                });
+            });
+
+        // alert("Certificate for " + name + " generated successfully!");
+        // certificateresetForm();
+        // certificatecloseModal();
+    }
+    function certificateresetForm() {
+        inputName.value = '';
+        certificateremovePhoto();  // This will reset the photo and show the "Take a Photo" button again
+    }
+    window.onclick = function(event) {
+        if (event.target == CertificateModal) {
+            certificatecloseModal();
+        }
+    }
+    
+</script>
+
+<style>
+     #map {
+            height: 100%;
+            width: 100%;
+            z-index: 5;
+        }
+</style>
+
+
+<!-- end   -->
+
+{% endblock %}

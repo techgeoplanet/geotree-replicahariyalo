@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>उपयोगकर्ता लॉगिन</title>
+</head>
+
+<body>
+    <form method="POST" action="{% url 'tempuser_login' %}" id="loginForm">
+        {% csrf_token %}
+        <label for="phone">फ़ोन:</label>
+        <input type="text" name="phone" id="phone" required><br>
+        <label for="otp">OTP (अगर प्राप्त किया है):</label>
+        <input type="text" name="otp" id="otp"><br>
+        <button type="submit">सबमिट</button>
+    </form>
+
+
+    <script>
+        document.getElementById('otp').addEventListener('input', function () {
+            if (this.value === '123456') {
+                document.getElementById('loginForm').submit();
+            }
+        });
+    </script>
+</body>
+
+</html>

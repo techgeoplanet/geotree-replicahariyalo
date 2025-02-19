@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tree Details</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Leaflet CSS -->
+        <link rel="stylesheet"
+            href="https://unpkg.com/leaflet/dist/leaflet.css">
+        <!-- Leaflet JS -->
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <style>
+    #map {
+      height: 100%;
+      width: 100%;
+      border-radius: 8px;
+    }
+    #refresh-btn, #zoom-to-current-btn, #zoom-to-tree-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+    }
+    #zoom-to-current-btn {
+      top: 50px;
+    }
+    #zoom-to-tree-btn {
+      top: 90px;
+    }
+  </style>
+    </head>
+    <body class="bg-gray-100">
+
+        <!-- Map -->
+        <div class="p-4 h-screen w-full flex flex-col items-center">
+            <div id="map"></div>
+            <div class="flex justify-between mt-4 ">
+                <!-- Refresh button on the left -->
+                <div class="flex justify-end absolute bottom-32 right-3">
+                    <button id="refresh-btn"
+                        class="bg-green-300 hover:bg-green-500 text-white font-bold py-2 px-4 rounded shadow-md">
+                        <span class="flex justify-center items-center">
+                            🔄
+                        </span>
+                    </button>
+                </div>
+            
+                <!-- Other buttons in the center -->
+                <div class="flex justify-center space-x-2">
+                    <button id="zoom-to-current-btn"
+                        class="bg-blue-300 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded shadow-md">
+                        <span class="flex justify-center items-center">
+                            👨
+                        </span>
+                    </button>
+                    <button id="zoom-to-tree-btn"
+                        class="bg-orange-300 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded shadow-md">
+                        <span class="flex justify-center items-center">
+                            🌳
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- Initialize Leaflet Map -->
+        <script>
+    let currentMarker;
+    let treeMarker;
+    let line;
+    let circle;
+
+    function initMap() {
+      const lat = 26.836743;
+      const lng = 75.833990;
+
+      const map = L.map('map').setView([lat, lng], 15);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      const treeIcon = L.icon({
+        iconUrl: 'tree.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+      });
+
+      const humanIcon = L.icon({
+        iconUrl: 'human.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+      });
+
+      treeMarker = L.marker([lat, lng], { icon: treeIcon })
+        .addTo(map)
+        .bindPopup("<b>Neem Tree</b><br>Lat: " + lat + ", Long: " + lng)
+        .openPopup();
+
+      // Draw a 10m circle around the tree location
+      circle = L.circle([lat, lng], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5,
+        radius: 10 // 10 meters
+      }).addTo(map);
+
+      // Get current location and zoom on it
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const currentLat = position.coords.latitude;
+          const currentLng = position.coords.longitude;
+          const accuracy = position.coords.accuracy;
+
+          const treeLocation = L.latLng(lat, lng);
+          const currentLocation = L.latLng(currentLat, currentLng);
+
+          // Calculate the distance (in kilometers)
+          const distance = (treeLocation.distanceTo(currentLocation) / 1000).toFixed(2);
+
+          currentMarker = L.marker([currentLat, currentLng], { icon: humanIcon })
+            .addTo(map)
+            .bindPopup(
+              `<b>Your Location</b><br>Lat: ${currentLat}, Long: ${currentLng}<br>Accuracy: ${accuracy} meters<br>Distance to tree: ${distance} kilometers`
+            )
+            .openPopup();
+
+          // Draw a 10m circle around the current location
+          L.circle([currentLat, currentLng], {
+            color: 'blue',
+            fillColor: '#f03',
+            fillOpacity: 0.5,
+            radius: 10 // 10 meters
+          }).addTo(map);
+
+          // Draw line between current location and tree location
+          line = L.polyline([[lat, lng], [currentLat, currentLng]], {color: 'red'}).addTo(map);
+
+          // Fly to the current location
+          map.flyTo([currentLat, currentLng], 15, {
+            animate: true,
+            duration: 1.5 // duration of the flight in seconds
+          });
+        });
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+      }
+
+      // Refresh button click event
+      document.getElementById('refresh-btn').addEventListener('click', function() {
+        if (currentMarker) {
+          currentMarker.remove();
+        }
+        if (line) {
+          line.remove();
+        }
+        if (circle) {
+          circle.remove();
+        }
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            const currentLat = position.coords.latitude;
+            const currentLng = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
+
+            // Fly to the tree location first
+            map.flyTo([lat, lng], 18, {
+              animate: true,
+              duration: 1.5 // duration of the flight in seconds
+            });
+
+            // Then fly to the current location after a short delay
+            setTimeout(function() {
+              currentMarker = L.marker([currentLat, currentLng], { icon: humanIcon })
+                .addTo(map)
+                .bindPopup("<b>Your Location</b><br>Lat: " + currentLat + ", Long: " + currentLng + "<br>Accuracy: " + accuracy + " meters");
+
+              // Draw a 10m circle around the current location
+              L.circle([currentLat, currentLng], {
+                color: 'blue',
+                fillColor: '#f03',
+                fillOpacity: 0.5,
+                radius: 10 // 10 meters
+              }).addTo(map);
+
+              // Draw line between current location and neem lat lng
+              line = L.polyline([[lat, lng], [currentLat, currentLng]], {color: 'red'}).addTo(map);
+
+              map.flyTo([currentLat, currentLng], 9, {
+                animate: true,
+                duration: 1.5 // duration of the flight in seconds
+              });
+            }, 2000); // 5000 milliseconds = 5 seconds
+          });
+        } else {
+          console.error("Geolocation is not supported by this browser.");
+        }
+      });
+
+      // Zoom to Current Location button click event
+      document.getElementById('zoom-to-current-btn').addEventListener('click', function() {
+        if (currentMarker) {
+          map.flyTo([currentMarker.getLatLng().lat, currentMarker.getLatLng().lng], 18, {
+            animate: true,
+            duration: 1.5 // duration of the flight in seconds
+          });
+        } else {
+          console.error("Current location marker not found.");
+        }
+      });
+
+      // Zoom to Tree Location button click event
+      document.getElementById('zoom-to-tree-btn').addEventListener('click', function() {
+        if (treeMarker) {
+          map.flyTo([treeMarker.getLatLng().lat, treeMarker.getLatLng().lng], 18, {
+            animate: true,
+            duration: 1.5 // duration of the flight in seconds
+          });
+        } else {
+          console.error("Tree location marker not found.");
+        }
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", initMap);
+  </script>
+
+
+    </body>
+</html>

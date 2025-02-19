@@ -1,0 +1,365 @@
+<!-- certificateAdm.html -->
+{% extends "A_base.html" %}
+{% load static %}
+
+{% block title %}
+Plant Data Table for Government
+{% endblock %}
+
+{% block extra_css %}
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Your custom CSS -->
+    <link rel="stylesheet" href="{% static 'certificateAdm/certificateadm.css' %}">
+    <link rel="stylesheet" href="{% static 'plantdata/plantdata.css' %}">
+    <style>
+   
+    </style>
+
+{% endblock %}
+
+{% block content %}
+    {% include 'menu/menu.html' with name=user.name active='Plantation Data' %}
+    <div class="certi-main">
+        <div class="certi-header">
+            <div class="date-time" id="current-date-time"></div>
+            <div class="button-group">
+                <a class="category-button" id="category-1" href="{% url 'plantationdatapvtadm' %}" onclick="openCategoryPage('private')">Private</a>
+                <a class="category-button" id="category-2" href="{% url 'plantationdatagovadm' %}" onclick="openCategoryPage('government')" style="background: linear-gradient(145deg, #18350d 0%, #18ff35fa 100%);">Government</a>
+                <a class="category-button" id="category-3" href="{% url 'plantationdatangoadm' %}" onclick="openCategoryPage('ngo')">NGO</a>
+            </div>
+            <div class="download-seciton">
+                <button id="download-data" class="category-button">Download Data</button>
+                <button id="prepair-data" class="category-button disable hidden">Preparing ...</button>
+
+                <fieldset id="date-picker" style="display: none;">
+                    <label for="start-date">Start Date:</label>
+                    <input type="date" id="start-date" class="inputdate">
+                    <label for="end-date">End Date:</label>
+                    <input type="date" id="end-date" class="inputdate">
+                    <div class="cat">
+                    <button id="confirm-date" class="category-button">Confirm</button>
+                    <button id="cancel-date" class="category-button">Cancel</button>
+                </div>
+                </fieldset>
+            </div> 
+            </div>
+        </div>
+        
+        <div id="lightbox" class="lightbox">
+            <img id="lightbox-img" src="" alt="Enlarged Image">
+        </div>
+        <div class="rows-selection">
+            <label for="rows-per-page">Rows per page:</label>
+            <select id="rows-per-page" onchange="updateRowsPerPage()">
+                <option value="10" {% if rows_per_page == 10 %}selected{% endif %}>10</option>
+                <option value="25" {% if rows_per_page == 25 %}selected{% endif %}>25</option>
+                <option value="50" {% if rows_per_page == 50 %}selected{% endif %}>50</option>
+                <option value="100" {% if rows_per_page == 100 %}selected{% endif %}>100</option>
+            </select>
+        </div>
+        <table id="example" class="display nowrap" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="select-all" style="width:20px; height:20px; cursor: pointer;border-radius:6px;"></th>
+                    <th>Serial No</th>
+                    <th>Plant Id</th>
+                    <th>Name</th>
+                    <th>Height</th>
+                    <th>Department</th>
+                    <th>Land Ownership</th>
+                    <th>District</th> <!-- New column -->
+                    <th>Block</th> <!-- New column -->
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Plant Images</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Date and Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for gov in gov_info %}
+                <tr id="{{ gov.id}}" >
+                    <td><input type="checkbox" class="row-select" style="width:20px; height:20px; cursor: pointer;border-radius:6px;"></td>
+                    <td>{{ forloop.counter|add:gov_info.start_index|add:"-1" }}</td>
+                    <td>{{gov.id}}</td>
+                    <td>{{gov.plantation_name}}</td>
+                    <td>{{gov.plantation_height}}</td>
+                    <td>{{gov.gov_department_id}}</td>
+                    <td>{{gov.land_ownership}}</td>
+                    <td>Null</td>
+                    <td>Null</td>
+                    <td>{{gov.location_lat}}</td>
+                    <td>{{gov.location_long}}</td>
+                    <td>
+                        <div class="img-container">
+                            {% if gov.image1 %}
+                                <img src="{{ gov.image1.url }}" alt="img1" class="img" onclick="showLightbox('{{ gov.image1.url }}')">
+                            {% else %}
+                                Null
+                            {% endif %}
+                            {% if gov.image3 %}
+                                <img src="{{ gov.image3.url }}" alt="img3" class="img" onclick="showLightbox('{{ gov.image3.url }}')">
+                            {% else %}
+                                Null
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>{{ gov.submitted_by }}</td>
+                    <td>{{ gov.status }}</td>
+                    <td>{{ gov.created_at }}</td>
+                    <td id="Action_Btn_Table"><button class="approve-button" data-id="{{ gov.id }}" onclick="approveCertificate(`{{ gov.id }}`)">Approve</button> <button class="approve-button" data-id="{{ gov.id }}" onclick="deleteCertificate(`{{ gov.id }}`)" style="background-color: red; margin-left: 20px;">Delete</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination controls -->
+        <div class="foot" style="display: flex;
+        justify-content: space-between;
+        align-items: center; margin-bottom:10px;">
+        <div style="    margin-left: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;">
+    <button style="    padding: 10px 20px;
+    margin: 10px;
+    background: linear-gradient(145deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;">Approve All
+    </button>
+    </div >
+    <div class="pagination"  >
+        <span class="step-links">
+            {% if gov_info.has_previous %}
+            <a href="?page=1&rows={{ rows_per_page }}" class="pagination-button">&laquo; First</a>
+    
+            <a href="?page={{ gov_info.previous_page_number }}&rows={{ rows_per_page }}" class="pagination-button">Previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ gov_info.number }} of {{ gov_info.paginator.num_pages }} |
+                {{ gov_info.start_index }}-{{ gov_info.end_index }} of {{ gov_info.paginator.count }} entries
+            </span>
+    
+            {% if gov_info.has_next %}
+            <a href="?page={{ gov_info.next_page_number }}&rows={{ rows_per_page }}" class="pagination-button">Next</a>
+            <a href="?page={{ gov_info.paginator.num_pages }}&rows={{ rows_per_page }}" class="pagination-button">Last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    <div style="margin-right:20px;display: flex;
+    justify-content: center;
+    align-items: center;">
+    <form method="get" action="{% url 'plantationdatagovadm' %}">
+        {% comment %} <label for="skip_to_page">Skip to page:</label> {% endcomment %}
+        <input type="number" id="skip_to_page" name="rows" min="1" value="{{ rows_per_page }}"hidden>
+        <label for="skip_to_page" style="font-size:18px;">Skip to page:</label>
+        <input type="number" id="skip_to_page" name="skip_to_page" min="1" value="{{ gov_info.number }}" style="
+    border-radius: 10px;padding:10px;
+    border: 1px solid black; font-size:18px">
+        <button type="submit" style="    background-color: #378351;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    margin: 0 5px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;">Go</button>
+        </form>
+
+    </div>
+
+    </div>
+
+    <!-- jQuery (required for DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const buttons = document.querySelectorAll('.pagination-button');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    window.location.href = this.href; // Uncomment this line to enable actual navigation
+                });
+            });
+
+            $('#select-all').click(function() {
+                $('.row-select').prop('checked', this.checked);
+            });
+
+            $('.row-select').click(function() {
+                if (!this.checked) {
+                    $('#select-all').prop('checked', false);
+                }
+            });
+        });
+
+        // Initialize DataTable with search and sorting enabled
+        $(document).ready(function() {
+            $('#example').DataTable({
+                paging: false, // Enable pagination
+                searching: true, // Enable search filter
+                ordering: true,
+                info: false // Enable sorting
+            });
+        });
+
+        // Function to handle approving a row
+        function approveRow(button, id) {
+            alert(`Approved: Certificate for ID ${id}`);
+            $(button).replaceWith('<span class="approved-button">Certificate Approved</span>'); // Replace button with text
+        }
+
+        // Function to approve all rows
+        function approveAll() {
+            let table = $('#example').DataTable();
+            let currentPageIndex = table.page.info().page; // Get current page index
+            let rowsOnPage = table.rows({ page: 'current' }).nodes(); // Get rows on the current page
+
+            $(rowsOnPage).each(function() {
+                let row = this;
+                let rowData = table.row(row).data(); // Get data for each row
+
+                if (rowData.status !== 'Approved') {
+                    // Update UI to reflect button text change
+                    $(row).find('td:eq(4)').html('<span class="approved-button">Certificate Approved</span>'); // Change button text in current page row
+                    rowData.status = 'Approved'; // Update the data status if needed
+                    $(row).find('td:eq(1)').css('color', 'red'); // Example: Update status column color
+                } else {
+                    // Handle already approved rows
+                    $(row).find('td:eq(4)').html('<span class="approved-button">Certificate Approved</span>'); // Change button text in current page row
+                }
+            });
+        }
+        
+        // Function to display the enlarged image in a lightbox
+        function showLightbox(imgSrc) {
+            $('#lightbox-img').attr('src', imgSrc);
+            $('#lightbox').css('display', 'flex');
+        }
+
+        // Close lightbox when clicking outside the image
+        $(document).on('click', '#lightbox', function(e) {
+            if (e.target.id === 'lightbox' || e.target.id === 'lightbox-img') {
+                $('#lightbox').css('display', 'none');
+            }
+        });
+
+        // Display current date and time
+        function updateDateTime() {
+            const now = new Date();
+            const dateTimeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+            $('#current-date-time').text(dateTimeStr);
+        }
+
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        function updateRowsPerPage() {
+            const rowsPerPage = document.getElementById('rows-per-page').value;
+            const url = new URL(window.location.href);
+            url.searchParams.set('rows', rowsPerPage);
+            window.location.href = url.href;
+        }
+    </script>
+    
+
+    <script>
+        $('#download-data').click(function() {
+            $('#date-picker').toggle(); // Show/hide date picker
+            $(this).toggle(); // Toggle visibility of download button
+
+            // Hide date picker on cancel
+            $('#cancel-date').click(function() {
+                $('#date-picker').hide(); // Hide date picker
+                $('#download-data').show(); // Show download button
+            });
+
+            // Handle confirm date button click
+            $('#confirm-date').click(function() {
+                let startDate = $('#start-date').val();
+                let endDate = $('#end-date').val();
+
+                // Validate start and end dates
+                if (!startDate || !endDate) {
+                    alert('Please select both start and end dates.');
+                    return;
+                }
+
+                // Check if end date is after start date
+                if (new Date(endDate) < new Date(startDate)) {
+                    alert('End date must be after start date.');
+                    return;
+                }
+
+                            // Show the download button
+                // Add 'disable' class to the button
+                $('#prepair-data').removeClass('hidden');
+                // Display message indicating data preparation
+
+
+                // Prepare data for AJAX request
+                let requestData = {
+                    start_date: startDate,
+                    end_date: endDate,
+                    plantation_ownership_table: 'plantation_bygov' // Replace with actual table name or identifier
+                };
+
+                // AJAX request to Django view
+                $.ajax({
+                    url: "{% url 'download_plantation_csv' %}", // Adjust URL as per your Django URL configuration
+                    type: 'GET',
+                    data: requestData,
+
+                    xhrFields: {
+                        responseType: 'blob' // Set response type to blob (binary data)
+                    },
+
+                    success: function(data) {
+                        
+                        // On success, create a blob URL and initiate download
+                        let blob = new Blob([data], { type: 'text/csv' });
+                        let link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = `${startDate}_to_${endDate}-${requestData.plantation_ownership_table}_data.csv`;
+                        link.click();
+                        // Reset download button text
+                        $('#prepair-data').addClass('hidden');
+                        $('#download-data').show();
+                    },
+                    error: function(xhr, status, error) {
+                        // Reset download button text
+                        $('#prepair-data').addClass('hidden');
+                        $('#download-data').show();
+
+                        // Handle error, if any
+                        console.error('Error:', error);
+                    }
+                });
+
+                // Hide date picker after initiating request
+                $('#date-picker').hide();
+            });
+        });
+    </script>
+
+
+
+{% endblock %}

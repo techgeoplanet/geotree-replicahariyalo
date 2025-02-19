@@ -1,0 +1,35 @@
+<!-- included_template.html -->
+<script type="text/javascript">
+    var aggregatedData = JSON.parse('{{ aggregated_data_list|escapejs }}');
+    console.log(aggregatedData);  // You can now use the data in JavaScript
+</script>
+
+<!-- Use the data to populate the table -->
+<table>
+    <thead>
+        <tr>
+            <th>District</th>
+            <th>Tag Tree Verify</th>
+            <th>Tag Tree Non-Verify</th>
+            <th>Block Plantation Verify</th>
+            <th>Block Plantation Non-Verify</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Render the table rows using JavaScript -->
+        <script type="text/javascript">
+            var tableBody = document.querySelector('table tbody');
+            aggregatedData.forEach(function(item) {
+                var row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.DISTRICT_N}</td>
+                    <td>${item.total_tag_tree_verify}</td>
+                    <td>${item.total_tag_tree_non_verify}</td>
+                    <td>${item.total_block_plantation_verify}</td>
+                    <td>${item.total_block_plantation_non_verify}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        </script>
+    </tbody>
+</table>

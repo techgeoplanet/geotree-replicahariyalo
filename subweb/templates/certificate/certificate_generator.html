@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #certificate-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #certificate-canvas {
+            border: 1px solid #000;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Certificate Generator</h1>
+    <form id="certificate-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{{ name }}" required><br><br>
+        <label for="profile-image">Profile Image:</label>
+        <input type="file" id="profile-image" name="profile-image" accept="image/*" required><br><br>
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" value="{{ date }}" required><br><br>
+        <label for="certificate-number">Certificate Number:</label>
+        <input type="text" id="certificate-number" name="certificate-number" value="{{ certificate_number }}" required><br><br>
+        <button type="submit">Generate Certificate</button>
+    </form>
+    <div id="certificate-container">
+        <canvas id="certificate-canvas" width="1200" height="800"></canvas>
+    </div>
+    <button id="download-btn" style="display:none;">Download Certificate</button>
+
+    <script>
+        document.getElementById('certificate-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            generateCertificate();
+        });
+
+        function generateCertificate() {
+            const canvas = document.getElementById('certificate-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Fetch the main certificate template image
+            fetch('/get-certificate-template/')
+                .then(response => response.blob())
+                .then(blob => {
+                    const templateImage = new Image();
+                    templateImage.src = URL.createObjectURL(blob);
+                    templateImage.onload = function() {
+                        ctx.drawImage(templateImage, 0, 0, canvas.width, canvas.height);
+
+                        // Get user inputs
+                        const name = document.getElementById('name').value;
+                        const date = document.getElementById('date').value;
+                        const certificateNumber = document.getElementById('certificate-number').value;
+
+                        // Load the profile image
+                        const profileImageInput = document.getElementById('profile-image');
+                        const profileImageFile = profileImageInput.files[0];
+                        const profileImage = new Image();
+                        profileImage.src = URL.createObjectURL(profileImageFile);
+                        profileImage.onload = function() {
+                            ctx.drawImage(profileImage, 200, 510, 300, 300); // Adjust position and size as needed
+
+                            // Add name text
+                            ctx.font = '100px Arial';
+                            ctx.fillStyle = 'black';
+                            ctx.fillText(name, 750, 710); // Adjust position as needed
+
+                            // Add date text
+                            ctx.font = '30px Arial';
+                            ctx.fillStyle = 'black';
+                            ctx.fillText(date, 750, 650); // Adjust position as needed
+
+                            // Add certificate number
+                            ctx.font = '30px Arial';
+                            ctx.fillStyle = 'black';
+                            ctx.fillText(certificateNumber, 750, 600); // Adjust position as needed
+
+                            // Show download button
+                            document.getElementById('download-btn').style.display = 'block';
+                        };
+                    };
+                });
+        }
+
+        document.getElementById('download-btn').addEventListener('click', function() {
+            const canvas = document.getElementById('certificate-canvas');
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'certificate.png';
+            link.click();
+        });
+    </script>
+</body>
+</html>

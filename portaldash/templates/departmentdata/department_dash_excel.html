@@ -1,0 +1,207 @@
+{% extends "portal_base.html" %}
+{% load static %}
+
+{% block title %}
+DATA SHEET -GPSPL
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .header-t {
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        table {
+            font-size: 16px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            font-weight: bold;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tfoot th {
+            font-weight: normal;
+            background-color: #009c05be;
+            color: #FFFF;
+            text-align: right;
+            padding: 10px;
+            border-top: 2px solid #969494;
+        }
+        tfoot th:first-child {
+            text-align: left;
+            font-weight: bold;
+        }
+        #exportButton {
+            margin: 20px 0;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #exportButton:hover {
+            background-color: #45a049;
+        }
+        .dataTables_filter input {
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    {% include 'header.html' %}
+    <div class="header-t">GeoPlanet Solution Pvt Ltd</div>
+    <button id="exportButton">Download Excel</button>
+    {% if user.is_staff %}
+    <table id="districtTable" class="display">
+        <thead>
+            <tr>
+                <th>Sn.</th>
+                <th>District</th>
+                <th>Total Plants</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be populated by JavaScript -->
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Total</th>
+                <th></th>
+                <th id="totalPlants">0</th>
+                <th id="totalCount">0</th>
+            </tr>
+        </tfoot>
+    </table>
+    {% endif %}
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+    <script>
+       $(document).ready(function() {
+    try {
+        // Parse JSON data from Django context variables
+        var plantsData = JSON.parse('{{ block_plantation_data|escapejs }}');
+        var repeatedData = JSON.parse('{{ indivisual_plantation_data|escapejs }}');
+        var department_name = JSON.parse('{{ department_name|escapejs }}');
+        document.querySelector('.header-t').textContent = department_name
+        console.log("Parsed plantsData:", plantsData);
+        console.log("Parsed repeatedData:", repeatedData);
+
+        // Create a map for quick lookup
+        var dataMap = {};
+
+        // Populate map with plants data
+        plantsData.forEach(function(item) {
+            dataMap[item['dict_code__DISTRICT_N']] = {
+                total_plants: item['total_plants'],
+                count: 0  // Initialize count to 0
+            };
+        });
+
+        // Update map with repeated data
+        repeatedData.forEach(function(item) {
+            if (dataMap[item['dict_code__DISTRICT_N']]) {
+                dataMap[item['dict_code__DISTRICT_N']].count = item['count'];
+            } else {
+                dataMap[item['dict_code__DISTRICT_N']] = {
+                    total_plants: 0,
+                    count: item['count']
+                };
+            }
+        });
+
+        // Convert map to array of objects for DataTable and add serial number
+        var mergedResults = Object.keys(dataMap).map(function(key, index) {
+            return {
+                serialNumber: index + 1, // Add serial number starting from 1
+                district: key,
+                total_plants: dataMap[key].total_plants,
+                count: dataMap[key].count
+            };
+        });
+
+        console.log("Merged results:", mergedResults);
+
+        // Calculate totals
+        var totalPlants = mergedResults.reduce(function(sum, item) {
+            return sum + item.total_plants;
+        }, 0);
+
+        var totalCount = mergedResults.reduce(function(sum, item) {
+            return sum + item.count;
+        }, 0);
+
+        // Initialize DataTable with default page length
+        var table = $('#districtTable').DataTable({
+            data: mergedResults,
+            pageLength: 100,
+            columns: [
+                { data: 'serialNumber', title: 'Sn.' },
+                { data: 'district', title: 'District' },
+                { data: 'total_plants', title: 'Block Plantation' },
+                { data: 'count', title: 'Indivisual Plantation' }
+            ]
+        });
+
+        // Update totals in footer
+        $('#totalPlants').text(totalPlants);
+        $('#totalCount').text(totalCount);
+
+        // Export to Excel functionality
+        $('#exportButton').click(function() {
+    try {
+        // Create a new workbook
+        var wb = XLSX.utils.book_new();
+
+        // Define the custom header and column headers
+        var customHeader = [[department_name]];
+        var headers = ['Sn', 'District', 'Block Plantation', 'Indivisual Plantation'];
+        var data = mergedResults.map(function(item) {
+            return [item.serialNumber, item.district, item.total_plants, item.count];
+        });
+
+        // Create a worksheet with the custom header and column headers
+        var ws = XLSX.utils.aoa_to_sheet(customHeader.concat([headers]).concat(data));
+
+        // Adjust the row height for the custom header
+        ws['!rows'] = [{ hpt: 30 }]; // Adjust the row height of the custom header
+
+        // Add the worksheet to the workbook
+        XLSX.utils.book_append_sheet(wb, ws, "District Data");
+
+        // Write the workbook to file
+        XLSX.writeFile(wb, "district_data.xlsx");
+    } catch (error) {
+        console.error("Error processing data:", error);
+    }
+});
+    } catch (error) {
+        console.error("Error initializing data:", error);
+    }
+});
+
+    </script>
+{% endblock %}

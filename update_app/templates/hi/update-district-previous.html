@@ -1,0 +1,144 @@
+{% extends "subweb-base.html" %}
+{% load static %}
+
+{% block title %}
+जिला को अपडेट करें
+{% endblock %}
+
+{% block extra_css %}
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+
+{% endblock %}
+{% block content %}
+{% include 'header/headerbar.html' %}
+{% include 'header/header-route.html' with btn_text="जिला अपडेट" %}
+<div class="main-section overflow-x-hidden" style="display: flex; align-items: center; flex-direction: column; width: 100%;">
+    <div class="mt-10 bg-red-200 rounded-lg p-2">
+        <div class="bg-white border text-red-700 px-4 py-3 rounded-2xl relative" role="alert">
+          
+          <strong class="font-bold">त्रुटि!</strong>
+          <span class="block sm:inline mt-5">पोधा <span class="font-bold">"{{table_name}}-{{plant_id}}"</span> के पते में समस्या है। कृपया पोधा लोकेशन <span class="font-bold">" जिला "</span> का चयन करके इसे हल करें।</span>
+        </div>
+
+        <div class="bg-white border text-red-700 px-4 py-3 rounded-2xl relative flex flex-col items-center" role="alert">
+            <!-- Editable Section -->
+            <li class="flex items-center space-x-2 mt-5 text-green-800 w-11/12">
+                <span class="bg-green-200 text-green-800 font-medium rounded-full px-3 py-1">🏢</span>
+                <span class="flex-1 flex justify-between items-center ">
+                    <label for="district" class="font-semibold">जिला:</label>
+                    <select 
+                        id="district"
+                        name="district"
+                        class="border border-gray-300 rounded-md px-2 py-1 w-3/5 focus:outline-none focus:ring-2 focus:ring-green-500"
+                        >
+                        <option value="">विभाग चुनें</option>
+                        {% for district in district_list|dictsort:"DISTRICT_N" %}
+                            {% if district.DISTRICT_N != "0" %}
+                                <option value="{{ district.DISTRICT_C }}">{{ district.DISTRICT_N }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </span>
+            </li>
+
+            <button id="submit-btn" onclick="checkInputAndFetch()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-4 px-6 rounded mt-10">
+                सबमिट करें
+            </button>
+            <button id="sucess-btn-show" class=" hidden bg-green-100 text-green-600 font-bold py-4 px-6 rounded mt-10 animate-pulse border-green-600">
+                अपडेट सफल
+                <i class="fas fa-check-circle ml-2"></i>
+            </button>
+        </div>
+
+      <script>
+        function showWarning(message) {
+          const warningContainer = document.createElement('div');
+          warningContainer.className = 'validation-warning-container p-5 bg-red-100 text-red-600';
+          warningContainer.style.position = 'absolute';
+          warningContainer.style.top = '60%';
+          warningContainer.style.left = '50%';
+          warningContainer.style.transform = 'translate(-50%, -50%)';
+          warningContainer.style.zIndex = '9999';
+          warningContainer.style.transition = 'top 0.5s ease';
+
+          const warning = document.createElement('div');
+          warning.className = 'validation-warning';
+          warning.innerHTML = `<p>${message}</p>`;
+
+          warningContainer.appendChild(warning);
+          document.body.appendChild(warningContainer);
+
+          setTimeout(() => {
+            warningContainer.style.top = '10%';
+            setTimeout(() => {
+              document.body.removeChild(warningContainer);
+            }, 2000);
+          }, 0);
+        }
+      </script>
+
+      
+      </div>
+
+      <script>
+
+        async function checkInputAndFetch() {
+            const districtSelect = document.getElementById('district');
+            const submitBtn = document.getElementById('submit-btn');
+            // Validate the district selection
+            if (districtSelect.value === '0' || districtSelect.value === '') {
+            showWarning('कृपया जिला चुनें।');
+            return;
+            }
+
+            // Prepare the URL and payload
+            const url = "{% url 'hiupdatedistrictfirst' %}";
+            const payload = {
+            district_id: districtSelect.value,
+            table_name: '{{table_name}}',
+            plantation_id: '{{plant_id}}',
+            };
+
+            try {
+            // Send the request
+            submitBtn.disabled = true;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}', // Include CSRF token if needed
+                },
+                body: JSON.stringify(payload),
+            });
+
+            // Handle non-200 responses
+            if (!response.ok) {
+                submitBtn.disabled = false;
+                const errorData = await response.json();
+                const errorMessage = errorData.error || 'Failed to update district. Please try again.';
+                throw new Error(errorMessage);
+            }
+
+            // Parse the JSON response
+            const data = await response.json();
+            
+            // Show success message
+            showWarning(`जिला सफल हुआ: ${data.message}`);
+            // Hide the submit button
+            submitBtn.classList.add('hidden');
+            document.getElementById('sucess-btn-show').classList.remove('hidden');
+
+            // Redirect after a short delay
+            setTimeout(() => {
+                window.history.back();
+            }, 2000);
+
+            } catch (error) {
+            // Log error for debugging and show user-friendly message
+            console.error('Error updating district:', error);
+            showWarning(error.message || 'जिला अपडेट करने में विफल। कृपया पुना प्रयास करें।');
+            }
+        }
+      </script>
+</div>
+{% endblock %}
