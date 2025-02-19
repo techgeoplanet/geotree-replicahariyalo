@@ -20,7 +20,7 @@ db.sqlite3
 media/
 images/
 .mp4
-static/
+# static/
 #json google storage bucket
 
 # VS Code settings
